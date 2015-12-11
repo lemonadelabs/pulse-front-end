@@ -4,8 +4,20 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
-    // Add options here
+    minifyJS: {
+      enabled: false
+    },
+    minifyCSS: {
+      enabled: false
+    }
   });
+
+  app.import('bower_components/three.js/build/three.js')
+  app.import('bower_components/three.js/examples/js/controls/OrbitControls.js')
+  app.import('bower_components/threex.domevents/threex.domevents.js')
+  app.import('bower_components/threex.windowresize/threex.windowresize.js')
+  app.import('bower_components/lodash/lodash.js')
+
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
