@@ -6,7 +6,7 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('view-project');
+  this.route('project-overview');
 });
 
 export default Router;

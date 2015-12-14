@@ -3,7 +3,7 @@
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'pulse',
-    podModulePrefix: 'pulse/app/pods',
+    podModulePrefix: 'pulse/pods',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
