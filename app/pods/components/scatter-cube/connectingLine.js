@@ -7,8 +7,6 @@ export default function ConnectingLine (opts) {
 }
 
 ConnectingLine.prototype.createMesh = function() {
-  console.log(this.a)
-  console.log(this.b)
   var geometry = new THREE.Geometry();
   geometry.vertices.push(this.a);
   geometry.vertices.push(this.b);

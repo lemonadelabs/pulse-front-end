@@ -1,3 +1,4 @@
+/* global THREE, THREEx, TWEEN, requestAnimationFrame */
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
 import ConnectingLine from './connectingLine';
@@ -14,6 +15,7 @@ export default function environment (component) {
   environment.scene = undefined
   environment.renderer  = undefined
   environment.onRenderFcts = []
+  environment.onPointClickFcts = []
 
 
   environment.init = function () {
@@ -50,6 +52,22 @@ export default function environment (component) {
     this.renderer.sortObjects = false;
     this.container.appendChild( this.renderer.domElement );
 
+    function addObjectToScene (object) {
+      self.scene.add(object.mesh)
+    }
+
+    function addObjectsToScene(objects) {
+      forEach(objects, addObjectToScene)
+    }
+
+    function removeObjectFromScene(object) {
+      self.scene.remove( object.mesh )
+    }
+
+    function removeObjectsFromScene (objects) {
+      forEach( objects, removeObjectFromScene )
+    }
+
 
     ///////////////////// On Window Resize ////////////////////////
 
@@ -71,7 +89,7 @@ export default function environment (component) {
 
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
-    this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry, mat) {
+    this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
       var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
       var cube = new THREE.Mesh(geometry, cubeMaterial)
       self.scene.add(cube)
@@ -102,7 +120,7 @@ export default function environment (component) {
 
     ///////////////////// Create Target ////////////////////////
 
-    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry, mat) {
+    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
 
       var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
       self.target = new THREE.Mesh(geometry, material)
@@ -114,6 +132,12 @@ export default function environment (component) {
       self.onRenderFcts.push(function () {
         self.target.quaternion.copy( self.camera.quaternion )
       })
+
+      self.onPointClickFcts.push(function (sHPoint) {
+        self.target.position.copy(sHPoint.mesh.position)
+      })
+
+
     })
 
 
@@ -123,37 +147,51 @@ export default function environment (component) {
     var sHData = data4Week()
     this.pointCloud = new PointCloud({ data: sHData })
 
-    forEach(this.pointCloud.sHPoints, addToScene)
+    addObjectsToScene(this.pointCloud.sHPoints)
 
     forEach(this.pointCloud.sHPoints, sHPointListner)
 
-    function addToScene (object) {
-      self.scene.add(object.mesh)
-    }
+    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
+      self.component.updateSelectedStakeholder(sHPoint)
+    })
 
     function sHPointListner (sHPoint) {
+
       var mesh = sHPoint.mesh
-      domEvents.addEventListener(mesh, 'click', function(event){
-        self.component.updateSelectedStakeholder(sHPoint)
-        self.target.position.copy(sHPoint.mesh.position)
-
-
+      domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
       }, false)
     }
 
     ///////////////////// Create Connecting Lines ////////////////////////
 
     this.connectingLines = []
-    var pointA = this.pointCloud.sHPoints[10]
 
-    for (var i = 0; i < this.pointCloud.sHPoints.length; i++) {
-      var pointB = this.pointCloud.sHPoints[i]
-      var line = new ConnectingLine({
-        a: pointA.mesh.position,
-        b: pointB.mesh.position
+    function removeConnectingLines () {
+      removeObjectsFromScene(self.connectingLines)
+      self.connectingLines = []
+    }
+
+    this.onPointClickFcts.push(removeConnectingLines)
+
+    function drawConnections (sHPoint) {
+      var pointA = sHPoint
+      var connections = self.pointCloud.sHPoints // change this to actual connection data
+      forEach(connections, function (pointB) {
+
+        var line = new ConnectingLine({
+          // pass in material depending on the connection strength
+          a: pointA.mesh.position,
+          b: pointB.mesh.position
+        })
+        self.connectingLines.push(line)
       })
-      addToScene(line)
-    };
+      addObjectsToScene(self.connectingLines)
+    }
+
+    this.onPointClickFcts.push(drawConnections)
 
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
@@ -205,6 +243,7 @@ export default function environment (component) {
 }
 
 function forEach(array, action) {
-  for (var i = 0; i < array.length; i++)
-    action(array[i]);
+  for (var i = 0; i < array.length; i++) {
+    action(array[i])
+  }
 }
