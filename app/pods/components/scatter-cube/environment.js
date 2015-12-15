@@ -1,6 +1,6 @@
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
-import Target from './target';
+import ConnectingLine from './connectingLine';
 // import data from './testData'
 import data4Week from './testDataMultiWeek'
 
@@ -121,11 +121,11 @@ export default function environment (component) {
     ///////////////////// Create Point Cloud ////////////////////////
 
     var sHData = data4Week()
-    var pointCloud = new PointCloud({ data: sHData })
+    this.pointCloud = new PointCloud({ data: sHData })
 
-    forEach(pointCloud.sHPoints, addToScene)
+    forEach(this.pointCloud.sHPoints, addToScene)
 
-    forEach(pointCloud.sHPoints, sHPointListner)
+    forEach(this.pointCloud.sHPoints, sHPointListner)
 
     function addToScene (object) {
       self.scene.add(object.mesh)
@@ -136,10 +136,24 @@ export default function environment (component) {
       domEvents.addEventListener(mesh, 'click', function(event){
         self.component.updateSelectedStakeholder(sHPoint)
         self.target.position.copy(sHPoint.mesh.position)
-        // move/show the target!!
+
 
       }, false)
     }
+
+    ///////////////////// Create Connecting Lines ////////////////////////
+
+    this.connectingLines = []
+    var pointA = this.pointCloud.sHPoints[10]
+
+    for (var i = 0; i < this.pointCloud.sHPoints.length; i++) {
+      var pointB = this.pointCloud.sHPoints[i]
+      var line = new ConnectingLine({
+        a: pointA.mesh.position,
+        b: pointB.mesh.position
+      })
+      addToScene(line)
+    };
 
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
