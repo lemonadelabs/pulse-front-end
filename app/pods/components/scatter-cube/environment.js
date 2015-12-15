@@ -1,5 +1,6 @@
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
+import Target from './target';
 // import data from './testData'
 import data4Week from './testDataMultiWeek'
 
@@ -64,10 +65,13 @@ export default function environment (component) {
     // var axisHelper = new THREE.AxisHelper( 10000 );
     // this.scene.add( axisHelper );
 
+    //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
+
+    this.jSONloader = new THREE.JSONLoader()
+
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
-    var loader = new THREE.JSONLoader()
-    loader.load('./assets/geometries/axis-cube.json', function (geometry, mat) {
+    this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry, mat) {
       var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
       var cube = new THREE.Mesh(geometry, cubeMaterial)
       self.scene.add(cube)
@@ -96,6 +100,13 @@ export default function environment (component) {
       lookAtCameraUpdate(labelGroup.labels)
     })
 
+    ///////////////////// Create Target ////////////////////////
+
+    var target = new Target({
+      jSONloader: this.jSONloader,
+      scene: this.scene
+    })
+
     ///////////////////// Create Point Cloud ////////////////////////
 
     var sHData = data4Week()
@@ -103,17 +114,19 @@ export default function environment (component) {
 
     forEach(pointCloud.sHPoints, addToScene)
 
-    forEach(pointCloud.sHPoints, listenToMesh)
+    forEach(pointCloud.sHPoints, sHPointListner)
 
     function addToScene (object) {
       self.scene.add(object.mesh)
     }
 
-    function listenToMesh (sHPoint) {
+    function sHPointListner (sHPoint) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(event){
-        // console.log("Name: " + sHPoint.name)
         self.component.updateSelectedStakeholder(sHPoint)
+
+        // move/show the target!!
+
       }, false)
     }
 
