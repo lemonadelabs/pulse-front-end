@@ -102,10 +102,21 @@ export default function environment (component) {
 
     ///////////////////// Create Target ////////////////////////
 
-    var target = new Target({
-      jSONloader: this.jSONloader,
-      scene: this.scene
+    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry, mat) {
+
+      var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
+      self.target = new THREE.Mesh(geometry, material)
+
+      self.scene.add(self.target)
+
+      self.target.position.set(1,1,1)
+
+      self.onRenderFcts.push(function () {
+        self.target.quaternion.copy( self.camera.quaternion )
+      })
     })
+
+
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -124,7 +135,7 @@ export default function environment (component) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(event){
         self.component.updateSelectedStakeholder(sHPoint)
-
+        self.target.position.copy(sHPoint.mesh.position)
         // move/show the target!!
 
       }, false)
