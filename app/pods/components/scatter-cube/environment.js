@@ -105,15 +105,15 @@ export default function environment (component) {
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry, mat) {
 
       var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
-      var target = new THREE.Mesh(geometry, material)
+      self.target = new THREE.Mesh(geometry, material)
 
-      console.log(target)
-      self.scene.add(target)
+      self.scene.add(self.target)
+
+      self.target.position.set(1,1,1)
 
       self.onRenderFcts.push(function () {
-        target.quaternion.copy( self.camera.quaternion )
+        self.target.quaternion.copy( self.camera.quaternion )
       })
-
     })
 
 
@@ -135,7 +135,7 @@ export default function environment (component) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(event){
         self.component.updateSelectedStakeholder(sHPoint)
-
+        self.target.position.copy(sHPoint.mesh.position)
         // move/show the target!!
 
       }, false)
