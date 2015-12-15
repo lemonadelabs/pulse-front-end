@@ -1,5 +1,5 @@
-import SHPoint from './SHPoint';
 import LabelGroup from './labelGroup';
+import PointCloud from './pointCloud';
 // import data from './testData'
 import data4Week from './testDataMultiWeek'
 
@@ -96,79 +96,14 @@ export default function environment (component) {
       lookAtCameraUpdate(labelGroup.labels)
     })
 
-    ///////////////////// Load the data ////////////////////////
+    ///////////////////// Create Point Cloud ////////////////////////
 
-    var _data4Week = data4Week()
+    var sHData = data4Week()
+    var pointCloud = new PointCloud({ data: sHData })
 
-    var currentData = getData(1, _data4Week)
+    forEach(pointCloud.sHPoints, addToScene)
 
-    function getData(week, data) {
-      var returnData = {}
-      for (var i = 0; i < data.length; i++) {
-        returnData[data[i].name] = data[i].data[week]
-      }
-      return returnData
-    }
-
-
-    ///////////////////// Animate the dot ////////////////////////
-
-    // setInterval(function () {
-
-    //   var randomWeek = Math.floor(Math.random() * 4) + 1
-
-    //   var newData = getData(randomWeek, _data4Week)
-
-    //   forEach(sHPoints, function (shPoint) {
-    //     var name = shPoint.name
-    //     var shData = newData[name]
-    //     shPoint.power = shData.power
-    //     shPoint.support = shData.support
-    //     shPoint.vital = shData.vital
-    //     shPoint.animate()
-    //   })
-
-    // },2000)
-
-    ///////////////////// create the plotted objetcs ////////////////////////
-
-    var sHPoints = []
-
-    $.each(currentData, function (key, value) {
-      sHPoints.push (
-        new SHPoint({
-          power : value.power,
-          support : value.support,
-          vital : value.vital,
-          name : key,
-          // image : stakeHolder.image,
-          // company : stakeHolder.company,
-          // role : stakeHolder.role,
-          // tags : stakeHolder.tags,
-          scene: self.scene
-        })
-      )
-    })
-
-    forEach(sHPoints, addToScene)
-    forEach(sHPoints, listenToMesh)
-
-
-    // function plotPoint (stakeHolder) {
-    //   sHPoints.push (
-    //     new SHPoint({
-    //       power : stakeHolder.power,
-    //       support : stakeHolder.support,
-    //       vital : stakeHolder.vital,
-    //       name : stakeHolder.name,
-    //       image : stakeHolder.image,
-    //       company : stakeHolder.company,
-    //       role : stakeHolder.role,
-    //       tags : stakeHolder.tags,
-    //       scene: self.scene
-    //     })
-    //   )
-    // }
+    forEach(pointCloud.sHPoints, listenToMesh)
 
     function addToScene (object) {
       self.scene.add(object.mesh)
@@ -178,9 +113,17 @@ export default function environment (component) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(event){
         // console.log("Name: " + sHPoint.name)
-        self.component.updateSelectedStakeholder(sHPoint.name)
+        self.component.updateSelectedStakeholder(sHPoint)
       }, false)
     }
+
+    ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
+
+    // setInterval(function () {
+    //   var randomWeek = Math.floor(Math.random() * 4) + 1
+
+    //   pointCloud.updatePositions(randomWeek)
+    // }, 4000)
 
 
     //////////////////////////////////////////////////////////////////////////////

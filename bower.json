@@ -1,16 +1,35 @@
 {
   "name": "pulse",
+  "description": "Small description for pulse goes here",
+  "main": "",
+  "authors": [
+    "will-sklenars <will.sklenars@gmail.com>"
+  ],
+  "license": "Copywrite Lemonade Labs 2015",
+  "homepage": "https://github.com/lemonadelabs/pulse-front-end",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
-    "ember": "2.2.0",
     "ember-cli-shims": "0.0.6",
     "ember-cli-test-loader": "0.2.1",
     "ember-data": "2.2.0",
     "ember-load-initializers": "0.1.7",
-    "ember-qunit": "0.4.16",
     "ember-qunit-notifications": "0.1.0",
+    "ember-qunit": "0.4.16",
     "ember-resolver": "~0.1.20",
-    "jquery": "^1.11.3",
     "loader.js": "ember-cli/loader.js#3.4.0",
-    "qunit": "~1.20.0"
+    "qunit": "~1.20.0",
+    "threex.windowresize": "*",
+    "tween.js": "tweenjs#~16.3.1",
+    "lodash": "~3.10.1",
+    "three.js": "threejs#*",
+    "threex.domevents": "*"
   }
 }

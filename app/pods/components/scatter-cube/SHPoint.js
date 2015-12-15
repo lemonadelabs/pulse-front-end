@@ -1,10 +1,8 @@
 export default function SHPoint (opts) {
-  this.power = opts.power,
-  this.support = opts.support,
-  this.vital = opts.vital,
+  this.weeks = opts.weeks,
   this.name = opts.name,
   this.image = opts.image,
-  this.company = opts.company,
+  this.organisation = opts.organisation,
   this.role = opts.role,
   this.tags = opts.tags,
 
@@ -32,23 +30,23 @@ SHPoint.prototype.createMesh = function() {
 
   // sets the position for each mesh
   var position = new THREE.Vector3();
-  var x = (this.power) * 1.8  + 0.1
-  var y = (this.support) * 1.8  + 0.1
-  var z = (this.vital) * 1.8  + 0.1
+  var x = (this.weeks[1].power) * 1.8  + 0.1
+  var y = (this.weeks[1].support) * 1.8  + 0.1
+  var z = (this.weeks[1].vital) * 1.8  + 0.1
 
   point.position.set(x, y, z)
 
   return point
-};
+}
 
-SHPoint.prototype.animate = function() {
-  var x = (this.power) * 1.8  + 0.1
-  var y = (this.support) * 1.8  + 0.1
-  var z = (this.vital) * 1.8  + 0.1
+SHPoint.prototype.animate = function(week) {
+  var x = (this.weeks[week].power) * 1.8  + 0.1
+  var y = (this.weeks[week].support) * 1.8  + 0.1
+  var z = (this.weeks[week].vital) * 1.8  + 0.1
 
   var self = this
   var xTween = new TWEEN.Tween(this.mesh.position)
       .to({x: x, y: y, z: z}, 1500)
       .easing(TWEEN.Easing.Exponential.Out)
       .start();
-};
+}
