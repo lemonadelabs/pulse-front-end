@@ -102,10 +102,21 @@ export default function environment (component) {
 
     ///////////////////// Create Target ////////////////////////
 
-    var target = new Target({
-      jSONloader: this.jSONloader,
-      scene: this.scene
+    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry, mat) {
+
+      var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
+      var target = new THREE.Mesh(geometry, material)
+
+      console.log(target)
+      self.scene.add(target)
+
+      self.onRenderFcts.push(function () {
+        target.quaternion.copy( self.camera.quaternion )
+      })
+
     })
+
+
 
     ///////////////////// Create Point Cloud ////////////////////////
 
