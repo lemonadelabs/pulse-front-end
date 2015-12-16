@@ -12,29 +12,38 @@
   <hr class="stakeholder-title-rule">
 </header>
 <section class="stakeholder-tags-section">
-  {{!-- The each is compressed like this for inline-block--}}
-  {{#each this.selectedStakeholder.tags as |tag|}}<p class="stakeholder-tag">{{tag}}</p>{{/each}}
+  {{#if this.selectedStakeholder.tags}}
+    {{!-- The each is compressed like this for inline-block--}}
+    {{#each this.selectedStakeholder.tags as |tag|}}<p class="stakeholder-tag">{{tag}}</p>{{/each}}
+  {{else}}
+    <p class="stakeholder-no-data">There are no tags for this stakeholder.</p>
+  {{/if}}
 </section>
 <header class="stakeholder-title-header">
   <hr class="stakeholder-title-rule">
   <h2 class="stakeholder-title" >stats</h2>
   <hr class="stakeholder-title-rule">
 </header>
-{{#if this.selectedStakeholder.stats}}
-  {{!-- We need to work out the stats --}}
-{{else}}
-  <p>There are no stats for this stakeholder.</p>
-{{/if}}
+<section>
+  {{#if this.selectedStakeholder.stats}}
+    {{!-- We need to work out the stats --}}
+  {{else}}
+    <p class="stakeholder-no-data">There are no stats for this stakeholder.</p>
+  {{/if}}
+</section>
 <header class="stakeholder-title-header">
   <hr class="stakeholder-title-rule">
   <h2 class="stakeholder-title" >notes</h2>
   <hr class="stakeholder-title-rule">
 </header>
+<section>
+  {{#if this.selectedStakeholder.notes}}
+    {{this.selectedStakeholder.notes}}
+  {{else}}
+    <p class="stakeholder-no-data">There are no notes on this stakeholder.</p>
+  {{/if}}
+</section>
 
-{{#if this.selectedStakeholder.notes}}
-  {{this.selectedStakeholder.notes}}
-{{else}}
-  <p>There are no notes on this stakeholder.</p>
-{{/if}}
-
-<button>Close</button>
+<footer>
+  <button {{action "close"}}>Close</button>
+</footer>
