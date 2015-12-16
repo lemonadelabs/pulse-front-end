@@ -16,6 +16,7 @@ export default Ember.Component.extend({
   // selectedStakeholder: this.selectedStakeholder,
 
   updateSelectedStakeholder: function (shInfo) {
-    this.set('selectedStakeholder', shInfo)
+    this.get('updateStakeholder')(shInfo);
   }
+
 });

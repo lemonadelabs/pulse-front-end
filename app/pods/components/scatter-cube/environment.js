@@ -198,7 +198,7 @@ export default function environment (component) {
     // setInterval(function () {
     //   var randomWeek = Math.floor(Math.random() * 4) + 1
 
-    //   pointCloud.updatePositions(randomWeek)
+    //   self.pointCloud.updatePositions(randomWeek)
     // }, 4000)
 
 
