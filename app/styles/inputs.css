@@ -1,3 +1,5 @@
+input:focus,button { outline: none; }
+
 button{
   transition: color 250ms;
   border:solid white 2px;
@@ -12,11 +14,11 @@ button{
   padding-bottom: 8px;
 }
 
-button:hover{
+button:hover,button:focus{
   color: var(--pulseBlack);
 }
 
-button:hover::after{
+button:hover::after,button:focus::after{
   opacity: 1;
 }
 
