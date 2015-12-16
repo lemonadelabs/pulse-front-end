@@ -1,0 +1,119 @@
+.stakeholder-modal{
+  position: absolute;
+  left:30px;
+  top:40px;
+  width: 300px;
+  height: auto;
+  padding: 30px;
+  z-index: 1;
+  border: solid 1px white;
+  background: color(var(--darkBlue) alpha(-5%));
+}
+
+.stakeholder-modal::before{
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  border-top: solid 3px white;
+  border-left: solid 3px white;
+}
+
+.stakeholder-modal::after{
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  border-bottom: solid 3px white;
+  border-right: solid 3px white;
+}
+
+.stakeholder-modal button{
+  position: relative;
+  bottom: 0px;
+}
+
+.stakeholder-modal section{
+  margin: 0 10px 0 10px;
+}
+
+.stakeholder-tags-section{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.stakeholder-tag{
+  display: inline-block;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.2em;
+  padding-bottom: 0.3em;
+  background-color: var(--teal);
+  text-transform:capitalize;
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+
+.stakeholder-name{
+  display: inline-block;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--darkBlue);
+  background-color: var(--teal);
+}
+
+.stakeholder-image-container{
+  display: inline-block;
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+}
+
+.stakeholder-image-container img{
+  width: 100%;
+  height: auto;
+}
+
+.stakeholder-info-container{
+  position: relative;
+  top: -10px;
+  margin-left: 30px;
+}
+.stakeholder-info{
+  font-size: 10pt;
+  margin: 8px 0px 8px;
+}
+
+.stakeholder-title-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.stakeholder-title{
+  font-size: 10pt;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+.stakeholder-title-rule {
+  flex-grow: 1;
+  height: 1px;
+  border: none;
+  background-color: color(white alpha(-40%))
+}

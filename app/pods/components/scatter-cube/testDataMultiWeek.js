@@ -372,7 +372,7 @@ export default function data4Week() {
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
-      'tags' : ['internal'],
+      'tags' : ['internal','core','dedicated','overloaded','over achiever'],
       'data' : {
         '1' : {
           'power' : '1.0',

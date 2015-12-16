@@ -1,12 +1,40 @@
-{{this.selectedStakeholder.name}}
-<br>
-{{this.selectedStakeholder.organisation}}
-<br>
-{{this.selectedStakeholder.role}}
-<br>
-{{this.selectedStakeholder.tags}}
-<br>
-{{!-- <img src="{{this.selectedStakeholder.image}}"> --}}
-<br>
+<div class="stakeholder-image-container inline-block">
+  <img src="{{this.selectedStakeholder.image}}">
+</div>
+<div class="stakeholder-info-container inline-block">
+  <p class="stakeholder-name">{{this.selectedStakeholder.name}}</p>
+  <p class="stakeholder-info">{{this.selectedStakeholder.organisation}}</p>
+  <p class="stakeholder-info">{{this.selectedStakeholder.role}}</p>
+</div>
+<header class="stakeholder-title-header">
+  <hr class="stakeholder-title-rule">
+  <h2 class="stakeholder-title" >tags</h2>
+  <hr class="stakeholder-title-rule">
+</header>
+<section class="stakeholder-tags-section">
+  {{!-- The each is compressed like this for inline-block--}}
+  {{#each this.selectedStakeholder.tags as |tag|}}<p class="stakeholder-tag">{{tag}}</p>{{/each}}
+</section>
+<header class="stakeholder-title-header">
+  <hr class="stakeholder-title-rule">
+  <h2 class="stakeholder-title" >stats</h2>
+  <hr class="stakeholder-title-rule">
+</header>
+{{#if this.selectedStakeholder.stats}}
+  {{!-- We need to work out the stats --}}
+{{else}}
+  <p>There are no stats for this stakeholder.</p>
+{{/if}}
+<header class="stakeholder-title-header">
+  <hr class="stakeholder-title-rule">
+  <h2 class="stakeholder-title" >notes</h2>
+  <hr class="stakeholder-title-rule">
+</header>
 
-{{yield}}
+{{#if this.selectedStakeholder.notes}}
+  {{this.selectedStakeholder.notes}}
+{{else}}
+  <p>There are no notes on this stakeholder.</p>
+{{/if}}
+
+<button>Close</button>
