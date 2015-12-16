@@ -16,7 +16,7 @@ export default function environment (component) {
   environment.renderer  = undefined
   environment.onRenderFcts = []
   environment.onPointClickFcts = []
-
+  environment.noSelectedStakeholderFcts = []
 
   environment.init = function () {
 
@@ -122,24 +122,33 @@ export default function environment (component) {
 
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
 
+      self.target = {}
+
       var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
-      self.target = new THREE.Mesh(geometry, material)
+      self.target.mesh = new THREE.Mesh(geometry, material)
 
-      self.scene.add(self.target)
+      self.target.mesh.visible = true
 
-      self.target.position.set(1,1,1)
+      self.scene.add(self.target.mesh)
 
-      self.onRenderFcts.push(function () {
-        self.target.quaternion.copy( self.camera.quaternion )
+      self.onRenderFcts.push(function () { // billboarding
+        self.target.mesh.quaternion.copy( self.camera.quaternion )
       })
 
-      self.onPointClickFcts.push(function (sHPoint) {
-        self.target.position.copy(sHPoint.mesh.position)
-      })
+      self.onPointClickFcts.push(updateTargetLocation)
+      function updateTargetLocation (sHPoint) {
+        self.target.mesh.visible = true
+        self.target.mesh.position.copy(sHPoint.mesh.position)
+      }
 
+
+      // hide target
+      self.noSelectedStakeholderFcts.push(hideTarget)
+      function hideTarget () {
+        self.target.mesh.visible = false
+      }
 
     })
-
 
 
     ///////////////////// Create Point Cloud ////////////////////////
@@ -155,6 +164,9 @@ export default function environment (component) {
       self.component.updateSelectedStakeholder(sHPoint)
     })
 
+
+
+
     function sHPointListner (sHPoint) {
 
       var mesh = sHPoint.mesh
@@ -165,17 +177,21 @@ export default function environment (component) {
       }, false)
     }
 
+
+
+
     ///////////////////// Create Connecting Lines ////////////////////////
 
     this.connectingLines = []
 
+    this.onPointClickFcts.push(removeConnectingLines)
     function removeConnectingLines () {
       removeObjectsFromScene(self.connectingLines)
       self.connectingLines = []
     }
 
-    this.onPointClickFcts.push(removeConnectingLines)
 
+    this.onPointClickFcts.push(drawConnections)
     function drawConnections (sHPoint) {
       var pointA = sHPoint
       var connections = self.pointCloud.sHPoints // change this to actual connection data
@@ -191,7 +207,25 @@ export default function environment (component) {
       addObjectsToScene(self.connectingLines)
     }
 
-    this.onPointClickFcts.push(drawConnections)
+    this.noSelectedStakeholderFcts.push(hideConnections)
+    function hideConnections() {
+      removeObjectsFromScene(self.connectingLines)
+    }
+
+
+
+    ///////////////////// logic when stakeholder modal is closed ////////////////////////
+
+    this.noSelectedStakeholder = function () {
+      this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
+        noSelectedStakeholderFct()
+      })
+    }
+
+    // setInterval(function() { // for testing purposes, delete later
+    //   self.component.updateSelectedStakeholder(undefined)
+    // }, 4000)
+
 
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
