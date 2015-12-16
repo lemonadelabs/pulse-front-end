@@ -1,5 +1,13 @@
+@import "helpers.css";
+@import "inputs.css";
+@import "colours.css";
+@import "stakeholder-modal.css";
+
 body {
   margin: 0;
+  color: white;
+  background-color: var(--pulseBlack);
+  font-family: "neuzeit-grotesk";
 }
 
 canvas {

@@ -1,6 +1,9 @@
 /*jshint node:true*/
-/* global require, module */
+/* global require, module*/
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+var cssImport = require("postcss-import");
+var autoprefixer = require('autoprefixer');
+var cssnext = require('cssnext');
 
 module.exports = function(defaults) {
   var app = new EmberApp(defaults, {
@@ -9,6 +12,26 @@ module.exports = function(defaults) {
     },
     minifyCSS: {
       enabled: false
+    },
+    postcssOptions: {
+      plugins: [
+        {
+          module: cssImport,
+          options: {
+            path: ["app/styles"]
+          }
+        },
+        {
+          module: autoprefixer,
+          options: {
+            browsers: ['last 2 version']
+          }
+        },
+        {
+          module: cssnext,
+          options: {}
+        }
+      ]
     }
   });
 
