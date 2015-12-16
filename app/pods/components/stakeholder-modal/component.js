@@ -9,5 +9,10 @@ export default Ember.Component.extend({
       this.get("setStakeholderUndefined")();
       this.set("visible",false);
     }
-  }
+  },
+  showModalOnSelection:function(){
+    if(this.get("selectedStakeholder")!== undefined && this.get("visible") === false){
+      this.set("visible",true);
+    }
+  }.observes("selectedStakeholder")
 });
