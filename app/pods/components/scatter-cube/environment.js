@@ -26,7 +26,7 @@ export default function environment (component) {
 
     /////////////////////////// set up camera /////////////////////////////
 
-    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.0001, 1000 );
     this.camera.position.set(-1.5,1,3)
 
     /////////////////////////// set up controls /////////////////////////////
