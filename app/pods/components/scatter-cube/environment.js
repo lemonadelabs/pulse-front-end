@@ -127,7 +127,7 @@ export default function environment (component) {
       var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
       self.target.mesh = new THREE.Mesh(geometry, material)
 
-      self.target.mesh.visible = true
+      self.target.mesh.visible = false
 
       self.scene.add(self.target.mesh)
 
@@ -154,18 +154,16 @@ export default function environment (component) {
     ///////////////////// Create Point Cloud ////////////////////////
 
     var sHData = data4Week()
-    this.pointCloud = new PointCloud({ data: sHData })
+    this.pointCloud = new PointCloud({ data: sHData }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
 
+    addObjectsToScene(this.pointCloud.sHPointClickTargets)
     addObjectsToScene(this.pointCloud.sHPoints)
 
-    forEach(this.pointCloud.sHPoints, sHPointListner)
+    forEach(this.pointCloud.sHPointClickTargets, sHPointListner)
 
     this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
       self.component.updateSelectedStakeholder(sHPoint)
     })
-
-
-
 
     function sHPointListner (sHPoint) {
 
@@ -176,6 +174,7 @@ export default function environment (component) {
         })
       }, false)
     }
+
 
 
 
