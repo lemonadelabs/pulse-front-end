@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNames: ['stakeholder-modal'],
   classNameBindings: ['visible'],
-  visible: true,
+  visible: false,
   actions:{
     close:function(){
       this.get("setStakeholderUndefined")();
