@@ -1,15 +1,18 @@
 import SHPoint from './SHPoint';
+import SHPointClickTarget from './sHPointClickTarget';
+// import SHPointClickTarget from './sHPointClickTarget';
 
 export default function PointCloud (opts) {
   this.data = opts.data
 
+  this.sHPointClickTargets = this.createSHPointClickTargets()
   this.sHPoints = this.createSHPoints()
 }
 
-PointCloud.prototype.createSHPoints = function() {
-  var shPoints = []
+PointCloud.prototype.createSHPointClickTargets = function() {
+  var sHPointClickTargets = []
   forEach(this.data, function (stakeHolder) {
-    var point = new SHPoint({
+    var sHPointClickTarget = new SHPointClickTarget({
       weeks : stakeHolder.data,
       name : stakeHolder.name,
       image : stakeHolder.image,
@@ -18,12 +21,33 @@ PointCloud.prototype.createSHPoints = function() {
       tags : stakeHolder.tags
       // scene: self.scene
     })
+    sHPointClickTargets.push(sHPointClickTarget)
+  })
+  console.log(sHPointClickTargets)
+  return sHPointClickTargets
+};
+
+PointCloud.prototype.createSHPoints = function() {
+  var shPoints = []
+  forEach(this.data, function (stakeHolder) {
+    var point = new SHPoint({
+      weeks : stakeHolder.data,
+      // name : stakeHolder.name,
+      // image : stakeHolder.image,
+      // organisation : stakeHolder.organisation,
+      // role : stakeHolder.role,
+      // tags : stakeHolder.tags
+    })
     shPoints.push(point)
   })
   return shPoints
 };
 
 PointCloud.prototype.updatePositions = function(week) {
+  forEach(this.sHPointClickTargets, function (sHPointClickTarget) {
+    sHPointClickTarget.animate(week)
+  })
+
   forEach(this.sHPoints, function (sHPoint) {
     sHPoint.animate(week)
   })

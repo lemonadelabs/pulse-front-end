@@ -1,18 +1,18 @@
-export default function SHPoint (opts) {
+export default function SHPointClickTarget (opts) {
   this.weeks = opts.weeks,
-  // this.name = opts.name,
-  // this.image = opts.image,
-  // this.organisation = opts.organisation,
-  // this.role = opts.role,
-  // this.tags = opts.tags,
+  this.name = opts.name,
+  this.image = opts.image,
+  this.organisation = opts.organisation,
+  this.role = opts.role,
+  this.tags = opts.tags,
 
   this.mesh = this.createMesh()
 }
 
-SHPoint.prototype.createMesh = function() {
+SHPointClickTarget.prototype.createMesh = function() {
   var matrix = new THREE.Matrix4();
 
-  var geometry = new THREE.SphereGeometry(150, 8, 8);
+  var geometry = new THREE.SphereGeometry(400, 6, 6);
 
   // sets the scale for each mesh
   var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
@@ -22,6 +22,8 @@ SHPoint.prototype.createMesh = function() {
   geometry.applyMatrix(matrix)
 
   var material = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0,
     shading: THREE.FlatShading,
     color: 0x4AE3C4
   });
@@ -39,7 +41,7 @@ SHPoint.prototype.createMesh = function() {
   return point
 }
 
-SHPoint.prototype.animate = function(week) {
+SHPointClickTarget.prototype.animate = function(week) {
   var x = (this.weeks[week].power) * 1.8  + 0.1
   var y = (this.weeks[week].support) * 1.8  + 0.1
   var z = (this.weeks[week].vital) * 1.8  + 0.1
