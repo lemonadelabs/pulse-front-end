@@ -1,4 +1,5 @@
 .stakeholder-modal{
+  transition: opacity 300ms;
   position: absolute;
   left:30px;
   top:40px;
@@ -8,6 +9,7 @@
   z-index: 1;
   border: solid 1px white;
   background: color(var(--darkBlue) alpha(-5%));
+  opacity: 0;
 }
 
 .stakeholder-modal::before{
