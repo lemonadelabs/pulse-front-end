@@ -2,8 +2,8 @@
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
 import LineGroup from './lineGroup';
-// import data from './testData'
-import data4Week from './testDataMultiWeek'
+import data4Week from '../../../mockData/testDataMultiWeek'
+import getProjects from '../../../mockData/getProjects'
 
 
 export default function environment (component) {
