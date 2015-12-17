@@ -5,6 +5,7 @@ export default function SHPointClickTarget (opts) {
   this.organisation = opts.organisation,
   this.role = opts.role,
   this.tags = opts.tags,
+  this.lineGroup = opts.lineGroup
 
   this.mesh = this.createMesh()
 }
@@ -50,5 +51,11 @@ SHPointClickTarget.prototype.animate = function(week) {
   var xTween = new TWEEN.Tween(this.mesh.position)
       .to({x: x, y: y, z: z}, 1500)
       .easing(TWEEN.Easing.Exponential.Out)
+      .onUpdate(function () {
+        self.lineGroup.needsUpdate = true // make the lines follow the points
+      })
+      .onComplete(function () {
+        self.lineGroup.needsUpdate = false
+      })
       .start();
 }

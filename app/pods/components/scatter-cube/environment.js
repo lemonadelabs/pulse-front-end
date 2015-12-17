@@ -1,9 +1,9 @@
 /* global THREE, THREEx, TWEEN, requestAnimationFrame */
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
-import ConnectingLine from './connectingLine';
-// import data from './testData'
-import data4Week from './testDataMultiWeek'
+import LineGroup from './lineGroup';
+import data4Week from '../../../mockData/testDataMultiWeek'
+import getProjects from '../../../mockData/getProjects'
 
 
 export default function environment (component) {
@@ -18,6 +18,8 @@ export default function environment (component) {
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
 
+  environment.lineGroup = {}
+
   environment.init = function () {
 
     var self = this
@@ -26,7 +28,7 @@ export default function environment (component) {
 
     /////////////////////////// set up camera /////////////////////////////
 
-    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.0001, 1000 );
     this.camera.position.set(-1.5,1,3)
 
     /////////////////////////// set up controls /////////////////////////////
@@ -38,6 +40,9 @@ export default function environment (component) {
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
 
+    // this.onPointClickFcts.push( function (sHPoint) { // makes camera focus on selected point
+    //   self.controls.target.copy(sHPoint.mesh.position)
+    // })
 
     this.onRenderFcts.push(this.controls.update)
 
@@ -45,29 +50,15 @@ export default function environment (component) {
 
     this.scene = new THREE.Scene();
 
+
+    /////////////////////////// set up renderer /////////////////////////////
+
     this.renderer = new THREE.WebGLRenderer( { antialias: true } );
     this.renderer.setClearColor( 0x222628 );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( window.innerWidth, window.innerHeight );
     this.renderer.sortObjects = false;
     this.container.appendChild( this.renderer.domElement );
-
-    function addObjectToScene (object) {
-      self.scene.add(object.mesh)
-    }
-
-    function addObjectsToScene(objects) {
-      forEach(objects, addObjectToScene)
-    }
-
-    function removeObjectFromScene(object) {
-      self.scene.remove( object.mesh )
-    }
-
-    function removeObjectsFromScene (objects) {
-      forEach( objects, removeObjectFromScene )
-    }
-
 
     ///////////////////// On Window Resize ////////////////////////
 
@@ -108,15 +99,11 @@ export default function environment (component) {
       labelGroup.updateLocation(self.camera.position)
     })
 
-    function lookAtCameraUpdate (objects) {
-      forEach(objects, function(object) {
-        object.mesh.quaternion.copy( self.camera.quaternion )
-      })
-    }
-
     this.onRenderFcts.push(function () {
-      lookAtCameraUpdate(labelGroup.labels)
+      billboardObjects(labelGroup.labels)
     })
+
+
 
     ///////////////////// Create Target ////////////////////////
 
@@ -131,16 +118,16 @@ export default function environment (component) {
 
       self.scene.add(self.target.mesh)
 
-      self.onRenderFcts.push(function () { // billboarding
-        self.target.mesh.quaternion.copy( self.camera.quaternion )
+      self.onRenderFcts.push(function () {
+        billboardObject(self.target)
       })
 
       self.onPointClickFcts.push(updateTargetLocation)
       function updateTargetLocation (sHPoint) {
+        var offset = new THREE.Vector3(0,0,-0.006)
         self.target.mesh.visible = true
-        self.target.mesh.position.copy(sHPoint.mesh.position)
+        self.target.mesh.position.copy(offset.add(sHPoint.mesh.position))
       }
-
 
       // hide target
       self.noSelectedStakeholderFcts.push(hideTarget)
@@ -150,23 +137,62 @@ export default function environment (component) {
 
     })
 
+    ///////////////////// Create Connecting Lines ////////////////////////
+
+    this.lineGroup = new LineGroup({})
+
+    this.onPointClickFcts.push(removeConnectingLines)
+    function removeConnectingLines () {
+      removeObjectsFromScene(self.lineGroup.primaryConnections)
+      self.lineGroup.primaryConnections = []
+    }
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.lineGroup.drawConnections(sHPoint)
+    })
+
+    this.onPointClickFcts.push( function () {
+      addObjectsToScene(self.lineGroup.primaryConnections)
+    })
+
+    this.onRenderFcts.push(function () {
+      self.lineGroup.update()
+    })
+
+    this.noSelectedStakeholderFcts.push(hideConnections)
+    function hideConnections() {
+      removeObjectsFromScene(self.connectingLines)
+    }
 
     ///////////////////// Create Point Cloud ////////////////////////
 
     var sHData = data4Week()
-    this.pointCloud = new PointCloud({ data: sHData }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
+    this.pointCloud = new PointCloud({
+      data: sHData,
+      lineGroup: self.lineGroup
+    }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
+    this.lineGroup.connections = self.pointCloud.sHPointClickTargets // replace this with proper data!!
 
     addObjectsToScene(this.pointCloud.sHPointClickTargets)
     addObjectsToScene(this.pointCloud.sHPoints)
 
-    forEach(this.pointCloud.sHPointClickTargets, sHPointListner)
+    forEach(this.pointCloud.sHPointClickTargets, addListnerSHPoint) // apply event listner to points
 
     this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
       self.component.updateSelectedStakeholder(sHPoint)
     })
 
-    function sHPointListner (sHPoint) {
 
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////// UTILITIES ////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    //////////////////// processing for when you click a point ////////////////////////
+
+    function addListnerSHPoint (sHPoint) {  // apply event listner to points
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(){
         self.onPointClickFcts.forEach( function(onPointClickFct) {
@@ -175,43 +201,35 @@ export default function environment (component) {
       }, false)
     }
 
+    ///////////////////////// adding & removing objects from scene /////////////////////////////////
 
-
-
-
-    ///////////////////// Create Connecting Lines ////////////////////////
-
-    this.connectingLines = []
-
-    this.onPointClickFcts.push(removeConnectingLines)
-    function removeConnectingLines () {
-      removeObjectsFromScene(self.connectingLines)
-      self.connectingLines = []
+    function addObjectToScene (object) {
+      self.scene.add(object.mesh)
     }
 
+    function addObjectsToScene(objects) {
+      forEach(objects, addObjectToScene)
+    }
 
-    this.onPointClickFcts.push(drawConnections)
-    function drawConnections (sHPoint) {
-      var pointA = sHPoint
-      var connections = self.pointCloud.sHPoints // change this to actual connection data
-      forEach(connections, function (pointB) {
+    function removeObjectFromScene(object) {
+      self.scene.remove( object.mesh )
+    }
 
-        var line = new ConnectingLine({
-          // pass in material depending on the connection strength
-          a: pointA.mesh.position,
-          b: pointB.mesh.position
-        })
-        self.connectingLines.push(line)
+    function removeObjectsFromScene (objects) {
+      forEach( objects, removeObjectFromScene )
+    }
+
+    //////////////////////////////////// billboarding ////////////////////////////////////////////////
+
+    function billboardObjects (objects) {
+      forEach(objects, function(object) {
+        billboardObject(object)
       })
-      addObjectsToScene(self.connectingLines)
     }
 
-    this.noSelectedStakeholderFcts.push(hideConnections)
-    function hideConnections() {
-      removeObjectsFromScene(self.connectingLines)
+    function billboardObject(object) {
+      object.mesh.quaternion.copy( self.camera.quaternion )
     }
-
-
 
     ///////////////////// logic when stakeholder modal is closed ////////////////////////
 
@@ -221,18 +239,17 @@ export default function environment (component) {
       })
     }
 
-    // setInterval(function() { // for testing purposes, delete later
-    //   self.component.updateSelectedStakeholder(undefined)
-    // }, 4000)
-
-
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
-    // setInterval(function () {
-    //   var randomWeek = Math.floor(Math.random() * 4) + 1
+    setInterval(function () {
+      var randomWeek = Math.floor(Math.random() * 4) + 1
 
-    //   self.pointCloud.updatePositions(randomWeek)
-    // }, 4000)
+      self.pointCloud.updatePositions(randomWeek)
+    }, 4000)
+
+
+
+
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -269,8 +286,6 @@ export default function environment (component) {
     })
 
   }
-
-
 
   return environment
 }
