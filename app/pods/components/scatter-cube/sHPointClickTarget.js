@@ -5,7 +5,8 @@ export default function SHPointClickTarget (opts) {
   this.organisation = opts.organisation,
   this.role = opts.role,
   this.tags = opts.tags,
-  this.lineGroup = opts.lineGroup
+  this.lineGroup = opts.lineGroup,
+  this.environment = opts.environment,
 
   this.mesh = this.createMesh()
 }
@@ -53,6 +54,7 @@ SHPointClickTarget.prototype.animate = function(week) {
       .easing(TWEEN.Easing.Exponential.Out)
       .onUpdate(function () {
         self.lineGroup.needsUpdate = true // make the lines follow the points
+        if (self.environment.focussedPoint) { self.environment.target.updatePosition(self.environment.focussedPoint) } // make the target follow the point
       })
       .onComplete(function () {
         self.lineGroup.needsUpdate = false

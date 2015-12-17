@@ -2,6 +2,7 @@
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
 import LineGroup from './lineGroup';
+import Target from './target';
 import data4Week from '../../../mockData/testDataMultiWeek'
 import getProjects from '../../../mockData/getProjects'
 
@@ -103,38 +104,30 @@ export default function environment (component) {
       billboardObjects(labelGroup.labels)
     })
 
-
-
     ///////////////////// Create Target ////////////////////////
 
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
 
-      self.target = {}
+      self.target = new Target ({
+        geometry : geometry
+      })
 
-      var material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
-      self.target.mesh = new THREE.Mesh(geometry, material)
+      addObjectToScene(self.target)
 
-      self.target.mesh.visible = false
-
-      self.scene.add(self.target.mesh)
+      self.onPointClickFcts.push(function (sHPoint) {
+        self.target.updatePosition(sHPoint)
+      })
 
       self.onRenderFcts.push(function () {
         billboardObject(self.target)
       })
 
-      self.onPointClickFcts.push(updateTargetLocation)
-      function updateTargetLocation (sHPoint) {
-        var offset = new THREE.Vector3(0,0,-0.006)
-        self.target.mesh.visible = true
-        self.target.mesh.position.copy(offset.add(sHPoint.mesh.position))
-      }
-
       // hide target
       self.noSelectedStakeholderFcts.push(hideTarget)
       function hideTarget () {
+        console.log(self.target.mesh)
         self.target.mesh.visible = false
       }
-
     })
 
     ///////////////////// Create Connecting Lines ////////////////////////
@@ -161,7 +154,7 @@ export default function environment (component) {
 
     this.noSelectedStakeholderFcts.push(hideConnections)
     function hideConnections() {
-      removeObjectsFromScene(self.connectingLines)
+      removeObjectsFromScene(self.lineGroup.primaryConnections)
     }
 
     ///////////////////// Create Point Cloud ////////////////////////
@@ -169,8 +162,10 @@ export default function environment (component) {
     var sHData = data4Week()
     this.pointCloud = new PointCloud({
       data: sHData,
-      lineGroup: self.lineGroup
+      lineGroup: self.lineGroup,
+      environment: this
     }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
+
     this.lineGroup.connections = self.pointCloud.sHPointClickTargets // replace this with proper data!!
 
     addObjectsToScene(this.pointCloud.sHPointClickTargets)
@@ -178,12 +173,17 @@ export default function environment (component) {
 
     forEach(this.pointCloud.sHPointClickTargets, addListnerSHPoint) // apply event listner to points
 
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.focussedPoint = sHPoint
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      self.focussedPoint = undefined
+    })
+
     this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
       self.component.updateSelectedStakeholder(sHPoint)
     })
-
-
-
 
 
     ///////////////////////////////////////////////////////////////////////////////////
