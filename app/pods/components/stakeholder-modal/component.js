@@ -8,6 +8,7 @@ export default Ember.Component.extend({
     close:function(){
       this.get("setStakeholderUndefined")();
       this.set("visible",false);
+      Ember.$("#close-button").blur();
     }
   },
   showModalOnSelection:function(){
