@@ -14,6 +14,7 @@ SHPoint.prototype.createMesh = function() {
 
   var geometry = new THREE.SphereGeometry(150, 8, 8);
 
+
   // sets the scale for each mesh
   var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
   matrix.scale(scale)
@@ -22,6 +23,8 @@ SHPoint.prototype.createMesh = function() {
   geometry.applyMatrix(matrix)
 
   var material = new THREE.MeshBasicMaterial({
+    // transparent: true,
+    // opacity: 1,
     shading: THREE.FlatShading,
     color: 0x4AE3C4
   });
