@@ -3,10 +3,8 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   timeSeries : [],
   selectedTime : undefined,
-  didInsertElement() {
-    this.setupTimeSeries(this.metadata[0])
-  },
-  setupTimeSeries: function(metadata) {
+  setupTimeSeries: function() {
+    var metadata = this.metadata[0]
     this.selectedTime = metadata.timeFrame;
     for (var i = 1; i <= metadata.timeFrame; i++) {
       var selected = false;
@@ -16,7 +14,7 @@ export default Ember.Component.extend({
       this.timeSeries.push({"title":metadata.timeFormat+i,"id":i,"selected":selected})
       this.timeSeries.arrayContentDidChange(i,0,1)
     }
-  },
+  }.on('init'),
   actions:{
     selectTimeSeries:function(id){
       var oldTime = this.get("selectedTime")
