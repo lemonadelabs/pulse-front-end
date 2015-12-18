@@ -4,15 +4,17 @@ import getRelationships from '../../mockData/getRelationships'
 import data4Week from '../../mockData/testDataMultiWeek'
 
 export default Ember.Route.extend({
+
   model: function() {
     var mockModel = {
-      projectData : undefined,
+      metadata : undefined,
       stakeholders : undefined,
       relationships : undefined
     }
-    mockModel.projectData = projectData();
+    mockModel.metadata = projectData();
     mockModel.stakeholders = data4Week();
     mockModel.relationships = getRelationships();
+
     return mockModel;
   }
 });

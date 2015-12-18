@@ -1,2 +1,3 @@
 {{stakeholder-modal selectedStakeholder=this.selectedStakeholder setStakeholderUndefined=(action 'userDidCloseStakeholderModal')}}
 {{scatter-cube stakeholders=this.model.stakeholders relationships=this.model.relationships selectedStakeholder=this.selectedStakeholder updateStakeholder=(action 'userDidSelectStakeholder')}}
+{{time-series metadata = model.metadata updateTime=(action 'userDidChangeTime')}}

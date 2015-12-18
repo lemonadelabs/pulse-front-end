@@ -2,6 +2,15 @@
 @import "inputs.css";
 @import "colours.css";
 @import "stakeholder-modal.css";
+@import "time-series.css";
+
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 
 body {
   margin: 0;
@@ -10,7 +19,12 @@ body {
   font-family: "neuzeit-grotesk";
 }
 
-canvas {
-  width: 100%;
-  height: 100%;
+[data-ember-action]{
+  cursor: pointer;
+}
+
+.scatter-cube{
+  position: fixed;
+  top:-43px;
+  left: 0;
 }

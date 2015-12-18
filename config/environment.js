@@ -17,6 +17,15 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+    contentSecurityPolicy: {
+      'default-src': "'none'",
+      'script-src': "'self' 'unsafe-inline' https://use.typekit.net/ ('sha256-5kMb497w7ItxXRHeDONhgk1HOjOqzAVeP4/0KPiMW0Y=')",
+      'font-src': "'self' data: use.typekit.net",
+      'connect-src': "'self'",
+      'img-src': "'self' https://p.typekit.net/",
+      'style-src': "'self' 'unsafe-inline' https://use.typekit.net/",
+      'media-src': "'self'"
     }
   };
 
