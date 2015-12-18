@@ -2,6 +2,7 @@ export default function data4Week() {
 
   var data = [
     {
+      'id' : '0',
       'name' : 'Adrian Schnall',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Ministry of Health',
@@ -31,6 +32,7 @@ export default function data4Week() {
       }
     },
     {
+      'id' : '1',
       'name' : 'Hemi Tomaz',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Ministry of Maori Affairs',
@@ -60,6 +62,7 @@ export default function data4Week() {
       }
     },
     {
+      'id' : '2',
       'name' : 'Lee Wong',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Opposition',
@@ -87,7 +90,9 @@ export default function data4Week() {
           'vital' : '0.9'
         }
       }
-    },{
+    },
+    {
+      'id' : '3',
       'name' : 'Melissa G',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Ministry of Health',
@@ -115,7 +120,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '4',
       'name' : 'Adam Larkins',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Ministry of Health',
@@ -143,7 +150,9 @@ export default function data4Week() {
           'vital' : '0.8'
         }
       }
-    },{
+    },
+    {
+      'id' : '5',
       'name' : 'Edward Mcvey',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Ministry of Health',
@@ -171,7 +180,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '6',
       'name' : 'Pania Thorpe',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Local Authority',
@@ -199,7 +210,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '7',
       'name' : 'Agnes Landes',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Local Authority',
@@ -227,7 +240,9 @@ export default function data4Week() {
           'vital' : '0.2'
         }
       }
-    },{
+    },
+    {
+      'id' : '8',
       'name' : 'Pita Maaka',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Local Iwi',
@@ -255,7 +270,9 @@ export default function data4Week() {
           'vital' : '0.75'
         }
       }
-    },{
+    },
+    {
+      'id' : '9',
       'name' : 'Dale Earley',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Local DHB',
@@ -283,7 +300,9 @@ export default function data4Week() {
           'vital' : '0.6'
         }
       }
-    },{
+    },
+    {
+      'id' : '10',
       'name' : 'Verna Lopez',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'DHBNZ',
@@ -311,7 +330,9 @@ export default function data4Week() {
           'vital' : '0.8'
         }
       }
-    },{
+    },
+    {
+      'id' : '11',
       'name' : 'Matthew Moss',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'DHBNZ',
@@ -339,7 +360,9 @@ export default function data4Week() {
           'vital' : '0.8'
         }
       }
-    },{
+    },
+    {
+      'id' : '12',
       'name' : 'Lillian Baumann',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'DHBNZ',
@@ -367,12 +390,14 @@ export default function data4Week() {
           'vital' : '0.8'
         }
       }
-    },{
+    },
+    {
+      'id' : '13',
       'name' : 'Kenneth Maxie',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
-      'tags' : ['internal','core','dedicated','overloaded','over achiever'],
+      'tags' : ['internal'],
       'data' : {
         '1' : {
           'power' : '1.0',
@@ -395,7 +420,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '14',
       'name' : 'Leonard Luce',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midias PHO',
@@ -423,7 +450,9 @@ export default function data4Week() {
           'vital' : '0.8'
         }
       }
-    },{
+    },
+    {
+      'id' : '15',
       'name' : 'Huhana Turner',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO',
@@ -451,7 +480,9 @@ export default function data4Week() {
           'vital' : '0.55'
         }
       }
-    },{
+    },
+    {
+      'id' : '16',
       'name' : 'Jo Rangi',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO',
@@ -479,7 +510,9 @@ export default function data4Week() {
           'vital' : '0.65'
         }
       }
-    },{
+    },
+    {
+      'id' : '17',
       'name' : 'Louis Hutchison',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO',
@@ -507,7 +540,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '18',
       'name' : 'Frank Clark',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Walcott Street Clinic',
@@ -535,7 +570,9 @@ export default function data4Week() {
           'vital' : '0.55'
         }
       }
-    },{
+    },
+    {
+      'id' : '19',
       'name' : 'Daniel Whitlock',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Baker & Medcalf Surgery',
@@ -563,7 +600,9 @@ export default function data4Week() {
           'vital' : '0.7'
         }
       }
-    },{
+    },
+    {
+      'id' : '20',
       'name' : 'Bryan Rongo',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Johnston Street Surgery',
@@ -591,7 +630,9 @@ export default function data4Week() {
           'vital' : '0.6'
         }
       }
-    },{
+    },
+    {
+      'id' : '21',
       'name' : 'Su Park',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -619,7 +660,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '22',
       'name' : 'Teresa Soialo',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -647,7 +690,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '23',
       'name' : 'Peter Melbourne',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -675,7 +720,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '24',
       'name' : 'Mary Smith',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -703,7 +750,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '25',
       'name' : 'Joanna Simpson',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -731,7 +780,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '26',
       'name' : 'Mike McDowell',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',
@@ -759,7 +810,9 @@ export default function data4Week() {
           'vital' : '0.5'
         }
       }
-    },{
+    },
+    {
+      'id' : '27',
       'name' : 'Ruchi Sharma',
       'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
       'organisation' : 'Midas PHO Clients',

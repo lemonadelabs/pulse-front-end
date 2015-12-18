@@ -19,6 +19,7 @@ PointCloud.prototype.createSHPointClickTargets = function() {
   forEach(this.data, function (stakeHolder) {
     var sHPointClickTarget = new SHPointClickTarget({
       weeks : stakeHolder.data,
+      id : stakeHolder.id,
       name : stakeHolder.name,
       image : stakeHolder.image,
       organisation : stakeHolder.organisation,

@@ -1,5 +1,6 @@
 export default function SHPointClickTarget (opts) {
   this.weeks = opts.weeks,
+  this.id = opts.id,
   this.name = opts.name,
   this.image = opts.image,
   this.organisation = opts.organisation,

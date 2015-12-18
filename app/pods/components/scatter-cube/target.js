@@ -10,7 +10,6 @@ Target.prototype.createMesh = function(geometry) {
 };
 
 Target.prototype.updatePosition = function(sHPoint) {
-  console.log(sHPoint)
   this.mesh.position.copy(sHPoint.mesh.position)
   this.mesh.visible = true
 };
