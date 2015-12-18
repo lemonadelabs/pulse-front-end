@@ -1,0 +1,11 @@
+<div class="time-series-container">
+  <hr>
+  <div class="time-series">
+    {{#each this.timeSeries as |time|}}
+      <div class="time-series-item {{if time.selected 'selected'}}" {{action "selectTimeSeries" time.id}}>
+        <span class="time-series-item-dot"></span>
+        <p>{{time.title}}</p>
+      </div>
+    {{/each}}
+  </div>
+</div>

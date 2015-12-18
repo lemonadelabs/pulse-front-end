@@ -2,7 +2,8 @@ import Ember from 'ember';
 import environment from './environment';
 
 export default Ember.Component.extend({
-
+  classNames: ['scatter-cube'],
+  
   didInsertElement() {
     this.initScatterCube()
   },

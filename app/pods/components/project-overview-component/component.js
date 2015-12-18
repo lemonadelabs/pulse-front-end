@@ -3,6 +3,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   selectedStakeholder: undefined,
+  selectedTime: undefined,
 
   actions : {
     userDidSelectStakeholder(stakeHolder) {
@@ -11,6 +12,10 @@ export default Ember.Component.extend({
 
     userDidCloseStakeholderModal() {
       this.set('selectedStakeholder', undefined)
+    },
+
+    userDidChangeTime(newTime) {
+      this.set('selectedTime',newTime)
     }
 
   }
