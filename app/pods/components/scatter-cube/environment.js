@@ -18,6 +18,8 @@ export default function environment (component) {
   environment.onRenderFcts = []
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
+  environment.onUpdateTimeFcts = []
+
 
   environment.lineGroup = {}
 
@@ -140,7 +142,8 @@ export default function environment (component) {
       connections: self.relationships
     })
 
-    this.onPointClickFcts.push(removeConnectingLines)
+    this.noSelectedStakeholderFcts.push(removeConnectingLines)
+
     function removeConnectingLines () {
       removeObjectsFromScene(self.lineGroup.primaryConnections)
       self.lineGroup.primaryConnections = []
@@ -148,10 +151,8 @@ export default function environment (component) {
 
     this.onPointClickFcts.push( function (sHPoint) {
       var currentWeek = 1
+      removeConnectingLines()
       self.lineGroup.drawConnections(sHPoint, currentWeek)
-    })
-
-    this.onPointClickFcts.push( function () {
       addObjectsToScene(self.lineGroup.primaryConnections)
     })
 
@@ -159,10 +160,12 @@ export default function environment (component) {
       self.lineGroup.update()
     })
 
-    this.noSelectedStakeholderFcts.push(hideConnections)
-    function hideConnections() {
-      removeObjectsFromScene(self.lineGroup.primaryConnections)
-    }
+    this.onUpdateTimeFcts.push(function (time) {
+      removeConnectingLines()
+      self.lineGroup.drawConnections(self.focussedPoint, time)
+      addObjectsToScene(self.lineGroup.primaryConnections)
+    })
+
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -249,11 +252,25 @@ export default function environment (component) {
 
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
-    setInterval(function () {
-      var randomWeek = Math.floor(Math.random() * 4) + 1
+    // setInterval(function () {
+    //   var randomWeek = Math.floor(Math.random() * 4) + 1
 
-      self.pointCloud.updatePositions(randomWeek)
-    }, 4000)
+    //   self.pointCloud.updatePositions(randomWeek)
+    // }, 4000)
+
+    this.onUpdateTimeFcts.push( function (time) {
+      self.pointCloud.updatePositions(time)
+    })
+
+    this.updateTime = function (time) {
+      this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
+        onUpdateTimeFct(time)
+      })
+    }
+
+    // need to:
+    //   update pointcloud
+    //   update lineGroup
 
 
 

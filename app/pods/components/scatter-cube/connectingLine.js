@@ -4,11 +4,28 @@ export default function ConnectingLine (opts) {
   this.pointA = opts.pointA
   this.pointB = opts.pointB
 
-  this.material = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 });
+  this.material = this.createMaterial(opts.strength)
   this.mesh = this.createMesh()
 
   // this.debug()
 }
+
+ConnectingLine.prototype.createMaterial = function(strength) {
+  var color = undefined
+
+  if (strength >= 0) {
+    // positive
+    color = '#00ff5f'
+  } else {
+    // negative
+    color = '#ff0068'
+    strength = strength * -1
+  }
+  color = chroma.interpolate('white', color, strength).css()
+  // color = color.replace('#', '0x')
+
+  return new THREE.LineBasicMaterial({ color: color, linewidth: 1 });
+};
 
 ConnectingLine.prototype.createMesh = function() {
   var geometry = new THREE.Geometry();
