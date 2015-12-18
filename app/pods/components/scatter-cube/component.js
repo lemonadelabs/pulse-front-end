@@ -9,15 +9,13 @@ export default Ember.Component.extend({
   },
 
   initScatterCube: function () {
-    // var _environment = environment(this)
-    // _environment.init()
-    // _environment.render()
     this.set('_environment', environment(this))
-    this._environment.init()
+    this._environment.init({
+      stakeholders : this.stakeholders,
+      relationships : this.relationships
+    })
     this._environment.render()
   },
-
-  // selectedStakeholder: this.selectedStakeholder,
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
