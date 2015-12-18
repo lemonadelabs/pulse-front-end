@@ -3,7 +3,7 @@ import environment from './environment';
 
 export default Ember.Component.extend({
   classNames: ['scatter-cube'],
-  
+
   didInsertElement() {
     this.initScatterCube()
   },
@@ -20,6 +20,11 @@ export default Ember.Component.extend({
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
   },
+
+  checkIfUpdatedTime: function ( ){
+    var time = this.get('selectedTime')
+    this._environment.updateTime(time)
+  }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function ( ){
     if(this.get('selectedStakeholder')===undefined){

@@ -35,6 +35,7 @@ module.exports = function(defaults) {
     }
   });
 
+  app.import('bower_components/chroma-js/chroma.js')
   app.import('bower_components/three.js/build/three.js')
   app.import('bower_components/three.js/examples/js/controls/OrbitControls.js')
   app.import('bower_components/threex.domevents/threex.domevents.js')

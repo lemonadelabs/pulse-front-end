@@ -30,6 +30,7 @@
     "tween.js": "tweenjs#~16.3.1",
     "lodash": "~3.10.1",
     "three.js": "threejs#*",
-    "threex.domevents": "*"
+    "threex.domevents": "*",
+    "chroma-js": "~1.1.1"
   }
 }

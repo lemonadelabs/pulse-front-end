@@ -13,9 +13,9 @@ LineGroup.prototype.archiveSHPoints = function(sHPoints) {
   for (var i = 0; i < sHPoints.length; i++) {
     var id = sHPoints[i].id
     points[id] = sHPoints[i]
-  };
+  }
   this.sHPoints = points
-};
+}
 
 LineGroup.prototype.getConnectionsForStakeholder = function(sHPoint, currentWeek) {
   var connectionsForStakeholder = []
@@ -25,27 +25,29 @@ LineGroup.prototype.getConnectionsForStakeholder = function(sHPoint, currentWeek
     }
   }
   return connectionsForStakeholder
-};
+}
 
 LineGroup.prototype.drawConnections = function(sHPoint, currentWeek) {
   this.createPrimaryConnections(sHPoint, currentWeek)
-};
+}
 
 LineGroup.prototype.createPrimaryConnections = function(sHPoint, currentWeek) {
   var self = this
   var connectingLines = []
   var connections = this.getConnectionsForStakeholder(sHPoint, currentWeek)
   forEach(connections, function (connection) {
+
     var sHPointB = self.sHPoints[connection.sh2_id]
     var line = new ConnectingLine({
       // pass in material depending on the connection strength
       pointA: sHPoint,
-      pointB: sHPointB
+      pointB: sHPointB,
+      strength: connection.strength
     })
     connectingLines.push(line)
   })
   this.primaryConnections = connectingLines
-};
+}
 
 LineGroup.prototype.update = function () {
   var self = this
