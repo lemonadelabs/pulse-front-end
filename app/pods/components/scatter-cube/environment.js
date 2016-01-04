@@ -42,7 +42,7 @@ export default function environment (component) {
 
     this.controls = new THREE.OrbitControls( this.camera, this.container );
     this.controls.maxDistance = 5
-    this.controls.minDistance = 0.5
+    this.controls.minDistance = 1.7
     this.controls.zoomSpeed = 0.2
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
