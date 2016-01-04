@@ -29,6 +29,7 @@ export default function environment (component) {
 
     this.stakeholders = opts.stakeholders
     this.relationships = opts.relationships
+    this.metaData = opts.metadata
     console.log(this.relationships.length)
 
     this.container = document.getElementById( "container" );
@@ -150,7 +151,7 @@ export default function environment (component) {
     }
 
     this.onPointClickFcts.push( function (sHPoint) {
-      var currentWeek = 1
+      var currentWeek = self.metaData[0].timeFrame
       removeConnectingLines()
       self.lineGroup.drawConnections(sHPoint, currentWeek)
       addObjectsToScene(self.lineGroup.primaryConnections)
@@ -171,6 +172,7 @@ export default function environment (component) {
 
     this.pointCloud = new PointCloud({
       data: self.stakeholders,
+      timeFrame: self.metaData[0].timeFrame,
       lineGroup: self.lineGroup,
       environment: this
     }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
