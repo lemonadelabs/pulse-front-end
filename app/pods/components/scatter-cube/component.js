@@ -12,7 +12,8 @@ export default Ember.Component.extend({
     this.set('_environment', environment(this))
     this._environment.init({
       stakeholders : this.stakeholders,
-      relationships : this.relationships
+      relationships : this.relationships,
+      metadata : this.metadata
     })
     this._environment.render()
   },

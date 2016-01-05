@@ -19,6 +19,8 @@ export default function environment (component) {
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
   environment.onUpdateTimeFcts = []
+  environment.currentWeek = undefined
+
 
 
   environment.lineGroup = {}
@@ -29,7 +31,9 @@ export default function environment (component) {
 
     this.stakeholders = opts.stakeholders
     this.relationships = opts.relationships
-    console.log(this.relationships.length)
+    this.metaData = opts.metadata
+
+    this.currentWeek = this.metaData[0].timeFrame
 
     this.container = document.getElementById( "container" );
 
@@ -42,7 +46,7 @@ export default function environment (component) {
 
     this.controls = new THREE.OrbitControls( this.camera, this.container );
     this.controls.maxDistance = 5
-    this.controls.minDistance = 0.5
+    this.controls.minDistance = 1.7
     this.controls.zoomSpeed = 0.2
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
@@ -131,7 +135,6 @@ export default function environment (component) {
       // hide target
       self.noSelectedStakeholderFcts.push(hideTarget)
       function hideTarget () {
-        console.log(self.target.mesh)
         self.target.mesh.visible = false
       }
     })
@@ -150,9 +153,9 @@ export default function environment (component) {
     }
 
     this.onPointClickFcts.push( function (sHPoint) {
-      var currentWeek = 1
+      var currentWeek = self.metaData[0].timeFrame
       removeConnectingLines()
-      self.lineGroup.drawConnections(sHPoint, currentWeek)
+      self.lineGroup.drawConnections(sHPoint, self.currentWeek)
       addObjectsToScene(self.lineGroup.primaryConnections)
     })
 
@@ -161,21 +164,21 @@ export default function environment (component) {
     })
 
     this.onUpdateTimeFcts.push(function (time) {
-      removeConnectingLines()
-      self.lineGroup.drawConnections(self.focussedPoint, time)
-      addObjectsToScene(self.lineGroup.primaryConnections)
+      if (self.focussedPoint) {
+        removeConnectingLines()
+        self.lineGroup.drawConnections(self.focussedPoint, time)
+        addObjectsToScene(self.lineGroup.primaryConnections)
+      }
     })
-
 
     ///////////////////// Create Point Cloud ////////////////////////
 
     this.pointCloud = new PointCloud({
       data: self.stakeholders,
+      timeFrame: self.metaData[0].timeFrame,
       lineGroup: self.lineGroup,
       environment: this
     }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
-
-    // this.lineGroup.connections = self.pointCloud.sHPointClickTargets // replace this with proper data!!
 
     this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 
@@ -252,30 +255,16 @@ export default function environment (component) {
 
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
-    // setInterval(function () {
-    //   var randomWeek = Math.floor(Math.random() * 4) + 1
-
-    //   self.pointCloud.updatePositions(randomWeek)
-    // }, 4000)
-
     this.onUpdateTimeFcts.push( function (time) {
       self.pointCloud.updatePositions(time)
     })
 
     this.updateTime = function (time) {
+      self.currentWeek = time
       this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
         onUpdateTimeFct(time)
       })
     }
-
-    // need to:
-    //   update pointcloud
-    //   update lineGroup
-
-
-
-
-
 
     //////////////////////////////////////////////////////////////////////////////
     //    render the scene            //

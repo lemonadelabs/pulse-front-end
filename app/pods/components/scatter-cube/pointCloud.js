@@ -3,8 +3,8 @@ import SHPointClickTarget from './sHPointClickTarget';
 // import SHPointClickTarget from './sHPointClickTarget';
 
 export default function PointCloud (opts) {
-  var self = this
   this.data = opts.data
+  this.timeFrame = opts.timeFrame
   this.selectedPoint = undefined
   this.lineGroup = opts.lineGroup
   this.environment = opts.environment
@@ -26,7 +26,8 @@ PointCloud.prototype.createSHPointClickTargets = function() {
       role : stakeHolder.role,
       tags : stakeHolder.tags,
       lineGroup : self.lineGroup,
-      environment : self.environment
+      environment : self.environment,
+      timeFrame : self.timeFrame
     })
     sHPointClickTargets.push(sHPointClickTarget)
   })
@@ -34,10 +35,12 @@ PointCloud.prototype.createSHPointClickTargets = function() {
 };
 
 PointCloud.prototype.createSHPoints = function() {
+  var self = this
   var shPoints = []
   forEach(this.data, function (stakeHolder) {
     var point = new SHPoint({
       weeks : stakeHolder.data,
+      timeFrame : self.timeFrame
     })
     shPoints.push(point)
   })
