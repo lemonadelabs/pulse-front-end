@@ -1,5 +1,4 @@
 export default function SHPoint (opts) {
-  console.log(opts)
   this.weeks = opts.weeks,
   // this.name = opts.name,
   // this.image = opts.image,
@@ -34,7 +33,6 @@ SHPoint.prototype.createMesh = function(noOfWeeks) {
 
   // sets the position for each mesh
   var position = new THREE.Vector3();
-  console.log(noOfWeeks)
   var x = (this.weeks[noOfWeeks].power) * 1.8  + 0.1
   var y = (this.weeks[noOfWeeks].support) * 1.8  + 0.1
   var z = (this.weeks[noOfWeeks].vital) * 1.8  + 0.1
