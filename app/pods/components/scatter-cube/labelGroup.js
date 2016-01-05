@@ -17,7 +17,13 @@ LabelGroup.prototype.createLabels = function() {
   this.objLoader.load("./assets/geometries/labels.json", function (labelScene) {
     for (var i = 0; i < 9; i++) {
       var child = labelScene.children[0]
-      child.material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, transparent: true, opacity: 0});
+      child.material = new THREE.MeshBasicMaterial({
+        shading: THREE.FlatShading,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        depthTest: false // makes the labels render in front of the danger zone
+      });
 
       var label = new Label({
         mesh: child,

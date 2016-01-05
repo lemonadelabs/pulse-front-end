@@ -26,10 +26,12 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   geometry.applyMatrix(matrix)
 
   var material = new THREE.MeshBasicMaterial({
-    transparent: true,
-    opacity: 0,
+    // transparent: true,
+    // opacity: 0,
     shading: THREE.FlatShading,
-    color: 0x4AE3C4
+    color: 0x4AE3C4,
+    // side: THREE.BackSide,
+    visible: false
   });
 
   var point = new THREE.Mesh( geometry, material );
@@ -44,6 +46,7 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   // var z = _.last(this.weeks).vital * 1.8  + 0.1
 
   point.position.set(x, y, z)
+
 
   return point
 }
