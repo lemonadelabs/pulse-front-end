@@ -5,3 +5,7 @@
 .visible{
   opacity: 1 !important;
 }
+
+.ignore-pointer{
+  pointer-events: none;
+}

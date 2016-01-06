@@ -3,7 +3,7 @@
   position: absolute;
   left:30px;
   top:40px;
-  width: 300px;
+  min-width: 300px;
   height: auto;
   padding: 30px;
   z-index: 1;
