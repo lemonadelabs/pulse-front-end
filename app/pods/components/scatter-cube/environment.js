@@ -73,6 +73,10 @@ export default function environment (component) {
     this.renderer.sortObjects = false;
     this.container.appendChild( this.renderer.domElement );
 
+    ///////////////////// Depth of Field ////////////////////////
+
+    this.depthOfField = new THREEx.DepthOfField( this.renderer )
+
     ///////////////////// On Window Resize ////////////////////////
 
     var windowResize = new THREEx.WindowResize(this.renderer, this.camera)
@@ -308,6 +312,7 @@ export default function environment (component) {
 
     this.onRenderFcts.push(function(){
       self.renderer.render( self.scene, self.camera );
+      // self.depthOfField.render( self.scene, self.camera )
     })
   }
 
