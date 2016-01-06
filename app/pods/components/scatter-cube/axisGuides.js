@@ -18,7 +18,7 @@ AxisGuides.prototype.createMaterial = function() {
     color: 0xffffff,
     linewidth: 1,
     transparent: true,
-    opacity: 0.2
+    opacity: 0.1
   });
 };
 
@@ -27,6 +27,7 @@ AxisGuides.prototype.createMeshes = function() {
   var lines = []
   var linesVertices
 
+  // middel lines
   if (self.currentSHPoint === undefined) {
     linesVertices = [
       [
@@ -42,7 +43,7 @@ AxisGuides.prototype.createMeshes = function() {
         new THREE.Vector3(2,1,1)
       ]
     ]
-  } else {
+  } else { // this will probably be deleted as it is dealing with the moving croshairs
     var position = self.currentSHPoint.mesh.position
       linesVertices = [
         [
@@ -60,8 +61,67 @@ AxisGuides.prototype.createMeshes = function() {
       ]
   }
 
+  // other lines
 
-  _.forEach(linesVertices, function (vertices) {
+  var planeVertices = [
+    // x = power
+    // y = support
+    // z = vital
+    [
+      new THREE.Vector3(1,0,0),
+      new THREE.Vector3(1,2,0)
+    ],
+    [
+      new THREE.Vector3(1,0,2),
+      new THREE.Vector3(1,2,2)
+    ],
+    [
+      new THREE.Vector3(0,1,2),
+      new THREE.Vector3(2,1,2)
+    ],
+    [
+      new THREE.Vector3(0,1,2),
+      new THREE.Vector3(0,1,0)
+    ],
+    [
+      new THREE.Vector3(0,1,0),
+      new THREE.Vector3(2,1,0)
+    ],
+    [
+      new THREE.Vector3(2,1,0),
+      new THREE.Vector3(2,1,2)
+    ],
+    [
+      new THREE.Vector3(0,0,1),
+      new THREE.Vector3(0,2,1)
+    ],
+    [
+      new THREE.Vector3(2,0,1),
+      new THREE.Vector3(2,2,1)
+    ],
+
+    [
+      new THREE.Vector3(2,0,1),
+      new THREE.Vector3(0,0,1)
+    ],
+    [
+      new THREE.Vector3(2,2,1),
+      new THREE.Vector3(0,2,1)
+    ],
+
+    [
+      new THREE.Vector3(1,0,0),
+      new THREE.Vector3(1,0,2)
+    ],
+    [
+      new THREE.Vector3(1,2,0),
+      new THREE.Vector3(1,2,2)
+    ],
+  ]
+
+  var allVertices = linesVertices.concat(planeVertices)
+
+  _.forEach(allVertices, function (vertices) {
     lines.push(
       new AxisGuideLine({
         vertices: vertices,
