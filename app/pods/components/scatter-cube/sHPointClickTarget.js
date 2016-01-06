@@ -28,7 +28,7 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0x4AE3C4,
-    // visible: false
+    visible: false
   });
 
   var point = new THREE.Mesh( geometry, material );
