@@ -133,3 +133,7 @@
   border: none;
   background-color: color(white alpha(-40%))
 }
+
+.stakeholder-stats {
+  width: 100%;
+}

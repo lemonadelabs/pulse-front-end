@@ -25,11 +25,12 @@
   <hr class="stakeholder-title-rule">
 </header>
 <section>
-  {{#if this.selectedStakeholder.stats}}
+  {{stakeholder-stats data=this.selectedStakeholder.weeks}}
+  {{!-- {{#if this.selectedStakeholder.stats}} --}}
     {{!-- We need to work out the stats --}}
-  {{else}}
-    <p class="stakeholder-no-data">There are no stats for this stakeholder.</p>
-  {{/if}}
+  {{!-- {{else}} --}}
+    {{!-- <p class="stakeholder-no-data">There are no stats for this stakeholder.</p> --}}
+  {{!-- {{/if}} --}}
 </section>
 <header class="stakeholder-title-header">
   <hr class="stakeholder-title-rule">

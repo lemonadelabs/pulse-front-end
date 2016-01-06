@@ -1,4 +1,5 @@
 /* global THREE, THREEx, TWEEN, requestAnimationFrame */
+import DangerZone from './dangerZone';
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
 import LineGroup from './lineGroup';
@@ -96,6 +97,16 @@ export default function environment (component) {
       var cube = new THREE.Mesh(geometry, cubeMaterial)
       self.scene.add(cube)
     })
+
+    //////////////////////////////////// create danger zone ////////////////////////////////////////////////
+
+    this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry, materials) {
+      self.dangerZone = new DangerZone({
+        geometry : geometry
+      })
+      addObjectToScene(self.dangerZone)
+    })
+
 
     //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
 

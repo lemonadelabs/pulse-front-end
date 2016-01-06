@@ -24,7 +24,12 @@ ConnectingLine.prototype.createMaterial = function(strength) {
   color = chroma.interpolate('white', color, strength).css()
   // color = color.replace('#', '0x')
 
-  return new THREE.LineBasicMaterial({ color: color, linewidth: 1 });
+  return new THREE.MeshBasicMaterial({
+    color: color,
+    linewidth: 1,
+    // transparent: true,
+    // opacity: 0.4
+  });
 };
 
 ConnectingLine.prototype.createMesh = function() {

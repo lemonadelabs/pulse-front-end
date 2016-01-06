@@ -26,10 +26,9 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   geometry.applyMatrix(matrix)
 
   var material = new THREE.MeshBasicMaterial({
-    transparent: true,
-    opacity: 0,
     shading: THREE.FlatShading,
-    color: 0x4AE3C4
+    color: 0x4AE3C4,
+    visible: false
   });
 
   var point = new THREE.Mesh( geometry, material );
@@ -37,21 +36,19 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   // sets the position for each mesh
   var position = new THREE.Vector3();
   var x = (this.weeks[noOfWeeks].power) * 1.8  + 0.1
-  var y = (this.weeks[noOfWeeks].support) * 1.8  + 0.1
-  var z = (this.weeks[noOfWeeks].vital) * 1.8  + 0.1
-  // var x = _.last(this.weeks).power * 1.8  + 0.1
-  // var y = _.last(this.weeks).support * 1.8  + 0.1
-  // var z = _.last(this.weeks).vital * 1.8  + 0.1
+  var y = (this.weeks[noOfWeeks].vital) * 1.8  + 0.1
+  var z = (this.weeks[noOfWeeks].support) * 1.8  + 0.1
 
   point.position.set(x, y, z)
+
 
   return point
 }
 
 SHPointClickTarget.prototype.animate = function(week) {
   var x = (this.weeks[week].power) * 1.8  + 0.1
-  var y = (this.weeks[week].support) * 1.8  + 0.1
-  var z = (this.weeks[week].vital) * 1.8  + 0.1
+  var y = (this.weeks[week].vital) * 1.8  + 0.1
+  var z = (this.weeks[week].support) * 1.8  + 0.1
 
   var self = this
   var xTween = new TWEEN.Tween(this.mesh.position)
