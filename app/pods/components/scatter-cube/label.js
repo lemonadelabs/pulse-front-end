@@ -62,7 +62,9 @@ Label.prototype.generateCoords = function() {
         [0.1,-0.1,2.1]
       ]
     return coords
-  } else if (this.name === "Support") {
+
+
+  } else if (this.name === "Vital") {
     var coords = [
         [-0.5,-0.1,1],
         [2.5,-0.1,1],
@@ -70,7 +72,7 @@ Label.prototype.generateCoords = function() {
         [-0.5,-0.1,1]
       ]
     return coords
-  } else if (this.name === "Label-Support-High") {
+  } else if (this.name === "Label-High-Vital") {
     var coords = [
         [-0.1,-0.1,1.9],
         [2.1,-0.1,1.9],
@@ -78,7 +80,7 @@ Label.prototype.generateCoords = function() {
         [-0.1,-0.1,1.9],
       ]
     return coords
-  } else if (this.name === "Label-Support-Low") {
+  } else if (this.name === "Label-Low-Vital") {
     var coords = [
         [-0.1,-0.1,0.1],
         [2.1,-0.1,0.1],
@@ -86,7 +88,9 @@ Label.prototype.generateCoords = function() {
         [-0.1,-0.1,0.1],
       ]
     return coords
-  } else if (this.name === "Vital") {
+
+
+  } else if (this.name === "Support") {
     var coords = [
         [-0.3,1,2.3],
         [-0.3,1,-0.3],
@@ -94,20 +98,20 @@ Label.prototype.generateCoords = function() {
         [2.3,1,2.3]
       ]
     return coords
-  } else if (this.name === "Label-Low-Vital") {
-    var coords = [
-        [-0.1,0.1,2.1],
-        [-0.1,0.1,-0.1],
-        [2.1,0.1,-0.1],
-        [2.1,0.1,2.1],
-      ]
-    return coords
-  } else if (this.name === "Label-High-Vital") {
+  } else if (this.name === "Label-Support-High") {
     var coords = [
         [-0.1,1.9,2.1],
         [-0.1,1.9,-0.1],
         [2.1,1.9,-0.1],
         [2.1,1.9,2.1],
+      ]
+    return coords
+  } else if (this.name === "Label-Support-Low") {
+    var coords = [
+        [-0.1,0.1,2.1],
+        [-0.1,0.1,-0.1],
+        [2.1,0.1,-0.1],
+        [2.1,0.1,2.1],
       ]
     return coords
   }
