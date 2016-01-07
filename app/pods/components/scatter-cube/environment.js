@@ -216,6 +216,12 @@ export default function environment (component) {
       self.component.updateSelectedStakeholder(sHPoint)
     })
 
+    this.onRenderFcts.push( function () {
+      forEach(self.pointCloud.sHPoints, function (sHPoint) {
+        sHPoint.updateColor(self.camera.position)
+      })
+    })
+
 
     ///////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////// UTILITIES ////////////////////////////////////
