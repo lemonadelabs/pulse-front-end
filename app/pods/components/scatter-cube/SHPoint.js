@@ -6,10 +6,22 @@ export default function SHPoint (opts) {
 
 SHPoint.prototype.updateColor = function(cameraPosition) {
 
-  var distance = cameraPosition.distanceTo(this.mesh.position)
-  var decimal = distance/6
-  // console.log()
-  this.mesh.material.opacity = decimal * -1 + 1
+  var distanceCameraSHPoint = cameraPosition.distanceTo(this.mesh.position)
+
+  var center = new THREE.Vector3(1,1,1)
+
+  var distanceCameraCenter = cameraPosition.distanceTo(center) // between 1.7 and 5
+
+  var cameraZoom = distanceCameraCenter - 1.7 // between 0 and 3.3
+
+  var normalisedSHPointDistance = distanceCameraSHPoint - cameraZoom
+
+  var zeroOneFloat = (normalisedSHPointDistance - 0.14) / 3.1188
+
+  zeroOneFloat = zeroOneFloat * -1 + 1 // reverse direction of float
+  zeroOneFloat = zeroOneFloat * 0.7 + 0.3 // limit the range
+
+  this.mesh.material.opacity = zeroOneFloat
 
 };
 
