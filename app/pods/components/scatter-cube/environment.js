@@ -1,5 +1,6 @@
 /* global THREE, THREEx, TWEEN, requestAnimationFrame */
 import DangerZone from './dangerZone';
+import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
 import LineGroup from './lineGroup';
@@ -97,6 +98,11 @@ export default function environment (component) {
       var cube = new THREE.Mesh(geometry, cubeMaterial)
       self.scene.add(cube)
     })
+
+    //////////////////////////////////// create axis guides ////////////////////////////////////////////////
+
+    this.axisGuides = new AxisGuides()
+    addObjectsToScene(this.axisGuides.lines)
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
