@@ -1,3 +1,8 @@
 {{#if this.processedData}}
-  {{chartist-chart data=this.processedData}}
+  {{chartist-chart ratio="ct-golden-section" options=this.chartOptions data=this.processedData}}
+  <div class="chart-key-container">
+    <p><span class="chart-key series-a"></span>Support</p>
+    <p><span class="chart-key series-b"></span>Vital</p>
+    <p><span class="chart-key series-c"></span>Power</p>
+  </div>
 {{/if}}

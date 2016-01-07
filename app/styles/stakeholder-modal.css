@@ -137,3 +137,91 @@
 .stakeholder-stats {
   width: 100%;
 }
+
+
+/*Chartist options*/
+
+.stakeholder-stats .ct-chart .ct-label {
+  color:white;
+  fill:white;
+  font-size: .55rem;
+}
+
+.stakeholder-stats .ct-chart .ct-series-a .ct-line{
+  stroke: var(--lightBlue);
+}
+
+.stakeholder-stats .ct-chart .ct-series-b .ct-line{
+  stroke: var(--lime);
+}
+
+.stakeholder-stats .ct-chart .ct-series-c .ct-line{
+  stroke: var(--orange);
+}
+
+.stakeholder-stats .ct-chart .ct-line {
+  stroke-width: 2px;
+}
+
+.stakeholder-stats .ct-chart .ct-grid{
+  stroke:none;
+  stroke-dasharray:none;
+}
+
+.stakeholder-stats .ct-chart .ct-grids .ct-horizontal:first-of-type{
+  stroke: color(white alpha(-40%));
+}
+
+.stakeholder-stats .ct-chart .ct-horizontal ~ .ct-horizontal{
+  stroke:none;
+}
+
+.stakeholder-stats .ct-chart .ct-grids .ct-vertical{
+  stroke: color(white alpha(-40%));
+}
+
+.stakeholder-stats .ct-chart .ct-vertical ~ .ct-vertical{
+  stroke:none;
+}
+
+.stakeholder-stats .ct-chart .ct-label.ct-horizontal{
+  padding-top: 5px;
+}
+
+.ct-label.ct-horizontal.ct-end {
+    transform: translate(-50%,0);
+    display: block;
+    text-align: center;
+}
+
+.chart-key-container{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.chart-key-container p{
+  margin: auto;
+  font-size: 7.5pt;
+}
+
+.chart-key {
+  display: inline-block;
+  top: 0.1em;
+  position: relative;
+  margin-right: 0.8em;
+  width: 1em;
+  height: 1em;
+}
+
+.chart-key.series-a{
+  background-color: var(--lightBlue);
+}
+
+.chart-key.series-b{
+  background-color: var(--lime);
+}
+
+.chart-key.series-c{
+  background-color: var(--orange);
+}
