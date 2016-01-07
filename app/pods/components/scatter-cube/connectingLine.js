@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE, chroma */
 
 export default function ConnectingLine (opts) {
   this.pointA = opts.pointA
@@ -11,24 +11,24 @@ export default function ConnectingLine (opts) {
 }
 
 ConnectingLine.prototype.createMaterial = function(strength) {
-  var color = undefined
+  var color;
 
   if (strength >= 0) {
     // positive
-    color = '#00ff5f'
+    color = 'rgba(0, 255, 95, 1)'
   } else {
     // negative
-    color = '#ff0068'
+    color = 'rgba(255, 0, 104, 1)'
     strength = strength * -1
   }
-  color = chroma.interpolate('white', color, strength).css()
+  color = chroma.interpolate('rgba(255,255,255,0.3)', color, strength)
   // color = color.replace('#', '0x')
 
   return new THREE.MeshBasicMaterial({
-    color: color,
+    color: color.css(),
     linewidth: 1,
-    // transparent: true,
-    // opacity: 0.4
+    transparent: true,
+    opacity: color.alpha()
   });
 };
 
