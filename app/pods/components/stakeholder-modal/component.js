@@ -7,10 +7,13 @@ export default Ember.Component.extend({
   "ignore-pointer":true,
   actions:{
     close:function(){
-      this.get("setStakeholderUndefined")();
+      var self = this;
       this.set("visible",false);
       this.set("ignore-pointer",true);
       Ember.$("#close-button").blur();
+      Ember.run.later(function(){
+        self.get("setStakeholderUndefined")();
+     }, 250);
     }
   },
   showModalOnSelection:function(){
