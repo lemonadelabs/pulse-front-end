@@ -1,13 +1,17 @@
 export default function SHPoint (opts) {
   this.weeks = opts.weeks,
-  // this.name = opts.name,
-  // this.image = opts.image,
-  // this.organisation = opts.organisation,
-  // this.role = opts.role,
-  // this.tags = opts.tags,
 
   this.mesh = this.createMesh(opts.timeFrame)
 }
+
+SHPoint.prototype.updateColor = function(cameraPosition) {
+
+  var distance = cameraPosition.distanceTo(this.mesh.position)
+  var decimal = distance/6
+  // console.log()
+  this.mesh.material.opacity = decimal * -1 + 1
+
+};
 
 SHPoint.prototype.createMesh = function(noOfWeeks) {
   var matrix = new THREE.Matrix4();
@@ -23,8 +27,8 @@ SHPoint.prototype.createMesh = function(noOfWeeks) {
   geometry.applyMatrix(matrix)
 
   var material = new THREE.MeshBasicMaterial({
-    // transparent: true,
-    // opacity: 1,
+    transparent: true,
+    opacity: 1,
     shading: THREE.FlatShading,
     color: 0x4AE3C4
   });
