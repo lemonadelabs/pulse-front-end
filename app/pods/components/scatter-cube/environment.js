@@ -73,10 +73,6 @@ export default function environment (component) {
     this.renderer.sortObjects = false;
     this.container.appendChild( this.renderer.domElement );
 
-    ///////////////////// Depth of Field ////////////////////////
-
-    this.depthOfField = new THREEx.DepthOfField( this.renderer )
-
     ///////////////////// On Window Resize ////////////////////////
 
     var windowResize = new THREEx.WindowResize(this.renderer, this.camera)
@@ -106,26 +102,7 @@ export default function environment (component) {
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
 
     this.axisGuides = new AxisGuides()
-    // to add the plain crosshairs in
-    this.axisGuides.createMeshes({})
     addObjectsToScene(this.axisGuides.lines)
-
-
-    // code for moving axis to match sHPoint
-    // this.onPointClickFcts.push(function (sHPoint) {
-    //   removeObjectsFromScene(self.axisGuides.lines)
-    //   self.axisGuides.currentSHPoint = sHPoint
-    //   self.axisGuides.createMeshes()
-    //   addObjectsToScene(self.axisGuides.lines)
-    // })
-
-    // this.noSelectedStakeholderFcts.push( function (sHPoint) {
-    //   self.axisGuides.currentSHPoint = undefined
-    //   removeObjectsFromScene(self.axisGuides.lines)
-    //   // to add the plain crosshairs in
-    //   // self.axisGuides.createMeshes({})
-    //   // addObjectsToScene(self.axisGuides.lines)
-    // })
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
@@ -312,7 +289,6 @@ export default function environment (component) {
 
     this.onRenderFcts.push(function(){
       self.renderer.render( self.scene, self.camera );
-      // self.depthOfField.render( self.scene, self.camera )
     })
   }
 

@@ -1,17 +1,9 @@
 import AxisGuideLine from './axisGuideLine';
 
 export default function AxisGuides () {
-  this.currentSHPoint = undefined
-
   this.material = this.createMaterial()
+  this.lines = this.createLines()
 }
-
-AxisGuides.prototype.updatePosition = function() {
-  var pointPosition = this.currentSHPoint.mesh.position
-  _.forEach(this.lines, function (line) {
-    console.log(line)
-  })
-};
 
 AxisGuides.prototype.createMaterial = function() {
   return new THREE.MeshBasicMaterial({
@@ -22,51 +14,31 @@ AxisGuides.prototype.createMaterial = function() {
   });
 };
 
-AxisGuides.prototype.createMeshes = function() {
+AxisGuides.prototype.createLines = function() {
   var self = this
   var lines = []
   var linesVertices
 
-  // middel lines
-  if (self.currentSHPoint === undefined) {
-    linesVertices = [
-      [
-        new THREE.Vector3(1,1,0),
-        new THREE.Vector3(1,1,2)
-      ],
-      [
-        new THREE.Vector3(1,0,1),
-        new THREE.Vector3(1,2,1)
-      ],
-      [
-        new THREE.Vector3(0,1,1),
-        new THREE.Vector3(2,1,1)
-      ]
-    ]
-  } else { // this will probably be deleted as it is dealing with the moving croshairs
-    var position = self.currentSHPoint.mesh.position
-      linesVertices = [
-        [
-          new THREE.Vector3(position.x,position.y,0),
-          new THREE.Vector3(position.x,position.y,2)
-        ],
-        [
-          new THREE.Vector3(position.x,0,position.z),
-          new THREE.Vector3(position.x,2,position.z)
-        ],
-        [
-          new THREE.Vector3(0,position.y, position.z),
-          new THREE.Vector3(2,position.y, position.z)
-        ]
-      ]
-  }
-
-  // other lines
-
-  var planeVertices = [
+  linesVertices = [
     // x = power
     // y = support
     // z = vital
+
+    // middel lines
+    [
+      new THREE.Vector3(1,1,0),
+      new THREE.Vector3(1,1,2)
+    ],
+    [
+      new THREE.Vector3(1,0,1),
+      new THREE.Vector3(1,2,1)
+    ],
+    [
+      new THREE.Vector3(0,1,1),
+      new THREE.Vector3(2,1,1)
+    ],
+
+    // other lines
     [
       new THREE.Vector3(1,0,0),
       new THREE.Vector3(1,2,0)
@@ -116,12 +88,10 @@ AxisGuides.prototype.createMeshes = function() {
     [
       new THREE.Vector3(1,2,0),
       new THREE.Vector3(1,2,2)
-    ],
+    ]
   ]
 
-  var allVertices = linesVertices.concat(planeVertices)
-
-  _.forEach(allVertices, function (vertices) {
+  _.forEach(linesVertices, function (vertices) {
     lines.push(
       new AxisGuideLine({
         vertices: vertices,
@@ -130,6 +100,6 @@ AxisGuides.prototype.createMeshes = function() {
     )
   })
 
-  this.lines = lines
+  return lines
 }
 

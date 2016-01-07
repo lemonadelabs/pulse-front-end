@@ -40,7 +40,6 @@ module.exports = function(defaults) {
   app.import('bower_components/three.js/examples/js/controls/OrbitControls.js')
   app.import('bower_components/threex.domevents/threex.domevents.js')
   app.import('bower_components/threex.windowresize/threex.windowresize.js')
-  app.import('bower_components/threex.depthoffield/threex.depthoffield.js')
   app.import('bower_components/lodash/lodash.js')
   app.import('bower_components/tween.js/src/Tween.js')
 
