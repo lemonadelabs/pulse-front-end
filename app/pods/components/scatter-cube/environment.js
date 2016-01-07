@@ -102,26 +102,7 @@ export default function environment (component) {
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
 
     this.axisGuides = new AxisGuides()
-    // to add the plain crosshairs in
-    this.axisGuides.createMeshes({})
     addObjectsToScene(this.axisGuides.lines)
-
-
-    // code for moving axis to match sHPoint
-    // this.onPointClickFcts.push(function (sHPoint) {
-    //   removeObjectsFromScene(self.axisGuides.lines)
-    //   self.axisGuides.currentSHPoint = sHPoint
-    //   self.axisGuides.createMeshes()
-    //   addObjectsToScene(self.axisGuides.lines)
-    // })
-
-    // this.noSelectedStakeholderFcts.push( function (sHPoint) {
-    //   self.axisGuides.currentSHPoint = undefined
-    //   removeObjectsFromScene(self.axisGuides.lines)
-    //   // to add the plain crosshairs in
-    //   // self.axisGuides.createMeshes({})
-    //   // addObjectsToScene(self.axisGuides.lines)
-    // })
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
