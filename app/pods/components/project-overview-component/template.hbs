@@ -1,3 +1,25 @@
-{{stakeholder-modal selectedStakeholder=this.selectedStakeholder setStakeholderUndefined=(action 'userDidCloseStakeholderModal')}}
-{{scatter-cube stakeholders=this.model.stakeholders metadata=model.metadata relationships=this.model.relationships selectedStakeholder=this.selectedStakeholder selectedTime=this.selectedTime updateStakeholder=(action 'userDidSelectStakeholder')}}
-{{time-series metadata=model.metadata updateTime=(action 'userDidChangeTime')}}
+{{stakeholder-modal
+  selectedStakeholder=this.selectedStakeholder
+  setStakeholderUndefined=(action 'userDidCloseStakeholderModal')
+}}
+
+{{ scatter-cube
+
+  stakeholders=this.model.stakeholders
+  metadata=this.model.metadata
+  relationships=this.model.relationships
+
+  selectedStakeholder=this.selectedStakeholder
+  selectedTime=this.selectedTime
+
+  relationshipView=true
+  distributionView=false
+  trailView=false
+
+  updateStakeholder=(action 'userDidSelectStakeholder')
+}}
+
+{{time-series
+  metadata=model.metadata
+  updateTime=(action 'userDidChangeTime')
+}}
