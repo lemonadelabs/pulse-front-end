@@ -3,6 +3,7 @@ import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
+import DistributionCloud from './distributionCloud';
 import LineGroup from './lineGroup';
 import Target from './target';
 import data4Week from '../../../mockData/testDataMultiWeek'
@@ -172,8 +173,8 @@ export default function environment (component) {
     this.onPointClickFcts.push( function (sHPoint) {
       var currentWeek = self.metaData[0].timeFrame
       removeConnectingLines()
-      self.lineGroup.drawConnections(sHPoint, self.currentWeek)
-      addObjectsToScene(self.lineGroup.primaryConnections)
+      // self.lineGroup.drawConnections(sHPoint, self.currentWeek)
+      // addObjectsToScene(self.lineGroup.primaryConnections)
     })
 
     this.onRenderFcts.push(function () {
@@ -221,6 +222,32 @@ export default function environment (component) {
         sHPoint.updateColor(self.camera.position)
       })
     })
+
+    ///////////////////// Create distribution Cloud ////////////////////////
+
+    this.distributionCloud = new DistributionCloud()
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      removeObjectsFromScene(self.distributionCloud.distributionPoints)
+      self.distributionCloud.selectedStakeholder = sHPoint
+      self.distributionCloud.createDistributionPoints(self.currentWeek)
+      addObjectsToScene(self.distributionCloud.distributionPoints)
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      removeObjectsFromScene(self.distributionCloud.distributionPoints)
+      self.distributionCloud.selectedStakeholder = undefined
+      removeObjectFromScene(self.distributionCloud.distributionPoints)
+      self.distributionCloud.distributionPoints = []
+    })
+
+
+    this.onRenderFcts.push(function() {
+      // console.log('asdf')
+      // self.distributionCloud.logSelectedStakeholder()
+    })
+
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////
