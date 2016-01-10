@@ -17,6 +17,9 @@ body {
   color: white;
   background-color: var(--pulseBlack);
   font-family: "neuzeit-grotesk";
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures, contextual;
+  font-feature-settings: "kern", "liga", "clig", "calt";
 }
 
 [data-ember-action]{
