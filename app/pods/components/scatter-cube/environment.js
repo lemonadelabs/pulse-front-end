@@ -6,6 +6,7 @@ import PointCloud from './pointCloud';
 import DistributionCloud from './distributionCloud';
 import LineGroup from './lineGroup';
 import Target from './target';
+import TweenController from './tweenController';
 import data4Week from '../../../mockData/testDataMultiWeek'
 import getProjects from '../../../mockData/getProjects'
 
@@ -92,6 +93,12 @@ export default function environment (component) {
 
     this.jSONloader = new THREE.JSONLoader()
 
+    /////////////////////// Create Tween Controller ///////////////////////
+
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
     this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
@@ -170,24 +177,24 @@ export default function environment (component) {
       self.lineGroup.primaryConnections = []
     }
 
-    this.onPointClickFcts.push( function (sHPoint) {
-      var currentWeek = self.metaData[0].timeFrame
-      removeConnectingLines()
-      // self.lineGroup.drawConnections(sHPoint, self.currentWeek)
-      // addObjectsToScene(self.lineGroup.primaryConnections)
-    })
+    // this.onPointClickFcts.push( function (sHPoint) {
+    //   var currentWeek = self.metaData[0].timeFrame
+    //   removeConnectingLines()
+    //   self.lineGroup.drawConnections(sHPoint, self.currentWeek)
+    //   addObjectsToScene(self.lineGroup.primaryConnections)
+    // })
 
-    this.onRenderFcts.push(function () {
-      self.lineGroup.update()
-    })
+    // this.onRenderFcts.push(function () {
+    //   self.lineGroup.update()
+    // })
 
-    this.onUpdateTimeFcts.push(function (time) {
-      if (self.focussedPoint) {
-        removeConnectingLines()
-        self.lineGroup.drawConnections(self.focussedPoint, time)
-        addObjectsToScene(self.lineGroup.primaryConnections)
-      }
-    })
+    // this.onUpdateTimeFcts.push(function (time) {
+    //   if (self.focussedPoint) {
+    //     removeConnectingLines()
+    //     self.lineGroup.drawConnections(self.focussedPoint, time)
+    //     addObjectsToScene(self.lineGroup.primaryConnections)
+    //   }
+    // })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -229,15 +236,22 @@ export default function environment (component) {
 
     this.onPointClickFcts.push( function (sHPoint) {
       removeObjectsFromScene(self.distributionCloud.distributionPoints)
+      self.distributionCloud.reset()
       self.distributionCloud.selectedStakeholder = sHPoint
       self.distributionCloud.createDistributionPoints(self.currentWeek)
       addObjectsToScene(self.distributionCloud.distributionPoints)
+      self.tweenController.distroCloudBirth(self.currentWeek)
+
+
+      // create points at sHPoint location,
+      // add to scene,
+      // animate
+
     })
 
     this.noSelectedStakeholderFcts.push( function () {
       removeObjectsFromScene(self.distributionCloud.distributionPoints)
-      self.distributionCloud.selectedStakeholder = undefined
-      removeObjectFromScene(self.distributionCloud.distributionPoints)
+      self.distributionCloud.reset()
       self.distributionCloud.distributionPoints = []
     })
 
@@ -246,7 +260,6 @@ export default function environment (component) {
       // console.log('asdf')
       // self.distributionCloud.logSelectedStakeholder()
     })
-
 
 
 
