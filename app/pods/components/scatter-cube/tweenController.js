@@ -3,6 +3,10 @@ export default function TweenController (opts) {
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// singular animations //////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 TweenController.prototype.distroCloudBirth = function(currentWeek) {
   var self = this
 
@@ -48,9 +52,64 @@ TweenController.prototype.distroCloudDeath = function() {
 
     tweens.push(tween)
   }
-
-
   return tweens
+};
+
+TweenController.prototype.updateSHPoints = function(time) {
+  var tweens = []
+  var pointCloud = this.environment.pointCloud
+
+  _.forEach(pointCloud.sHPointClickTargets, createPointTweens)
+  _.forEach(pointCloud.sHPoints, createPointTweens)
+
+  function createPointTweens (sHPoint) {
+    var x = (sHPoint.weeks[time].power) * 1.8  + 0.1
+    var y = (sHPoint.weeks[time].support) * 1.8  + 0.1
+    var z = (sHPoint.weeks[time].vital) * 1.8  + 0.1
+
+    var tween = new TWEEN.Tween(sHPoint.mesh.position)
+        .to({x: x, y: y, z: z}, 1500)
+        .easing(TWEEN.Easing.Exponential.Out)
+        .start();
+
+    tweens.push(tween)
+  }
+  return tweens
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// chained animations //////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+TweenController.prototype.updateTimeNoViews = function(time) {
+  this.updateSHPoints(time)
+};
+
+TweenController.prototype.updateTimeRelationView = function(time) {
+  var self = this
+
+  this.environment.removeConnectingLines()
+  self.environment.lineGroup.drawConnections(self.environment.focussedPoint, time)
+  self.environment.addObjectsToScene(self.environment.lineGroup.primaryConnections)
+
+  var sHPointTweens = this.updateSHPoints(time)
+
+  var lastTween = _.last(sHPointTweens)
+
+  lastTween.onUpdate(function () {
+    if (self.environment.focussedPoint) {
+      self.environment.target.updatePosition(self.environment.focussedPoint)
+    } // make the target follow the point
+    self.environment.lineGroup.needsUpdate = true // make the lines follow the points
+  })
+
+  lastTween.onComplete(function () {
+    self.environment.lineGroup.needsUpdate = false
+  })
+};
+
+TweenController.prototype.updateTimeDistroView = function(time) {
+
 };
 
 TweenController.prototype.onUpdateTime = function(time) {

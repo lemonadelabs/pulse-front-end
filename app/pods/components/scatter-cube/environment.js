@@ -100,7 +100,15 @@ export default function environment (component) {
     })
 
     this.onUpdateTimeFcts.push(function (time) {
-      self.tweenController.onUpdateTime(time)
+      if (self.component.relationshipView && self.component.distributionView && self.focussedPoint) {
+        self.tweenController.updateTimeRelationDistroViews()
+      } else if (self.component.relationshipView && self.focussedPoint) {
+        self.tweenController.updateTimeRelationView(time)
+      } else if (self.component.distributionView && self.focussedPoint) {
+        self.tweenController.updateTimeDistroView()
+      } else {
+        self.tweenController.updateTimeNoViews(time)
+      }
     })
 
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
@@ -196,13 +204,13 @@ export default function environment (component) {
       self.lineGroup.update()
     })
 
-    this.onUpdateTimeFcts.push(function (time) {
-      self.removeConnectingLines()
-      if (self.component.relationshipView && self.focussedPoint) {
-        self.lineGroup.drawConnections(self.focussedPoint, time)
-        addObjectsToScene(self.lineGroup.primaryConnections)
-      }
-    })
+    // this.onUpdateTimeFcts.push(function (time) {
+      // self.removeConnectingLines()
+    //   if (self.component.relationshipView && self.focussedPoint) {
+    //     self.lineGroup.drawConnections(self.focussedPoint, time)
+    //     addObjectsToScene(self.lineGroup.primaryConnections)
+    //   }
+    // })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -330,7 +338,7 @@ export default function environment (component) {
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
     this.onUpdateTimeFcts.push( function (time) {
-      self.pointCloud.updatePositions(time)
+      // self.pointCloud.updatePositions(time)
     })
 
     this.updateTime = function (time) {
