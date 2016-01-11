@@ -99,6 +99,10 @@ export default function environment (component) {
       environment : this
     })
 
+    this.onUpdateTimeFcts.push(function (time) {
+      self.tweenController.onUpdateTime(time)
+    })
+
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
     this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
@@ -170,31 +174,35 @@ export default function environment (component) {
       connections: self.relationships
     })
 
-    this.noSelectedStakeholderFcts.push(removeConnectingLines)
+    this.noSelectedStakeholderFcts.push( function () {
+      self.removeConnectingLines()
+    })
 
-    function removeConnectingLines () {
+    this.removeConnectingLines = function() {
       removeObjectsFromScene(self.lineGroup.primaryConnections)
       self.lineGroup.primaryConnections = []
     }
 
-    // this.onPointClickFcts.push( function (sHPoint) {
-    //   var currentWeek = self.metaData[0].timeFrame
-    //   removeConnectingLines()
-    //   self.lineGroup.drawConnections(sHPoint, self.currentWeek)
-    //   addObjectsToScene(self.lineGroup.primaryConnections)
-    // })
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.removeConnectingLines()
 
-    // this.onRenderFcts.push(function () {
-    //   self.lineGroup.update()
-    // })
+      if (self.component.relationshipView) {
+        self.lineGroup.drawConnections(sHPoint, self.currentWeek)
+        self.addObjectsToScene(self.lineGroup.primaryConnections)
+      }
+    })
 
-    // this.onUpdateTimeFcts.push(function (time) {
-    //   if (self.focussedPoint) {
-    //     removeConnectingLines()
-    //     self.lineGroup.drawConnections(self.focussedPoint, time)
-    //     addObjectsToScene(self.lineGroup.primaryConnections)
-    //   }
-    // })
+    this.onRenderFcts.push(function () {
+      self.lineGroup.update()
+    })
+
+    this.onUpdateTimeFcts.push(function (time) {
+      self.removeConnectingLines()
+      if (self.component.relationshipView && self.focussedPoint) {
+        self.lineGroup.drawConnections(self.focussedPoint, time)
+        addObjectsToScene(self.lineGroup.primaryConnections)
+      }
+    })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -234,32 +242,27 @@ export default function environment (component) {
 
     this.distributionCloud = new DistributionCloud()
 
+
+
     this.onPointClickFcts.push( function (sHPoint) {
-      removeObjectsFromScene(self.distributionCloud.distributionPoints)
-      self.distributionCloud.reset()
-      self.distributionCloud.selectedStakeholder = sHPoint
-      self.distributionCloud.createDistributionPoints(self.currentWeek)
-      addObjectsToScene(self.distributionCloud.distributionPoints)
-      self.tweenController.distroCloudBirth(self.currentWeek)
-
-
-      // create points at sHPoint location,
-      // add to scene,
-      // animate
-
+      if (self.component.distributionView) {
+        removeObjectsFromScene(self.distributionCloud.distributionPoints)
+        self.distributionCloud.selectedStakeholder = sHPoint
+        self.distributionCloud.createDistributionPoints(self.currentWeek)
+        addObjectsToScene(self.distributionCloud.distributionPoints)
+        self.tweenController.distroCloudBirth(self.currentWeek)
+      }
     })
 
     this.noSelectedStakeholderFcts.push( function () {
-      removeObjectsFromScene(self.distributionCloud.distributionPoints)
-      self.distributionCloud.reset()
-      self.distributionCloud.distributionPoints = []
+      self.tweenController.distroCloudDeath()
     })
 
 
-    this.onRenderFcts.push(function() {
-      // console.log('asdf')
-      // self.distributionCloud.logSelectedStakeholder()
-    })
+    // this.onRenderFcts.push(function() {
+    //   // console.log('asdf')
+    //   // self.distributionCloud.logSelectedStakeholder()
+    // })
 
 
 
@@ -288,11 +291,19 @@ export default function environment (component) {
       forEach(objects, addObjectToScene)
     }
 
+    this.addObjectsToScene = function (objects) {
+      forEach(objects, addObjectToScene)
+    }
+
     function removeObjectFromScene(object) {
       self.scene.remove( object.mesh )
     }
 
     function removeObjectsFromScene (objects) {
+      forEach( objects, removeObjectFromScene )
+    }
+
+    this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
       forEach( objects, removeObjectFromScene )
     }
 
