@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: ['stakeholder-modal'],
+  classNames: ['stakeholder-modal','fancy-corners'],
   classNameBindings: ['visible','ignore-pointer'],
   visible: false,
   "ignore-pointer":true,

@@ -2,6 +2,7 @@
 @import "inputs.css";
 @import "colours.css";
 @import "stakeholder-modal.css";
+@import "stakeholder-view-mode-window.css";
 @import "time-series.css";
 
 /* apply a natural box layout model to all elements, but allowing components to change */
@@ -30,4 +31,29 @@ body {
   position: fixed;
   top:-43px;
   left: 0;
+  z-index: -1;
+}
+
+.fancy-corners::before{
+  content: "";
+  display: block;
+  width: 0.6rem;
+  height: 0.6rem;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border-top: solid 1px white;
+  border-left: solid 1px white;
+}
+
+.fancy-corners::after{
+  content: "";
+  display: block;
+  width: 0.6rem;
+  height: 0.6rem;
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
 }

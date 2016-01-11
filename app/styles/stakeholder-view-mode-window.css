@@ -1,0 +1,28 @@
+.stakeholder-view-mode-window{
+  position: absolute;
+  right: 30px;
+  bottom: 80px;
+  width: 160px;
+  height: 130px;
+  padding: 15px;
+  background: color(var(--darkBlue) alpha(-5%));
+  border: solid 1px var(--borderBlue);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stakeholder-view-mode-window .window-title {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -25px;
+  margin-bottom: -3px;
+  font-size: 10pt;
+  font-weight: 900;
+  padding: 0.25em 0.5em;
+  letter-spacing: 0.04em;
+  color: color(var(--darkBlue));
+  background-color: white;
+  text-transform: uppercase;
+}
