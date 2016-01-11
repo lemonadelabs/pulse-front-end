@@ -1,5 +1,5 @@
 input:focus,button { outline: none; }
-
+/*----- Button styling-----*/
 button{
   transition: color 250ms;
   border:solid white 2px;
@@ -34,4 +34,85 @@ button::after{
   top: 12.5%;
   display: block;
   opacity: 0;
+}
+/*----- ### Checkbox styling ###-----*/
+input[type="checkbox"] {
+  visibility: hidden;
+  position: absolute;
+  top: -90000px;
+  left: -90000px;
+}
+
+input[type="checkbox"] + label {
+  font-size: 10pt;
+  width: 100%;
+  height: 1.5em;
+  position: relative;
+  display: block;
+}
+
+input[type="checkbox"] + label .checkbox-label {
+  text-transform: uppercase;
+  font-size: 0.8em;
+  position: absolute;
+  top: 0.31em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+input[type="checkbox"] + label .checkbox-toggle{
+  display: inline-block;
+  width: 2.5em;
+  height: 1.5em;
+  position: absolute;
+  right: 0;
+  cursor: pointer;
+}
+
+input[type="checkbox"] + label .checkbox-toggle::before{
+  transition: background-color 0.5s;
+  content: "off";
+  text-align:center;
+  width: 100%;
+  height: 100%;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 0.7em;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  padding-top: 0.5em;
+  background-color: var(--darkGrey);
+}
+
+input[type="checkbox"]:hover + label .checkbox-toggle::before{
+  background-color: color(var(--darkGrey) whiteness(80%))
+}
+
+input[type="checkbox"] + label .checkbox-toggle::after{
+  transition: opacity 0.3s, background-color 0.3s;
+  content: "on";
+  text-align:center;
+  width: 100%;
+  height: 100%;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 0.7em;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  padding-top: 0.5em;
+  opacity: 0;
+  background-color: var(--teal);
+}
+
+input[type="checkbox"]:checked + label .checkbox-toggle{
+
+}
+input[type="checkbox"]:checked + label .checkbox-toggle::after{
+  opacity: 1;
+
+}
+input[type="checkbox"]:checked:hover + label .checkbox-toggle::after{
+  background-color: color(var(--teal) saturation(+80%))
 }
