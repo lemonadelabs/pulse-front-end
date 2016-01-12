@@ -304,14 +304,15 @@ export default function environment (component) {
       addObjectsToScene(self.distributionCloud.distributionPoints)
       self.tweenController.distroCloudBirth({
         time : self.currentWeek,
-        easing : TWEEN.Easing.Exponential.In
+        duration : 400,
+        easing : TWEEN.Easing.Quadratic.Out
       })
     }
 
     this.onRenderFcts.push( function () { // update color of point
       if (self.component.distributionView && self.focussedPoint) {
         forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
-          distributionPoint.updateColor(self.camera.position)
+          if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
         })
 
       }

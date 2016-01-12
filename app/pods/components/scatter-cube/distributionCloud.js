@@ -2,6 +2,7 @@ import DistributionPoint from './distributionPoint';
 
 export default function DistributionCloud () {
   this.selectedStakeholder = undefined
+  this.transitioning = false
   this.distributionPoints = []
 }
 
