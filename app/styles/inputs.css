@@ -28,10 +28,10 @@ button::after{
   position: absolute;
   transition: opacity 500ms;
   background-color: white;
-  width: 90%;
-  height: 75%;
-  left: 5%;
-  top: 12.5%;
+  width: calc(100% - 0.5em);
+  height: calc(100% - 0.5em);
+  left: 0.25em;
+  top: 0.25em;
   display: block;
   opacity: 0;
 }
