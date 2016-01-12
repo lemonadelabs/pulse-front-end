@@ -3,8 +3,10 @@ import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
 import PointCloud from './pointCloud';
+import DistributionCloud from './distributionCloud';
 import LineGroup from './lineGroup';
 import Target from './target';
+import TweenController from './tweenController';
 import data4Week from '../../../mockData/testDataMultiWeek'
 import getProjects from '../../../mockData/getProjects'
 
@@ -91,6 +93,76 @@ export default function environment (component) {
 
     this.jSONloader = new THREE.JSONLoader()
 
+    /////////////////////// Create Tween Controller ///////////////////////
+
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
+    this.onUpdateTimeFcts.push(function (time) {
+      if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
+        self.tweenController.updateTimeRelationDistroViews(time)
+      } else if (self.component.connectionView && self.focussedPoint) {
+        self.tweenController.updateTimeRelationView(time)
+      } else if (self.component.distributionView && self.focussedPoint) {
+        self.tweenController.updateTimeDistroView(time)
+      } else if (self.focussedPoint) { // no views but with selected stakeholder
+        self.tweenController.updateTimeNoViewsWithFocus(time)
+      } else { // no viewsm no selected stakeholder
+        self.tweenController.updateSHPoints({
+          time : time,
+          easing : TWEEN.Easing.Exponential.Out,
+          duration : 1500
+        })
+      }
+    })
+
+    this.onPointClickFcts.push(function (sHPoint) {
+      if (self.component.connectionView && self.component.distributionView) {
+
+        self.tweenController.updateSelectedStakeholderDistroConnectionsViews(sHPoint)
+
+      } else if (self.component.connectionView) {
+
+        self.tweenController.replaceLines(sHPoint)
+        self.target.updatePosition(sHPoint)
+
+      } else if (self.component.distributionView) {
+        self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
+      } else {
+        self.target.updatePosition(sHPoint)
+      }
+    })
+
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.distributionView) {
+        self.tweenController.removeDistroCloud()
+      }
+    })
+
+    /////////////////////// Toggle component view modes ///////////////////////
+
+    this.connectionViewUpdated = function () {
+      if (this.component.connectionView) {
+        self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
+        self.addObjectsToScene(this.lineGroup.primaryConnections)
+      } else {
+        this.removeConnectingLines()
+      }
+    }
+
+    this.distributionViewUpdated = function () {
+      if (this.component.distributionView) {
+        buildDistributionCloud()
+      } else {
+        this.tweenController.removeDistroCloud()
+      }
+    }
+
+    this.historyViewUpdated = function () {
+
+    }
+
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
     this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
@@ -141,10 +213,6 @@ export default function environment (component) {
 
       addObjectToScene(self.target)
 
-      self.onPointClickFcts.push(function (sHPoint) {
-        self.target.updatePosition(sHPoint)
-      })
-
       self.onRenderFcts.push(function () {
         billboardObject(self.target)
       })
@@ -162,31 +230,35 @@ export default function environment (component) {
       connections: self.relationships
     })
 
-    this.noSelectedStakeholderFcts.push(removeConnectingLines)
+    this.noSelectedStakeholderFcts.push( function () {
+      self.removeConnectingLines()
+    })
 
-    function removeConnectingLines () {
+    this.removeConnectingLines = function() {
       removeObjectsFromScene(self.lineGroup.primaryConnections)
       self.lineGroup.primaryConnections = []
     }
 
-    this.onPointClickFcts.push( function (sHPoint) {
-      var currentWeek = self.metaData[0].timeFrame
-      removeConnectingLines()
-      self.lineGroup.drawConnections(sHPoint, self.currentWeek)
-      addObjectsToScene(self.lineGroup.primaryConnections)
-    })
+    // this.onPointClickFcts.push( function (sHPoint) {
+    //   self.removeConnectingLines()
+
+    //   if (self.component.connectionView) {
+    //     self.lineGroup.drawConnections(sHPoint, self.currentWeek)
+    //     self.addObjectsToScene(self.lineGroup.primaryConnections)
+    //   }
+    // })
 
     this.onRenderFcts.push(function () {
       self.lineGroup.update()
     })
 
-    this.onUpdateTimeFcts.push(function (time) {
-      if (self.focussedPoint) {
-        removeConnectingLines()
-        self.lineGroup.drawConnections(self.focussedPoint, time)
-        addObjectsToScene(self.lineGroup.primaryConnections)
-      }
-    })
+    // this.onUpdateTimeFcts.push(function (time) {
+      // self.removeConnectingLines()
+    //   if (self.component.connectionView && self.focussedPoint) {
+    //     self.lineGroup.drawConnections(self.focussedPoint, time)
+    //     addObjectsToScene(self.lineGroup.primaryConnections)
+    //   }
+    // })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -222,6 +294,31 @@ export default function environment (component) {
       })
     })
 
+    ///////////////////// Create distribution Cloud ////////////////////////
+
+    this.distributionCloud = new DistributionCloud()
+
+    function buildDistributionCloud () {
+      self.distributionCloud.selectedStakeholder = self.focussedPoint
+      self.distributionCloud.createDistributionPoints(self.currentWeek)
+      addObjectsToScene(self.distributionCloud.distributionPoints)
+      self.tweenController.distroCloudBirth({
+        time : self.currentWeek,
+        easing : TWEEN.Easing.Exponential.In
+      })
+    }
+
+    // this.noSelectedStakeholderFcts.push( function () {
+    //   self.tweenController.distroCloudDeath()
+    // })
+
+
+    // this.onRenderFcts.push(function() {
+    //   // console.log('asdf')
+    //   // self.distributionCloud.logSelectedStakeholder()
+    // })
+
+
 
     ///////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////// UTILITIES ////////////////////////////////////
@@ -248,11 +345,19 @@ export default function environment (component) {
       forEach(objects, addObjectToScene)
     }
 
+    this.addObjectsToScene = function (objects) {
+      forEach(objects, addObjectToScene)
+    }
+
     function removeObjectFromScene(object) {
       self.scene.remove( object.mesh )
     }
 
     function removeObjectsFromScene (objects) {
+      forEach( objects, removeObjectFromScene )
+    }
+
+    this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
       forEach( objects, removeObjectFromScene )
     }
 
@@ -279,7 +384,7 @@ export default function environment (component) {
     ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
 
     this.onUpdateTimeFcts.push( function (time) {
-      self.pointCloud.updatePositions(time)
+      // self.pointCloud.updatePositions(time)
     })
 
     this.updateTime = function (time) {

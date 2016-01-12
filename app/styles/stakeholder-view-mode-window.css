@@ -1,4 +1,5 @@
 .stakeholder-view-mode-window{
+  transition: opacity 300ms;
   position: absolute;
   right: 30px;
   bottom: 80px;
@@ -10,14 +11,17 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  opacity: 0;
 }
 
 .stakeholder-view-mode-window .window-title {
+  width: intrinsic;
   position: relative;
+  top: -25px;
+  margin-top: 0;
   margin-left: auto;
   margin-right: auto;
-  margin-top: -25px;
-  margin-bottom: -3px;
+  margin-bottom: -25px;
   font-size: 10pt;
   font-weight: 900;
   padding: 0.25em 0.5em;
