@@ -12,7 +12,6 @@
 }}
 
 {{scatter-cube
-
   stakeholders=this.model.stakeholders
   metadata=this.model.metadata
   relationships=this.model.relationships
@@ -22,7 +21,7 @@
 
   connectionView=this.connectionView
   distributionView=this.distributionView
-  historyView=false
+  historyView=this.historyView
 
   updateStakeholder=(action 'userDidSelectStakeholder')
 }}
