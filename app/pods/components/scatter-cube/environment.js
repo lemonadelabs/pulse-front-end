@@ -309,15 +309,15 @@ export default function environment (component) {
       })
     }
 
-    // this.noSelectedStakeholderFcts.push( function () {
-    //   self.tweenController.distroCloudDeath()
-    // })
+    this.onRenderFcts.push( function () { // update color of point
+      if (self.component.distributionView && self.focussedPoint) {
+        forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
+          distributionPoint.updateColor(self.camera.position)
+        })
 
+      }
+    })
 
-    // this.onRenderFcts.push(function() {
-    //   // console.log('asdf')
-    //   // self.distributionCloud.logSelectedStakeholder()
-    // })
 
 
 
