@@ -16,15 +16,16 @@ TweenController.prototype.replaceLines = function(sHPoint) {
 };
 
 TweenController.prototype.distroCloudBirth = function(opts) {
-  var self = this
+  var environment = this.environment
 
   var tweens = []
 
-  var points = this.environment.distributionCloud.distributionPoints
+  var points = environment.distributionCloud.distributionPoints
 
-  var data = self.environment.distributionCloud.data[opts.time]
+  var data = environment.distributionCloud.data[opts.time]
 
 
+  environment.distributionCloud.transitioning = true
   for (var i = 0; i < points.length; i++) {
     var x = (data[i].power) * 1.8  + 0.1
     var y = (data[i].support) * 1.8  + 0.1
@@ -33,12 +34,16 @@ TweenController.prototype.distroCloudBirth = function(opts) {
     var tween = new TWEEN.Tween(points[i].mesh.position)
       .to({x: x, y: y, z: z}, opts.duration)
       .easing(opts.easing)
+      .onComplete(function () {
+        environment.distributionCloud.transitioning = false
+      })
       .start();
-    //
-    // var deathFadeTween = new TWEEN.Tween(points[i].mesh.material)
-    //   .to({opacity:points[i].mesh.material.opacity}, opts.duration)
-    //   .easing(TWEEN.Easing.Quadratic.In)
-    //   .start();
+
+    points[i].updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
+    var birthFadeTween = new TWEEN.Tween(points[i].mesh.material)
+      .to({opacity:points[i].mesh.material.opacity}, opts.duration)
+      .easing(TWEEN.Easing.Exponential.In)
+      .start();
 
     tweens.push(tween)
   }
@@ -58,6 +63,7 @@ TweenController.prototype.distroCloudDeath = function(opts) {
   var y = coords.y
   var z = coords.z
 
+  self.environment.distributionCloud.transitioning = true
   for (var i = 0; i < points.length; i++) {
 
     var tween = new TWEEN.Tween(points[i].mesh.position)
@@ -67,7 +73,7 @@ TweenController.prototype.distroCloudDeath = function(opts) {
 
     var deathFadeTween = new TWEEN.Tween(points[i].mesh.material)
       .to({opacity:0}, opts.duration)
-      .easing(TWEEN.Easing.Quadratic.Out)
+      .easing(TWEEN.Easing.Quadratic.In)
       .start();
 
     tweens.push(tween)
@@ -161,8 +167,8 @@ TweenController.prototype.updateTimeDistroView = function(time) {
   var environment = this.environment
 
   var deathTweens = this.distroCloudDeath({
-    duration : 500,
-    easing : TWEEN.Easing.Exponential.Out
+    duration : 300,
+    easing : TWEEN.Easing.Quadratic.Out
   }) // returns a promise
   var lastDeathTween = _.last(deathTweens)
 
