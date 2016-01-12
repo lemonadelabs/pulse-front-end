@@ -5,6 +5,10 @@
 
 {{stakeholder-view-mode-window
   selectedStakeholder=this.selectedStakeholder
+  toggleConnections=(action 'toggleConnections')
+  toggleDistribution=(action 'toggleDistribution')
+  toggleHistory=(action 'toggleHistory')
+
 }}
 
 {{scatter-cube
@@ -16,9 +20,9 @@
   selectedStakeholder=this.selectedStakeholder
   selectedTime=this.selectedTime
 
-  connectionView=true
-  distributionView=false
-  trailView=false
+  connectionView=this.connectionView
+  distributionView=this.distributionView
+  historyView=false
 
   updateStakeholder=(action 'userDidSelectStakeholder')
 }}
