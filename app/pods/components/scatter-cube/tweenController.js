@@ -7,14 +7,23 @@ export default function TweenController (opts) {
 ////////////////////////////////////// singular animations //////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-TweenController.prototype.distroCloudBirth = function(currentWeek) {
+TweenController.prototype.replaceLines = function(sHPoint) {
+  var environment = this.environment
+  environment.removeConnectingLines()
+  environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+  environment.addObjectsToScene(environment.lineGroup.primaryConnections)
+};
+
+TweenController.prototype.distroCloudBirth = function(opts) {
   var self = this
 
   var tweens = []
 
   var points = this.environment.distributionCloud.distributionPoints
 
-  var data = self.environment.distributionCloud.data[currentWeek]
+  console.log(opts)
+  var data = self.environment.distributionCloud.data[opts.time]
+
 
   for (var i = 0; i < points.length; i++) {
     var x = (data[i].power) * 1.8  + 0.1
@@ -22,8 +31,8 @@ TweenController.prototype.distroCloudBirth = function(currentWeek) {
     var z = (data[i].vital) * 1.8  + 0.1
 
     var tween = new TWEEN.Tween(points[i].mesh.position)
-      .to({x: x, y: y, z: z}, 1500)
-      .easing(TWEEN.Easing.Exponential.Out)
+      .to({x: x, y: y, z: z}, 700)
+      .easing(opts.easing)
       .start();
 
     tweens.push(tween)
@@ -38,6 +47,7 @@ TweenController.prototype.distroCloudDeath = function() {
 
   var points = this.environment.distributionCloud.distributionPoints
 
+  // var coords = this.environment.focussedPoint.mesh.position
   var coords = this.environment.distributionCloud.selectedStakeholder.mesh.position
   var x = coords.x
   var y = coords.y
@@ -46,8 +56,8 @@ TweenController.prototype.distroCloudDeath = function() {
   for (var i = 0; i < points.length; i++) {
 
     var tween = new TWEEN.Tween(points[i].mesh.position)
-      .to({x: x, y: y, z: z}, 2000)
-      .easing(TWEEN.Easing.Exponential.Out)
+      .to({x: x, y: y, z: z}, 300)
+      .easing(TWEEN.Easing.Exponential.In)
       .start();
 
     tweens.push(tween)
@@ -55,7 +65,7 @@ TweenController.prototype.distroCloudDeath = function() {
   return tweens
 };
 
-TweenController.prototype.updateSHPoints = function(time) {
+TweenController.prototype.updateSHPoints = function(opts) {
   var tweens = []
   var pointCloud = this.environment.pointCloud
 
@@ -64,13 +74,13 @@ TweenController.prototype.updateSHPoints = function(time) {
   _.forEach(pointCloud.sHPoints, createPointTweens)
 
   function createPointTweens (sHPoint) {
-    var x = (sHPoint.weeks[time].power) * 1.8  + 0.1
-    var y = (sHPoint.weeks[time].support) * 1.8  + 0.1
-    var z = (sHPoint.weeks[time].vital) * 1.8  + 0.1
+    var x = (sHPoint.weeks[opts.time].power) * 1.8  + 0.1
+    var y = (sHPoint.weeks[opts.time].support) * 1.8  + 0.1
+    var z = (sHPoint.weeks[opts.time].vital) * 1.8  + 0.1
 
     var tween = new TWEEN.Tween(sHPoint.mesh.position)
-        .to({x: x, y: y, z: z}, 1500)
-        .easing(TWEEN.Easing.Exponential.Out)
+        .to({x: x, y: y, z: z}, opts.duration)
+        .easing(opts.easing)
         .start();
 
     tweens.push(tween)
@@ -82,32 +92,58 @@ TweenController.prototype.updateSHPoints = function(time) {
 ////////////////////////////////////// chained animations //////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-TweenController.prototype.updateTimeNoViews = function(time) {
-  this.updateSHPoints(time)
+
+
+TweenController.prototype.updateTimeNoViewsWithFocus = function(time) {
+  var environment = this.environment
+  var tweens = this.updateSHPoints({
+    time : time,
+    easing: TWEEN.Easing.Exponential.Out,
+    duration : 1500
+  })
+  var lastTween = _.last(tweens)
+      .onUpdate(function () {
+        environment.target.updatePosition(environment.focussedPoint)
+      })
 };
+
+TweenController.prototype.removeDistroCloud = function() {
+  var environment = this.environment
+  var deathTweens = this.distroCloudDeath() // returns a promise
+  var lastDeathTween = _.last(deathTweens)
+      .onComplete(function () {
+        environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+      })
+}
 
 TweenController.prototype.updateTimeRelationView = function(time) {
   var self = this
+  var environment = this.environment
 
-  this.environment.removeConnectingLines()
-  self.environment.lineGroup.drawConnections(self.environment.focussedPoint, time)
-  self.environment.addObjectsToScene(self.environment.lineGroup.primaryConnections)
+  environment.removeConnectingLines()
+  environment.lineGroup.drawConnections(environment.focussedPoint, time)
+  environment.addObjectsToScene(environment.lineGroup.primaryConnections)
 
-  var sHPointTweens = this.updateSHPoints(time)
+  var sHPointTweens = this.updateSHPoints({
+    time : time,
+    easing: TWEEN.Easing.Exponential.Out,
+    duration : 1500
+  })
 
   var lastTween = _.last(sHPointTweens)
 
   lastTween.onUpdate(function () {
-    self.environment.target.updatePosition(self.environment.focussedPoint) // make the target follow the point
-    self.environment.lineGroup.needsUpdate = true // make the lines follow the points
+    environment.target.updatePosition(environment.focussedPoint) // make the target follow the point
+    environment.lineGroup.needsUpdate = true // make the lines follow the points
   })
 
   lastTween.onComplete(function () {
-    self.environment.lineGroup.needsUpdate = false
+    environment.lineGroup.needsUpdate = false
   })
 };
 
 TweenController.prototype.updateTimeDistroView = function(time) {
+
   var self = this
   var environment = this.environment
 
@@ -117,7 +153,11 @@ TweenController.prototype.updateTimeDistroView = function(time) {
   lastDeathTween.onComplete( function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
 
-    var sHPointTweens = self.updateSHPoints(time)
+    var sHPointTweens = self.updateSHPoints({
+      time : time,
+      easing : TWEEN.Easing.Linear.None,
+      duration : 500
+    })
     var lastSHPointTween = _.last(sHPointTweens)
         .onUpdate(function () {
           self.environment.target.updatePosition(self.environment.focussedPoint)
@@ -125,11 +165,92 @@ TweenController.prototype.updateTimeDistroView = function(time) {
         .onComplete(function () {
           environment.distributionCloud.createDistributionPoints(time)
           environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-          var birthTweens = self.distroCloudBirth(time)
+          self.distroCloudBirth({
+            time : time,
+            easing : TWEEN.Easing.Exponential.Out
+          })
         })
   })
 
 };
+
+TweenController.prototype.updateTimeRelationDistroViews = function(time) {
+  var self = this
+  var environment = this.environment
+
+  var deathTweens = this.distroCloudDeath() // returns a promise
+  var lastDeathTween = _.last(deathTweens)
+
+  lastDeathTween.onComplete( function () {
+    environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+
+    var sHPointTweens = self.updateSHPoints({
+      time : time,
+      easing : TWEEN.Easing.Linear.None,
+      duration : 500
+    })
+    var lastSHPointTween = _.last(sHPointTweens)
+        .onUpdate(function () {
+          environment.target.updatePosition(environment.focussedPoint) // make the target follow the point
+          environment.lineGroup.needsUpdate = true // make the lines follow the points
+        })
+        .onComplete(function () {
+          environment.lineGroup.needsUpdate = false
+          environment.distributionCloud.createDistributionPoints(time)
+          environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
+          self.distroCloudBirth({
+            time : time,
+            easing : TWEEN.Easing.Exponential.Out
+          })
+        })
+  })
+
+};
+
+TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoint) {
+
+  var self = this
+  var environment = this.environment
+  var time = this.environment.currentWeek
+  var deathTweens = this.distroCloudDeath() // returns a promise
+  var lastDeathTween = _.last(deathTweens)
+      .onComplete(function () {
+        environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+        environment.target.updatePosition(self.environment.focussedPoint)
+        environment.distributionCloud.selectedStakeholder = sHPoint
+        environment.distributionCloud.createDistributionPoints(time)
+        environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
+        self.distroCloudBirth({
+          time : time,
+          easing : TWEEN.Easing.Exponential.Out
+        })
+
+      })
+}
+
+TweenController.prototype.updateSelectedStakeholderDistroConnectionsViews = function(sHPoint) {
+  var self = this
+  var environment = this.environment
+  var time = this.environment.currentWeek
+  var deathTweens = this.distroCloudDeath() // returns a promise
+  var lastDeathTween = _.last(deathTweens)
+      .onComplete(function () {
+        environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+        environment.target.updatePosition(self.environment.focussedPoint)
+        environment.distributionCloud.selectedStakeholder = sHPoint
+        environment.distributionCloud.createDistributionPoints(time)
+        environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
+        self.distroCloudBirth({
+          time : time,
+          easing : TWEEN.Easing.Exponential.Out
+        })
+
+        self.replaceLines(sHPoint)
+
+      })
+};
+
+
 
 
     // tween already returns a promise
