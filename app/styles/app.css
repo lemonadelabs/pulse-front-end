@@ -4,6 +4,7 @@
 @import "stakeholder-modal.css";
 @import "stakeholder-view-mode-window.css";
 @import "time-series.css";
+@import "nav-bar.css";
 
 /* apply a natural box layout model to all elements, but allowing components to change */
 html {

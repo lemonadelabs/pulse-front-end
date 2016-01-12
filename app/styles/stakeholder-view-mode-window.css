@@ -15,11 +15,13 @@
 }
 
 .stakeholder-view-mode-window .window-title {
+  width: intrinsic;
   position: relative;
+  top: -25px;
+  margin-top: 0;
   margin-left: auto;
   margin-right: auto;
-  margin-top: -25px;
-  margin-bottom: -3px;
+  margin-bottom: -25px;
   font-size: 10pt;
   font-weight: 900;
   padding: 0.25em 0.5em;
