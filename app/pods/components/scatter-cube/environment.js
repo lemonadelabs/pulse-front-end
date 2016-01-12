@@ -304,7 +304,8 @@ export default function environment (component) {
       addObjectsToScene(self.distributionCloud.distributionPoints)
       self.tweenController.distroCloudBirth({
         time : self.currentWeek,
-        easing : TWEEN.Easing.Exponential.In
+        duration : 400,
+        easing : TWEEN.Easing.Quadratic.Out
       })
     }
 
