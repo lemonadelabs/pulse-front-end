@@ -22,14 +22,26 @@ export default Ember.Component.extend({
     this.get('updateStakeholder')(shInfo);
   },
 
-  checkIfUpdatedTime: function ( ){
+  checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
     this._environment.updateTime(time)
   }.observes('selectedTime'),
 
-  checkUndefinedStakeholder: function ( ){
+  checkUndefinedStakeholder: function (){
     if(this.get('selectedStakeholder')===undefined){
       this._environment.noSelectedStakeholder()
     }
-  }.observes('selectedStakeholder')
+  }.observes('selectedStakeholder'),
+
+  onUpdateConnectionsView: function () {
+    this._environment.connectionViewUpdated()
+  }.observes('connectionView'),
+
+  onUpdateDistributionView: function () {
+    this._environment.distributionViewUpdated()
+  }.observes('distributionView'),
+
+  onUpdateHistoryView: function () {
+    this._environment.historyViewUpdated()
+  }.observes('historyView'),
 });

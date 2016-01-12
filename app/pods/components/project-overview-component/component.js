@@ -22,14 +22,12 @@ export default Ember.Component.extend({
     },
 
     toggleConnections(){
-      console.log("toggleConnections action");
       if(this.get("connectionView")){
         this.set("connectionView", false)
       }
       else{
         this.set("connectionView", true)
       }
-      console.log(this.get("connectionView"));
     },
 
     toggleDistribution(){

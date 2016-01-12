@@ -111,6 +111,25 @@ export default function environment (component) {
       }
     })
 
+    /////////////////////// Toggle component view modes ///////////////////////
+
+    this.connectionViewUpdated = function () {
+      if (this.component.connectionView) {
+        self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
+        self.addObjectsToScene(this.lineGroup.primaryConnections)
+      } else {
+        this.removeConnectingLines()
+      }
+    }
+
+    this.distributionViewUpdated = function () {
+
+    }
+
+    this.historyViewUpdated = function () {
+
+    }
+
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
     this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
