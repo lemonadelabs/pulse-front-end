@@ -105,7 +105,7 @@ export default function environment (component) {
       } else if (self.component.connectionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationView(time)
       } else if (self.component.distributionView && self.focussedPoint) {
-        self.tweenController.updateTimeDistroView()
+        self.tweenController.updateTimeDistroView(time)
       } else {
         self.tweenController.updateTimeNoViews(time)
       }

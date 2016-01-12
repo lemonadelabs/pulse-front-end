@@ -59,6 +59,7 @@ TweenController.prototype.updateSHPoints = function(time) {
   var tweens = []
   var pointCloud = this.environment.pointCloud
 
+
   _.forEach(pointCloud.sHPointClickTargets, createPointTweens)
   _.forEach(pointCloud.sHPoints, createPointTweens)
 
@@ -97,9 +98,7 @@ TweenController.prototype.updateTimeRelationView = function(time) {
   var lastTween = _.last(sHPointTweens)
 
   lastTween.onUpdate(function () {
-    if (self.environment.focussedPoint) {
-      self.environment.target.updatePosition(self.environment.focussedPoint)
-    } // make the target follow the point
+    self.environment.target.updatePosition(self.environment.focussedPoint) // make the target follow the point
     self.environment.lineGroup.needsUpdate = true // make the lines follow the points
   })
 
@@ -109,34 +108,26 @@ TweenController.prototype.updateTimeRelationView = function(time) {
 };
 
 TweenController.prototype.updateTimeDistroView = function(time) {
-
-};
-
-TweenController.prototype.onUpdateTime = function(time) {
   var self = this
   var environment = this.environment
-  var birthTweens
-
 
   var deathTweens = this.distroCloudDeath() // returns a promise
-
   var lastDeathTween = _.last(deathTweens)
 
   lastDeathTween.onComplete( function () {
-
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
 
-    environment.distributionCloud.createDistributionPoints(time)
-
-    // animate the points!!!
-
-    environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-
-    birthTweens = self.distroCloudBirth(time)
-
-
+    var sHPointTweens = self.updateSHPoints(time)
+    var lastSHPointTween = _.last(sHPointTweens)
+        .onUpdate(function () {
+          self.environment.target.updatePosition(self.environment.focussedPoint)
+        })
+        .onComplete(function () {
+          environment.distributionCloud.createDistributionPoints(time)
+          environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
+          var birthTweens = self.distroCloudBirth(time)
+        })
   })
-
 
 };
 
