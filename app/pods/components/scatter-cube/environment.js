@@ -100,9 +100,9 @@ export default function environment (component) {
     })
 
     this.onUpdateTimeFcts.push(function (time) {
-      if (self.component.relationshipView && self.component.distributionView && self.focussedPoint) {
+      if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationDistroViews()
-      } else if (self.component.relationshipView && self.focussedPoint) {
+      } else if (self.component.connectionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationView(time)
       } else if (self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeDistroView()
@@ -194,7 +194,7 @@ export default function environment (component) {
     this.onPointClickFcts.push( function (sHPoint) {
       self.removeConnectingLines()
 
-      if (self.component.relationshipView) {
+      if (self.component.connectionView) {
         self.lineGroup.drawConnections(sHPoint, self.currentWeek)
         self.addObjectsToScene(self.lineGroup.primaryConnections)
       }
@@ -206,7 +206,7 @@ export default function environment (component) {
 
     // this.onUpdateTimeFcts.push(function (time) {
       // self.removeConnectingLines()
-    //   if (self.component.relationshipView && self.focussedPoint) {
+    //   if (self.component.connectionView && self.focussedPoint) {
     //     self.lineGroup.drawConnections(self.focussedPoint, time)
     //     addObjectsToScene(self.lineGroup.primaryConnections)
     //   }
