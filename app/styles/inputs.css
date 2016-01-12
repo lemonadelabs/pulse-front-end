@@ -1,6 +1,7 @@
 input:focus,button { outline: none; }
 /*----- Button styling-----*/
 button{
+  perspective: 1000px;
   transition: color 250ms;
   border:solid white 2px;
   position: relative;
@@ -18,10 +19,12 @@ button:hover,button:focus{
   color: var(--pulseBlack);
 }
 
-button:hover::after,button:focus::after{
+button:active::after,button:hover::after,button:focus::after{
   opacity: 1;
 }
-
+button:active::after{
+  transform: translateZ(-50px);
+}
 button::after{
   z-index: -1;
   content: "";
