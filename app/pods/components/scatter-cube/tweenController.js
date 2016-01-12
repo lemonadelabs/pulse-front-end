@@ -21,7 +21,6 @@ TweenController.prototype.distroCloudBirth = function(opts) {
 
   var points = this.environment.distributionCloud.distributionPoints
 
-  console.log(opts)
   var data = self.environment.distributionCloud.data[opts.time]
 
 
