@@ -88,12 +88,36 @@ TweenController.prototype.updateSHPoints = function(opts) {
   return tweens
 };
 
-TweenController.prototype.replaceLines = function(sHPoint) {
-  var environment = this.environment
-  environment.removeConnectingLines()
-  environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
-  environment.addObjectsToScene(environment.lineGroup.primaryConnections)
+TweenController.prototype.fadeInConnections = function(opts) {
+  var tweens = []
+  var connections = this.environment.lineGroup.primaryConnections
+
+  _.forEach(connections, function (connection) {
+    var destinationOpacity = connection.mesh.material.opacity
+    connection.mesh.material.opacity = 0
+    var tween = new TWEEN.Tween(connection.mesh.material)
+        .to({opacity: destinationOpacity}, opts.duration)
+        .easing(opts.easing)
+        .start();
+    tweens.push(tween)
+  })
+  return tweens
 };
+
+TweenController.prototype.fadeOutConnections = function(opts) {
+  var tweens = []
+  var connections = this.environment.lineGroup.primaryConnections
+
+  _.forEach(connections, function (connection) {
+    var tween = new TWEEN.Tween(connection.mesh.material)
+        .to({opacity: 0}, opts.duration)
+        .easing(opts.easing)
+        .start();
+    tweens.push(tween)
+  })
+  return tweens
+};
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// chained animations //////////////////////////////////////
@@ -240,6 +264,38 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time) {
 
 ////////////////////////////////////// updateSelectedStakeholder //////////////////////////////////////
 
+TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHPoint) {
+  var self = this
+  var environment = this.environment
+
+  environment.target.updatePosition(sHPoint)
+
+  if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
+    var fadeOutTweens = this.fadeOutConnections({
+      duration : 150,
+      easing : TWEEN.Easing.Quadratic.In
+    })
+
+    var lastFadeOutTween = _.last(fadeOutTweens)
+    lastFadeOutTween.onComplete(function () {
+      environment.removeConnectingLines()
+      environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+      environment.addObjectsToScene(environment.lineGroup.primaryConnections)
+      self.fadeInConnections({
+        duration : 500,
+        easing : TWEEN.Easing.Quadratic.Out
+      })
+    })
+  } else {
+    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
+    self.fadeInConnections({
+      duration : 500,
+      easing : TWEEN.Easing.Quadratic.Out
+    })
+  }
+};
+
 TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoint) {
 
   var self = this
@@ -268,14 +324,15 @@ TweenController.prototype.updateSelectedStakeholderDistroConnectionsViews = func
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
-  var deathTweens = this.distroCloudDeath({
+
+  var cloudDeathTweens = this.distroCloudDeath({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
   })
-  var lastDeathTween = _.last(deathTweens)
+  var lastDeathTween = _.last(cloudDeathTweens)
   .onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
-    environment.target.updatePosition(environment.focussedPoint)
+    environment.target.updatePosition(sHPoint)
     environment.distributionCloud.selectedStakeholder = sHPoint
     environment.distributionCloud.createDistributionPoints(time)
     environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
@@ -284,6 +341,21 @@ TweenController.prototype.updateSelectedStakeholderDistroConnectionsViews = func
       duration : 500,
       easing : TWEEN.Easing.Quadratic.Out
     })
-    self.replaceLines(sHPoint)
+
+    environment.removeConnectingLines()
+    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
+    self.fadeInConnections({
+      duration : 150,
+      easing : TWEEN.Easing.Quadratic.Out
+    })
   })
+
+  if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
+    this.fadeOutConnections({
+      duration : 300,
+      easing : TWEEN.Easing.Quadratic.In
+    })
+  }
 }
+

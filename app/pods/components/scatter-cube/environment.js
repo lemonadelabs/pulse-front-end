@@ -159,8 +159,7 @@ export default function environment (component) {
       if (self.component.connectionView && self.component.distributionView) {
         self.tweenController.updateSelectedStakeholderDistroConnectionsViews(sHPoint)
       } else if (self.component.connectionView) {
-        self.tweenController.replaceLines(sHPoint)
-        self.target.updatePosition(sHPoint)
+        self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
       } else if (self.component.distributionView) {
         self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
       } else {
@@ -180,8 +179,20 @@ export default function environment (component) {
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
         self.addObjectsToScene(this.lineGroup.primaryConnections)
+        self.tweenController.fadeInConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.Out
+        })
       } else {
-        this.removeConnectingLines()
+        var tweens = self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        })
+        if (!_.isEmpty(tweens)) {
+          _.last(tweens).onComplete(function () {
+            self.removeConnectingLines()
+          })
+        }
       }
     }
 
