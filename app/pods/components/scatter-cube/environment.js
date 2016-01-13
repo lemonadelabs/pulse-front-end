@@ -55,16 +55,11 @@ export default function environment (component) {
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
 
-    // this.onPointClickFcts.push( function (sHPoint) { // makes camera focus on selected point
-    //   self.controls.target.copy(sHPoint.mesh.position)
-    // })
-
     this.onRenderFcts.push(this.controls.update)
 
     /////////////////////////// set up scene /////////////////////////////
 
     this.scene = new THREE.Scene();
-
 
     /////////////////////////// set up renderer /////////////////////////////
 
@@ -83,15 +78,58 @@ export default function environment (component) {
 
     var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
 
-    ///////////////////////////////////// Axis Helper ////////////////////////////////////////
-
-    // Add axis helper to show axis in x (red) and y (green) z (blue) direction, remove later
-    // var axisHelper = new THREE.AxisHelper( 10000 );
-    // this.scene.add( axisHelper );
-
     //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
 
     this.jSONloader = new THREE.JSONLoader()
+
+    ///////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////// UTILITIES ////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////// adding & removing objects from scene /////////////////////////////////
+
+    this.addObjectsToScene = function (objects) {
+      forEach(objects, self.addObjectToScene)
+    }
+
+    this.addObjectToScene = function (object) {
+      self.scene.add(object.mesh)
+    }
+
+    this.removeObjectFromScene = function (object) {
+      self.scene.remove( object.mesh )
+    }
+
+    this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
+      forEach( objects, self.removeObjectFromScene )
+    }
+
+    //////////////////////////////////// billboarding ////////////////////////////////////////////////
+
+    this.billboardObjects = function (objects) {
+      forEach(objects, function(object) {
+        self.billboardObject(object)
+      })
+    }
+
+    this.billboardObject = function (object) {
+      object.mesh.quaternion.copy( self.camera.quaternion )
+    }
+
+    ///////////////////// logic when stakeholder modal is closed ////////////////////////
+
+    this.noSelectedStakeholder = function () {
+      this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
+        noSelectedStakeholderFct()
+      })
+    }
+
+    this.updateTime = function (time) {
+      self.currentWeek = time
+      this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
+        onUpdateTimeFct(time)
+      })
+    }
 
     /////////////////////// Create Tween Controller ///////////////////////
 
@@ -119,14 +157,10 @@ export default function environment (component) {
 
     this.onPointClickFcts.push(function (sHPoint) {
       if (self.component.connectionView && self.component.distributionView) {
-
         self.tweenController.updateSelectedStakeholderDistroConnectionsViews(sHPoint)
-
       } else if (self.component.connectionView) {
-
         self.tweenController.replaceLines(sHPoint)
         self.target.updatePosition(sHPoint)
-
       } else if (self.component.distributionView) {
         self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
       } else {
@@ -153,7 +187,7 @@ export default function environment (component) {
 
     this.distributionViewUpdated = function () {
       if (this.component.distributionView) {
-        buildDistributionCloud()
+        self.tweenController.buildDistroCloud()
       } else {
         this.tweenController.removeDistroCloud()
       }
@@ -174,7 +208,7 @@ export default function environment (component) {
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
 
     this.axisGuides = new AxisGuides()
-    addObjectsToScene(this.axisGuides.lines)
+    this.addObjectsToScene(this.axisGuides.lines)
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
@@ -182,25 +216,25 @@ export default function environment (component) {
       self.dangerZone = new DangerZone({
         geometry : geometry
       })
-      addObjectToScene(self.dangerZone)
+      self.addObjectToScene(self.dangerZone)
     })
 
 
     //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
 
-    var labelGroup = new LabelGroup({
+    this.labelGroup = new LabelGroup({
       scene: this.scene,
       camera: this.camera
     })
 
-    labelGroup.createLabels()
+    this.labelGroup.createLabels()
 
     this.onRenderFcts.push(function () {
-      labelGroup.updateLocation(self.camera.position)
+      self.labelGroup.updateLocation(self.camera.position)
     })
 
     this.onRenderFcts.push(function () {
-      billboardObjects(labelGroup.labels)
+      self.billboardObjects(self.labelGroup.labels)
     })
 
     ///////////////////// Create Target ////////////////////////
@@ -211,10 +245,10 @@ export default function environment (component) {
         geometry : geometry
       })
 
-      addObjectToScene(self.target)
+      self.addObjectToScene(self.target)
 
       self.onRenderFcts.push(function () {
-        billboardObject(self.target)
+        self.billboardObject(self.target)
       })
 
       // hide target
@@ -235,46 +269,35 @@ export default function environment (component) {
     })
 
     this.removeConnectingLines = function() {
-      removeObjectsFromScene(self.lineGroup.primaryConnections)
+      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
       self.lineGroup.primaryConnections = []
     }
-
-    // this.onPointClickFcts.push( function (sHPoint) {
-    //   self.removeConnectingLines()
-
-    //   if (self.component.connectionView) {
-    //     self.lineGroup.drawConnections(sHPoint, self.currentWeek)
-    //     self.addObjectsToScene(self.lineGroup.primaryConnections)
-    //   }
-    // })
 
     this.onRenderFcts.push(function () {
       self.lineGroup.update()
     })
-
-    // this.onUpdateTimeFcts.push(function (time) {
-      // self.removeConnectingLines()
-    //   if (self.component.connectionView && self.focussedPoint) {
-    //     self.lineGroup.drawConnections(self.focussedPoint, time)
-    //     addObjectsToScene(self.lineGroup.primaryConnections)
-    //   }
-    // })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
     this.pointCloud = new PointCloud({
       data: self.stakeholders,
       timeFrame: self.metaData[0].timeFrame,
-      lineGroup: self.lineGroup,
-      environment: this
-    }) // todo make this more efficient, maybe share material between points, or find a more efficient way to render the clickTargets
+    })
 
     this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 
-    addObjectsToScene(this.pointCloud.sHPointClickTargets)
-    addObjectsToScene(this.pointCloud.sHPoints)
+    this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
+    this.addObjectsToScene(this.pointCloud.sHPoints)
 
-    forEach(this.pointCloud.sHPointClickTargets, addListnerSHPoint) // apply event listner to points
+    this.addListnerSHPoint = function (sHPoint) {
+      var mesh = sHPoint.mesh
+      domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
+      }, false)
+    }
+    forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
 
     this.onPointClickFcts.push( function (sHPoint) {
       self.focussedPoint = sHPoint
@@ -298,110 +321,23 @@ export default function environment (component) {
 
     this.distributionCloud = new DistributionCloud()
 
-    function buildDistributionCloud () {
-      self.distributionCloud.selectedStakeholder = self.focussedPoint
-      self.distributionCloud.createDistributionPoints(self.currentWeek)
-      addObjectsToScene(self.distributionCloud.distributionPoints)
-      self.tweenController.distroCloudBirth({
-        time : self.currentWeek,
-        duration : 400,
-        easing : TWEEN.Easing.Quadratic.Out
-      })
-    }
-
     this.onRenderFcts.push( function () { // update color of point
       if (self.component.distributionView && self.focussedPoint) {
         forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
+          // dont update if they are being animated!!
           if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
         })
-
       }
     })
 
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////// UTILITIES ////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
-
-    //////////////////// processing for when you click a point ////////////////////////
-
-    function addListnerSHPoint (sHPoint) {  // apply event listner to points
-      var mesh = sHPoint.mesh
-      domEvents.addEventListener(mesh, 'click', function(){
-        self.onPointClickFcts.forEach( function(onPointClickFct) {
-          onPointClickFct(sHPoint)
-        })
-      }, false)
-    }
-
-    ///////////////////////// adding & removing objects from scene /////////////////////////////////
-
-    function addObjectToScene (object) {
-      self.scene.add(object.mesh)
-    }
-
-    function addObjectsToScene(objects) {
-      forEach(objects, addObjectToScene)
-    }
-
-    this.addObjectsToScene = function (objects) {
-      forEach(objects, addObjectToScene)
-    }
-
-    function removeObjectFromScene(object) {
-      self.scene.remove( object.mesh )
-    }
-
-    function removeObjectsFromScene (objects) {
-      forEach( objects, removeObjectFromScene )
-    }
-
-    this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
-      forEach( objects, removeObjectFromScene )
-    }
-
-    //////////////////////////////////// billboarding ////////////////////////////////////////////////
-
-    function billboardObjects (objects) {
-      forEach(objects, function(object) {
-        billboardObject(object)
-      })
-    }
-
-    function billboardObject(object) {
-      object.mesh.quaternion.copy( self.camera.quaternion )
-    }
-
-    ///////////////////// logic when stakeholder modal is closed ////////////////////////
-
-    this.noSelectedStakeholder = function () {
-      this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
-        noSelectedStakeholderFct()
-      })
-    }
-
-    ///////////////////// Aimate Point Cloud Point Cloud ////////////////////////
-
-    this.onUpdateTimeFcts.push( function (time) {
-      // self.pointCloud.updatePositions(time)
-    })
-
-    this.updateTime = function (time) {
-      self.currentWeek = time
-      this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
-        onUpdateTimeFct(time)
-      })
-    }
-
     //////////////////////////////////////////////////////////////////////////////
-    //    render the scene            //
+    //                         render the scene                                 //
     //////////////////////////////////////////////////////////////////////////////
 
     this.onRenderFcts.push(function(){
       self.renderer.render( self.scene, self.camera );
     })
+
   }
 
   environment.render = function () {
@@ -425,9 +361,7 @@ export default function environment (component) {
 
       // update TWEEN functions
       TWEEN.update(nowMsec);
-
     })
-
   }
 
   return environment

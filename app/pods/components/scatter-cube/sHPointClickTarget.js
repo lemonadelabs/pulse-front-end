@@ -6,8 +6,6 @@ export default function SHPointClickTarget (opts) {
   this.organisation = opts.organisation,
   this.role = opts.role,
   this.tags = opts.tags,
-  this.lineGroup = opts.lineGroup,
-  this.environment = opts.environment,
 
   this.mesh = this.createMesh(opts.timeFrame)
 }
@@ -43,23 +41,4 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
 
 
   return point
-}
-
-SHPointClickTarget.prototype.animate = function(week) {
-  var x = (this.weeks[week].power) * 1.8  + 0.1
-  var y = (this.weeks[week].support) * 1.8  + 0.1
-  var z = (this.weeks[week].vital) * 1.8  + 0.1
-
-  var self = this
-  var xTween = new TWEEN.Tween(this.mesh.position)
-      .to({x: x, y: y, z: z}, 1500)
-      .easing(TWEEN.Easing.Exponential.Out)
-      .onUpdate(function () {
-        self.lineGroup.needsUpdate = true // make the lines follow the points
-        if (self.environment.focussedPoint) { self.environment.target.updatePosition(self.environment.focussedPoint) } // make the target follow the point
-      })
-      .onComplete(function () {
-        self.lineGroup.needsUpdate = false
-      })
-      .start();
 }
