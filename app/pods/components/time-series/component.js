@@ -6,6 +6,8 @@ export default Ember.Component.extend({
   setupTimeSeries: function() {
     var metadata = this.metadata[0]
     this.selectedTime = metadata.timeFrame;
+    //reset the timeSeries
+    this.set("timeSeries",[]);
     for (var i = 1; i <= metadata.timeFrame; i++) {
       var selected = false;
       if(i === metadata.timeFrame){
