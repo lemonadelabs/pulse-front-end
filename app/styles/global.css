@@ -68,3 +68,23 @@ body {
   border-bottom: solid 1px white;
   border-right: solid 1px white;
 }
+
+.title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.title-text{
+  font-size: 10pt;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+.title-rule {
+  flex-grow: 1;
+  height: 1px;
+  border: none;
+  background-color: color(white alpha(-40%))
+}

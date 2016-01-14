@@ -6,10 +6,10 @@
   <p class="stakeholder-info">{{this.selectedStakeholder.organisation}}</p>
   <p class="stakeholder-info">{{this.selectedStakeholder.role}}</p>
 </div>
-<header class="stakeholder-title-header">
-  <hr class="stakeholder-title-rule">
-  <h2 class="stakeholder-title" >tags</h2>
-  <hr class="stakeholder-title-rule">
+<header class="title-container">
+  <hr class="title-rule">
+  <h2 class="title-text" >tags</h2>
+  <hr class="title-rule">
 </header>
 <section class="stakeholder-tags-section">
   {{#if this.selectedStakeholder.tags}}
@@ -19,10 +19,10 @@
     <p class="stakeholder-no-data">There are no tags for this stakeholder.</p>
   {{/if}}
 </section>
-<header class="stakeholder-title-header">
-  <hr class="stakeholder-title-rule">
-  <h2 class="stakeholder-title" >stats</h2>
-  <hr class="stakeholder-title-rule">
+<header class="title-container">
+  <hr class="title-rule">
+  <h2 class="title-text" >stats</h2>
+  <hr class="title-rule">
 </header>
 <section>
   {{stakeholder-stats data=this.selectedStakeholder.weeks}}
@@ -32,10 +32,10 @@
     {{!-- <p class="stakeholder-no-data">There are no stats for this stakeholder.</p> --}}
   {{!-- {{/if}} --}}
 </section>
-<header class="stakeholder-title-header">
-  <hr class="stakeholder-title-rule">
-  <h2 class="stakeholder-title" >notes</h2>
-  <hr class="stakeholder-title-rule">
+<header class="title-container">
+  <hr class="title-rule">
+  <h2 class="title-text" >notes</h2>
+  <hr class="title-rule">
 </header>
 <section>
   {{#if this.selectedStakeholder.notes}}
