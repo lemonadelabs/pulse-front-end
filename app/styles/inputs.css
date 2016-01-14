@@ -107,6 +107,7 @@ input[type="checkbox"] + label .checkbox-toggle::after{
   padding-top: 0.5em;
   opacity: 0;
   background-color: var(--teal);
+  color: var(--darkBlue)
 }
 
 input[type="checkbox"]:checked + label .checkbox-toggle{
