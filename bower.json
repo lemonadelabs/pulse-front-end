@@ -32,6 +32,7 @@
     "three.js": "threejs#*",
     "threex.domevents": "*",
     "chroma-js": "~1.1.1",
-    "chartist": "~0.9.5"
-    }
+    "chartist": "~0.9.5",
+    "masonry": "~3.3.2"
+  }
 }
