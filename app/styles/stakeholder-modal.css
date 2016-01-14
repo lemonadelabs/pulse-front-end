@@ -89,26 +89,6 @@
   margin: 8px 0px 8px;
 }
 
-.stakeholder-title-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.stakeholder-title{
-  font-size: 10pt;
-  letter-spacing: 0.19em;
-  text-transform: uppercase;
-  margin-left: 1em;
-  margin-right: 1em;
-}
-.stakeholder-title-rule {
-  flex-grow: 1;
-  height: 1px;
-  border: none;
-  background-color: color(white alpha(-40%))
-}
-
 .stakeholder-stats {
   width: 100%;
 }

@@ -42,6 +42,7 @@ module.exports = function(defaults) {
   app.import('bower_components/threex.windowresize/threex.windowresize.js')
   app.import('bower_components/lodash/lodash.js')
   app.import('bower_components/tween.js/src/Tween.js')
+  app.import('bower_components/masonry/dist/masonry.pkgd.js')
 
 
   // Use `app.import` to add additional libraries to the generated

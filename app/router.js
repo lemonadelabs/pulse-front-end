@@ -7,6 +7,7 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('project-overview');
+  this.route('select-project');
 });
 
 export default Router;
