@@ -15,14 +15,13 @@
 }
 
 .project-card-title{
-  position: absolute;
+  position: relative;
   font-size: 12pt;
   font-weight: 900;
   color: var(--pulseBlack);
   background-color: var(--teal);
   padding: 0.25em 0.5em;
-  width: intrinsic;
-  position: relative;
+  width: max-content;
   margin-left: auto;
   margin-right: auto;
   margin-top: 0px;
