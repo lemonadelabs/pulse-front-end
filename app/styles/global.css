@@ -1,0 +1,70 @@
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  color: white;
+  background-color: var(--pulseBlack);
+  font-family: "neuzeit-grotesk";
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures, contextual;
+  font-feature-settings: "kern", "liga", "clig", "calt";
+}
+
+[data-ember-action]{
+  cursor: pointer;
+}
+
+.page-title{
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
+  font-size: 20pt;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.action-footer{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-image: linear-gradient( to bottom, color(var(--pulseBlack) alpha(0)) , var(--pulseBlack) 40%);
+}
+.fancy-corners{
+  position: relative;
+}
+.fancy-corners::before{
+  content: "";
+  display: block;
+  width: 0.6rem;
+  height: 0.6rem;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  border-top: solid 1px white;
+  border-left: solid 1px white;
+}
+
+.fancy-corners::after{
+  content: "";
+  display: block;
+  width: 0.6rem;
+  height: 0.6rem;
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
+}
