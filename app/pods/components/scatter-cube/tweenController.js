@@ -67,11 +67,69 @@ TweenController.prototype.distroCloudDeath = function(opts) {
 };
 
 TweenController.prototype.updateSHPoints = function(opts) {
+  var self = this
   var tweens = []
-  var pointCloud = this.environment.pointCloud
+  var environment = this.environment
+  var pointCloud = environment.pointCloud
 
-  _.forEach(pointCloud.sHPointClickTargets, createPointTweens)
-  _.forEach(pointCloud.sHPoints, createPointTweens)
+  var deltaT = Math.abs(opts.time - opts.oldTime)
+
+  if (deltaT <= 2 ) { // make the animations follow the curve
+    allPointsFromCurve()
+  } else if ( ( deltaT >= 3 ) && environment.component.historyView && environment.focussedPoint ) { // linear, focussed point is curvy
+    linearAndCurve()
+  } else { // all linear animations
+    allPointsLinear()
+  }
+
+  function linearAndCurve() {
+    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
+      if (pointCloud.sHPointClickTargets[i].id === environment.focussedPoint.id) {
+        createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
+        createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
+      } else {
+        createPointTweens(pointCloud.sHPoints[i])
+        createPointTweens(pointCloud.sHPointClickTargets[i])
+      }
+    }
+  }
+
+  function allPointsFromCurve () {
+    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
+      createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
+      createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
+    }
+  }
+
+  function allPointsLinear () {
+    _.forEach(pointCloud.sHPoints, function (sHPoint) {createPointTweens(sHPoint)} )
+    _.forEach(pointCloud.sHPointClickTargets, function (sHPoint) {createPointTweens(sHPoint)} )
+  }
+
+  function createPointTweensFromCurve (sHPoint, curve) {
+
+    if (curve) {
+      sHPoint.curveLocation = curveLocation(opts.oldTime)
+      var newCurveLocation = curveLocation(opts.time)
+
+      var tween = new TWEEN.Tween(sHPoint)
+
+          .to({curveLocation: newCurveLocation}, opts.duration)
+          .easing(opts.easing)
+          .onUpdate(function () {
+            sHPoint.mesh.position.copy(
+              curve.getPoint(sHPoint.curveLocation)
+            )
+          })
+          .start();
+      tweens.push(tween)
+    }
+  }
+
+  function curveLocation(week) {
+    var timeFrame = self.environment.metaData[0].timeFrame
+    return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
+  }
 
   function createPointTweens (sHPoint) {
     var x = (sHPoint.weeks[opts.time].power) * 1.8  + 0.1
@@ -83,8 +141,8 @@ TweenController.prototype.updateSHPoints = function(opts) {
         .easing(opts.easing)
         .start();
     tweens.push(tween)
-
   }
+
   return tweens
 };
 
@@ -151,10 +209,11 @@ TweenController.prototype.removeDistroCloud = function() {
 
 ////////////////////////////////////// updateTime //////////////////////////////////////
 
-TweenController.prototype.updateTimeNoViewsWithFocus = function(time) {
+TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
   var environment = this.environment
   var tweens = this.updateSHPoints({
     time : time,
+    oldTime : oldTime,
     easing: TWEEN.Easing.Exponential.Out,
     duration : 1500
   })
@@ -165,7 +224,7 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time) {
 };
 
 
-TweenController.prototype.updateTimeRelationView = function(time) {
+TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
   var environment = this.environment
 
   environment.removeConnectingLines()
@@ -174,6 +233,7 @@ TweenController.prototype.updateTimeRelationView = function(time) {
 
   var sHPointTweens = this.updateSHPoints({
     time : time,
+    oldTime : oldTime,
     easing: TWEEN.Easing.Exponential.Out,
     duration : 1500
   })
@@ -190,7 +250,7 @@ TweenController.prototype.updateTimeRelationView = function(time) {
   })
 }
 
-TweenController.prototype.updateTimeDistroView = function(time) {
+TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
 
   var self = this
   var environment = this.environment
@@ -206,6 +266,7 @@ TweenController.prototype.updateTimeDistroView = function(time) {
 
     var sHPointTweens = self.updateSHPoints({
       time : time,
+      oldTime : oldTime,
       easing : TWEEN.Easing.Linear.None,
       duration : 500
     })
@@ -225,7 +286,7 @@ TweenController.prototype.updateTimeDistroView = function(time) {
   })
 }
 
-TweenController.prototype.updateTimeRelationDistroViews = function(time) {
+TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime) {
   var self = this
   var environment = this.environment
 
@@ -240,6 +301,7 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time) {
 
     var sHPointTweens = self.updateSHPoints({
       time : time,
+      oldTime : oldTime,
       easing : TWEEN.Easing.Quadratic.InOut,
       duration : 500
     })

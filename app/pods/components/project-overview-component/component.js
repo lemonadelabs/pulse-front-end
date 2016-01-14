@@ -4,9 +4,9 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   selectedStakeholder: undefined,
   selectedTime: undefined,
-  connectionView:true,
+  connectionView:false,
   distributionView:false,
-  historyView:false,
+  historyView:true,
 
   actions : {
     userDidSelectStakeholder(stakeHolder) {
