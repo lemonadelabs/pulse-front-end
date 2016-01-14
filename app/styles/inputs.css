@@ -1,6 +1,7 @@
 input:focus,button { outline: none; }
 /*----- Button styling-----*/
 button{
+  cursor: pointer;
   perspective: 1000px;
   transition: color 250ms;
   border:solid white 2px;
