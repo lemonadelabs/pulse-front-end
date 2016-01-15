@@ -1,6 +1,6 @@
 .time-series-container{
   background-image: linear-gradient(180deg, rgba(34,37,40,0.00) 0%, #222528 50%);
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   width: 100%;
   height: 80px;
