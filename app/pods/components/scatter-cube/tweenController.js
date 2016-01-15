@@ -176,12 +176,90 @@ TweenController.prototype.fadeOutConnections = function(opts) {
   return tweens
 };
 
+TweenController.prototype.fadeInHistory = function(opts) {
+  var tweens = []
+  var lines = this.environment.historyTailGroup.historyTails
+
+  _.forEach(lines, function (line) {
+    var tween = new TWEEN.Tween(line.mesh.material)
+        .to({opacity: 1}, opts.duration)
+        .easing(opts.easing)
+        .onComplete(function () {
+          line.mesh.material.transparent = false
+        })
+        .start();
+    tweens.push(tween)
+  })
+  return tweens
+};
+
+TweenController.prototype.fadeOutHistory = function(opts) {
+  var tweens = []
+  var lines = this.environment.historyTailGroup.historyTails
+
+  _.forEach(lines, function (line) {
+    var tween = new TWEEN.Tween(line.mesh.material)
+        .to({opacity: 0}, opts.duration)
+        .easing(opts.easing)
+        .onStart(function () {
+          line.mesh.material.transparent = true
+        })
+        .start();
+    tweens.push(tween)
+  })
+  return tweens
+};
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// chained animations //////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////// simple //////////////////////////////////////
+
+TweenController.prototype.buildHistorytails = function(sHPoint) {
+  var environment = this.environment
+
+  environment.historyTailGroup.buildTails({
+    sHPoint : sHPoint
+  })
+
+  environment.addObjectsToScene(environment.historyTailGroup.historyTails)
+  var tweens = this.fadeInHistory({
+    duration : 300,
+    easing : TWEEN.Easing.Quadratic.Out
+  })
+  return _.last(tweens)
+};
+
+TweenController.prototype.removeHistoryTails = function () {
+  var environment = this.environment
+  var fadeOutTweens = this.fadeOutHistory({
+    duration : 300,
+    easing : TWEEN.Easing.Quadratic.In
+  })
+  var lastTween = _.last(fadeOutTweens)
+  return lastTween
+}
+
+TweenController.prototype.updateHistoryTail = function(sHPoint) {
+  var self = this
+  var environment = this.environment
+  var tween
+  if (_.isEmpty(environment.historyTailGroup.historyTails)) {
+    tween = this.buildHistorytails(sHPoint).onComplete(function () {
+      environment.target.updatePosition(environment.focussedPoint)
+    })
+  } else {
+    this.removeHistoryTails().onComplete(function () {
+      environment.removeObjectsFromScene(environment.historyTailGroup.historyTails)
+      environment.target.updatePosition(environment.focussedPoint)
+      self.buildHistorytails(sHPoint)
+    })
+  }
+  return tween
+};
 
 TweenController.prototype.buildDistroCloud = function() {
   var environment = this.environment
@@ -194,6 +272,8 @@ TweenController.prototype.buildDistroCloud = function() {
     easing : TWEEN.Easing.Quadratic.Out
   })
 };
+
+
 
 TweenController.prototype.removeDistroCloud = function() {
   var environment = this.environment
@@ -326,11 +406,18 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime
 
 ////////////////////////////////////// updateSelectedStakeholder //////////////////////////////////////
 
-TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHPoint) {
+TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHPoint) { // also history
   var self = this
   var environment = this.environment
 
   environment.target.updatePosition(sHPoint)
+
+  if (environment.component.historyView) {
+    var tween = _.last(self.fadeOutHistory({
+      duration : 150,
+      easing : TWEEN.Easing.Quadratic.In
+    }))
+    tween.onComplete(function () { environment.removeObjectsFromScene( environment.historyTailGroup.historyTails ) } ) }
 
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
     var fadeOutTweens = this.fadeOutConnections({
@@ -347,22 +434,30 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
         duration : 500,
         easing : TWEEN.Easing.Quadratic.Out
       })
+      self.buildHistorytails(sHPoint)
     })
-  } else {
+  } else { // clicking a point after having the modal closed
     environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
     self.fadeInConnections({
       duration : 500,
       easing : TWEEN.Easing.Quadratic.Out
     })
+
+    if (environment.component.historyView) self.buildHistorytails(sHPoint)
+      // fix this bug when the stakeholder modal is opened, the history trail flashes and goes away
+
   }
 };
 
-TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoint) {
+TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoint) { // also history
 
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
+
+  if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
+
   var deathTweens = this.distroCloudDeath({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
@@ -379,13 +474,16 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
       duration : 500,
       easing : TWEEN.Easing.Quadratic.Out
     });
+    if (environment.component.historyView) self.buildHistorytails(sHPoint)
   })
 }
 
-TweenController.prototype.updateSelectedStakeholderDistroConnectionsViews = function(sHPoint) {
+TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) {
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
+
+  if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
 
   var cloudDeathTweens = this.distroCloudDeath({
     duration : 300,
@@ -411,6 +509,9 @@ TweenController.prototype.updateSelectedStakeholderDistroConnectionsViews = func
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
+
+    if (environment.component.historyView) self.buildHistorytails(sHPoint)
+
   })
 
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {

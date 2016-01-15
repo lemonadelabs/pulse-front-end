@@ -1,7 +1,5 @@
 export default function DistributionPoint (opts) {
-  // this.data = opts.data
   this.selectedStakeholder = opts.selectedStakeholder
-  // this.currentWeek = opts.currentWeek
 
   this.mesh = this.createMesh()
 }
@@ -35,20 +33,6 @@ DistributionPoint.prototype.createMesh = function() {
   });
 
   var point = new THREE.Mesh( geometry, material );
-
-  // sets the position for each mesh
-  // var x = (this.data.power) * 1.8  + 0.1
-  // var y = (this.data.support) * 1.8  + 0.1
-  // var z = (this.data.vital) * 1.8  + 0.1
-
-
-  // var position = new THREE.Vector3();
-  // var weekData = this.selectedStakeholder.weeks[this.currentWeek] // initialize with the same posion as the sHPoint
-  // var x = (weekData.power) * 1.8  + 0.1
-  // var y = (weekData.support) * 1.8  + 0.1
-  // var z = (weekData.vital) * 1.8  + 0.1
-
-  // point.position.set(x, y, z)
 
   point.position.copy(this.selectedStakeholder.mesh.position)
 

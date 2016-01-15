@@ -11,7 +11,9 @@ HistoryTail.prototype.createMesh = function() {
   var material = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide,
     shading: THREE.FlatShading,
-    color: 0x1f6054
+    color: 0x1f6054,
+    transparent : true,
+    opacity : 0
   })
 
   var taper = function ( u ) { return u }

@@ -159,18 +159,14 @@ export default function environment (component) {
     })
 
     this.onPointClickFcts.push(function (sHPoint) {
-      if (self.component.connectionView && self.component.distributionView) {
-        self.tweenController.updateSelectedStakeholderDistroConnectionsViews(sHPoint)
-      } else if (self.component.connectionView) {
+      if (self.component.connectionView && self.component.distributionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderAllViews(sHPoint)
+      } else if (self.component.connectionView) { // also takes care of history view
         self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
-      } else if (self.component.distributionView) {
+      } else if (self.component.distributionView) { // also takes care of history view
         self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
       } else if (self.component.historyView) {
-        self.removeObjectsFromScene(self.historyTailGroup.historyTails)
-        self.historyTailGroup.buildTails({
-          sHPoint : sHPoint
-        })
-        self.addObjectsToScene(self.historyTailGroup.historyTails)
+        var tween = self.tweenController.updateHistoryTail(sHPoint)
       } else {
         self.target.updatePosition(sHPoint)
       }
@@ -215,12 +211,11 @@ export default function environment (component) {
 
     this.historyViewUpdated = function () {
       if (this.component.historyView) {
-        self.historyTailGroup.buildTails({
-          sHPoint : self.focussedPoint
-        })
-        self.addObjectsToScene(self.historyTailGroup.historyTails)
+        self.tweenController.buildHistorytails(self.focussedPoint)
       } else {
-        self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        })
       }
     }
 
@@ -292,7 +287,13 @@ export default function environment (component) {
     })
 
     this.noSelectedStakeholderFcts.push( function () {
-      self.removeConnectingLines()
+      var fadeOutTween = _.last(self.tweenController.fadeOutConnections({
+        duration : 300,
+        easing : TWEEN.Easing.Quadratic.In
+      }))
+      .onComplete( function () {
+        self.removeConnectingLines()
+      })
     })
 
     this.removeConnectingLines = function() {
@@ -360,6 +361,14 @@ export default function environment (component) {
     ///////////////////// Create history tail group ////////////////////////
 
     this.historyTailGroup = new HistoryTailGroup({})
+
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.historyView) {
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        })
+      }
+    })
 
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
