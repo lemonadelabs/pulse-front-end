@@ -1,32 +1,53 @@
 .stakeholder-view-mode-window{
-  transition: opacity 300ms;
-  position: absolute;
-  right: 30px;
-  bottom: 80px;
-  width: 160px;
-  height: 130px;
-  padding: 15px;
   background: color(var(--darkBlue) alpha(-5%));
   border: solid 1px var(--borderBlue);
+  bottom: 80px;
+  height: 130px;
+  opacity: 0;
+  padding: 15px;
+  position: absolute;
+  right: 30px;
+  transition: opacity 300ms;
+  width: 160px;
+}
+.stakeholder-view-mode-window .view-mode-controlls{
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: space-between;
-  opacity: 0;
+  width: 100%;
+  padding-top: 0.9em;
 }
-
 .stakeholder-view-mode-window .window-title {
-  width: intrinsic;
-  position: relative;
-  top: -25px;
-  margin-top: 0;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: -25px;
+  background-color: white;
+  color: color(var(--darkBlue));
   font-size: 10pt;
   font-weight: 900;
-  padding: 0.25em 0.5em;
   letter-spacing: 0.04em;
-  color: color(var(--darkBlue));
-  background-color: white;
+  margin-bottom: -2em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  padding: 0.25em 0.5em;
+  position: relative;
   text-transform: uppercase;
+  top: -2em;
+  width: max-content;
 }
+
+/*
+.project-card-title{
+  background-color: var(--teal);
+  color: var(--pulseBlack);
+  font-size: 12pt;
+  font-weight: 900;
+  margin-bottom: -2em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0px;
+  padding: 0.25em 0.5em;
+  position: relative;
+  text-transform: uppercase;
+  top:-2em;
+  width: max-content;
+}*/
