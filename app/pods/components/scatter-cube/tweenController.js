@@ -186,6 +186,7 @@ TweenController.prototype.fadeInHistory = function(opts) {
         .easing(opts.easing)
         .onComplete(function () {
           line.mesh.material.transparent = false
+
         })
         .start();
     tweens.push(tween)
@@ -194,6 +195,7 @@ TweenController.prototype.fadeInHistory = function(opts) {
 };
 
 TweenController.prototype.fadeOutHistory = function(opts) {
+  var self = this
   var tweens = []
   var lines = this.environment.historyTailGroup.historyTails
 
@@ -412,12 +414,17 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
 
   environment.target.updatePosition(sHPoint)
 
-  if (environment.component.historyView) {
+  if (environment.component.historyView) { // history tail stuff
     var tween = _.last(self.fadeOutHistory({
       duration : 150,
       easing : TWEEN.Easing.Quadratic.In
     }))
-    tween.onComplete(function () { environment.removeObjectsFromScene( environment.historyTailGroup.historyTails ) } ) }
+    tween.onComplete(function () {
+      console.log(environment.historyTailGroup.historyTails)
+      environment.removeObjectsFromScene( environment.historyTailGroup.historyTails )
+      self.buildHistorytails(sHPoint)
+    })
+  }
 
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
     var fadeOutTweens = this.fadeOutConnections({
@@ -434,7 +441,6 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
         duration : 500,
         easing : TWEEN.Easing.Quadratic.Out
       })
-      self.buildHistorytails(sHPoint)
     })
   } else { // clicking a point after having the modal closed
     environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
@@ -443,13 +449,6 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       duration : 500,
       easing : TWEEN.Easing.Quadratic.Out
     })
-
-    if (environment.component.historyView) {
-      self.buildHistorytails(sHPoint)
-      console.log('I should be building the tail right now')
-    }
-      // fix this bug when the stakeholder modal is opened, the history trail flashes and goes away
-
   }
 };
 
