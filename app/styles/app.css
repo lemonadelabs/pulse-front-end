@@ -7,6 +7,7 @@
 @import "stakeholder-view-mode-window.css";
 @import "time-series.css";
 @import "nav-bar.css";
+@import "name-badge.css";
 
 .scatter-cube{
   position: fixed;

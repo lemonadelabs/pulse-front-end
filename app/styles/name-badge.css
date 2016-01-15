@@ -1,0 +1,18 @@
+.name-badge {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  display: none;
+
+  background-color: white;
+  color: color(var(--darkBlue));
+  font-size: 10pt;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin: 0;
+  padding: 0.25em 0.25em;
+  /*position: relative;*/
+  text-transform: uppercase;
+  /*top: -2em;*/
+  /*width: max-content;*/
+}

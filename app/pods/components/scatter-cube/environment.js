@@ -24,6 +24,8 @@ export default function environment (component) {
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
   environment.onUpdateTimeFcts = []
+  environment.onMouseoverFcts = []
+  environment.onMouseoutFcts = []
   environment.currentWeek = undefined
 
 
@@ -319,6 +321,7 @@ export default function environment (component) {
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
 
+
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(){
@@ -326,7 +329,20 @@ export default function environment (component) {
           onPointClickFct(sHPoint)
         })
       }, false)
+
+      domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
+
+      domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
     }
+
     forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
 
     this.onPointClickFcts.push( function (sHPoint) {
@@ -340,6 +356,15 @@ export default function environment (component) {
     this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
       self.component.updateSelectedStakeholder(sHPoint)
     })
+
+    this.onMouseoverFcts.push(function (sHPoint) {
+      console.log(sHPoint.name)
+    })
+
+    this.onMouseoutFcts.push(function (sHPoint) {
+      console.log('mouseOut')
+    })
+
 
     this.onRenderFcts.push( function () {
       forEach(self.pointCloud.sHPoints, function (sHPoint) {
