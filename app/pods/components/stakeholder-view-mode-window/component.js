@@ -4,9 +4,9 @@ export default Ember.Component.extend({
   classNames: ['stakeholder-view-mode-window','fancy-corners'],
   classNameBindings: ['visible','ignore-pointer'],
   visible: false,
-  connections:true,
+  connections:false,
   distribution:false,
-  history:false,
+  history:true,
   "ignore-pointer":true,
   observeConnections:function(){
     this.get("toggleConnections")();

@@ -6,6 +6,7 @@ import PointCloud from './pointCloud';
 import DistributionCloud from './distributionCloud';
 import LineGroup from './lineGroup';
 import Target from './target';
+import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
 import data4Week from '../../../mockData/testDataMultiWeek'
 import getProjects from '../../../mockData/getProjects'
@@ -125,9 +126,10 @@ export default function environment (component) {
     }
 
     this.updateTime = function (time) {
+      var oldTime = self.currentWeek
       self.currentWeek = time
       this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
-        onUpdateTimeFct(time)
+        onUpdateTimeFct(time, oldTime)
       })
     }
 
@@ -137,18 +139,19 @@ export default function environment (component) {
       environment : this
     })
 
-    this.onUpdateTimeFcts.push(function (time) {
+    this.onUpdateTimeFcts.push(function (time, oldTime) {
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
-        self.tweenController.updateTimeRelationDistroViews(time)
+        self.tweenController.updateTimeRelationDistroViews(time, oldTime)
       } else if (self.component.connectionView && self.focussedPoint) {
-        self.tweenController.updateTimeRelationView(time)
+        self.tweenController.updateTimeRelationView(time, oldTime)
       } else if (self.component.distributionView && self.focussedPoint) {
-        self.tweenController.updateTimeDistroView(time)
+        self.tweenController.updateTimeDistroView(time, oldTime)
       } else if (self.focussedPoint) { // no views but with selected stakeholder
-        self.tweenController.updateTimeNoViewsWithFocus(time)
+        self.tweenController.updateTimeNoViewsWithFocus(time, oldTime)
       } else { // no viewsm no selected stakeholder
         self.tweenController.updateSHPoints({
           time : time,
+          oldTime : oldTime,
           easing : TWEEN.Easing.Exponential.Out,
           duration : 1500
         })
@@ -156,13 +159,14 @@ export default function environment (component) {
     })
 
     this.onPointClickFcts.push(function (sHPoint) {
-      if (self.component.connectionView && self.component.distributionView) {
-        self.tweenController.updateSelectedStakeholderDistroConnectionsViews(sHPoint)
-      } else if (self.component.connectionView) {
-        self.tweenController.replaceLines(sHPoint)
-        self.target.updatePosition(sHPoint)
-      } else if (self.component.distributionView) {
+      if (self.component.connectionView && self.component.distributionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderAllViews(sHPoint)
+      } else if (self.component.connectionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
+      } else if (self.component.distributionView) { // also takes care of history view
         self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
+      } else if (self.component.historyView) {
+        var tween = self.tweenController.updateHistoryTail(sHPoint)
       } else {
         self.target.updatePosition(sHPoint)
       }
@@ -180,8 +184,20 @@ export default function environment (component) {
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
         self.addObjectsToScene(this.lineGroup.primaryConnections)
+        self.tweenController.fadeInConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.Out
+        })
       } else {
-        this.removeConnectingLines()
+        var tweens = self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        })
+        if (!_.isEmpty(tweens)) {
+          _.last(tweens).onComplete(function () {
+            self.removeConnectingLines()
+          })
+        }
       }
     }
 
@@ -194,7 +210,13 @@ export default function environment (component) {
     }
 
     this.historyViewUpdated = function () {
-
+      if (this.component.historyView) {
+        self.tweenController.buildHistorytails(self.focussedPoint)
+      } else {
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        })
+      }
     }
 
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
@@ -265,7 +287,15 @@ export default function environment (component) {
     })
 
     this.noSelectedStakeholderFcts.push( function () {
-      self.removeConnectingLines()
+      if (self.component.connectionView) {
+        var fadeOutTween = _.last(self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        }))
+        .onComplete( function () {
+          self.removeConnectingLines()
+        })
+      }
     })
 
     this.removeConnectingLines = function() {
@@ -326,6 +356,18 @@ export default function environment (component) {
         forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
           // dont update if they are being animated!!
           if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
+        })
+      }
+    })
+
+    ///////////////////// Create history tail group ////////////////////////
+
+    this.historyTailGroup = new HistoryTailGroup({})
+
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.historyView) {
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
         })
       }
     })
