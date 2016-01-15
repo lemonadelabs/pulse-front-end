@@ -287,13 +287,15 @@ export default function environment (component) {
     })
 
     this.noSelectedStakeholderFcts.push( function () {
-      var fadeOutTween = _.last(self.tweenController.fadeOutConnections({
-        duration : 300,
-        easing : TWEEN.Easing.Quadratic.In
-      }))
-      .onComplete( function () {
-        self.removeConnectingLines()
-      })
+      if (self.component.connectionView) {
+        var fadeOutTween = _.last(self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        }))
+        .onComplete( function () {
+          self.removeConnectingLines()
+        })
+      }
     })
 
     this.removeConnectingLines = function() {
