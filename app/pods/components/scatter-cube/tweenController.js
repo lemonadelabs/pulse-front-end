@@ -420,7 +420,6 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       easing : TWEEN.Easing.Quadratic.In
     }))
     tween.onComplete(function () {
-      console.log(environment.historyTailGroup.historyTails)
       environment.removeObjectsFromScene( environment.historyTailGroup.historyTails )
       self.buildHistorytails(sHPoint)
     })
