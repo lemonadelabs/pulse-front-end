@@ -444,7 +444,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       easing : TWEEN.Easing.Quadratic.Out
     })
 
-    if (environment.component.historyView) self.buildHistorytails(sHPoint)
+    if (environment.component.historyView) {
+      self.buildHistorytails(sHPoint)
+      console.log('I should be building the tail right now')
+    }
       // fix this bug when the stakeholder modal is opened, the history trail flashes and goes away
 
   }
