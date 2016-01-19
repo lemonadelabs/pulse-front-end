@@ -1,3 +1,4 @@
+/* global THREE, THREEx, _ */
 import AxisGuideLine from './axisGuideLine';
 
 export default function AxisGuides () {
@@ -91,15 +92,18 @@ AxisGuides.prototype.createLines = function() {
     ]
   ]
 
-  _.forEach(linesVertices, function (vertices) {
-    lines.push(
-      new AxisGuideLine({
-        vertices: vertices,
-        material : self.material,
-      })
-    )
-  })
 
+
+
+  // todo: make the line segments all the same geometry. Also, maybe try and merge them with the cube geometry
+  // use THREE.LineSegment ???????
+
+  _.forEach(linesVertices, function (vertices) {
+    var line = new AxisGuideLine({
+      vertices : vertices,
+      material : self.material
+    })
+    lines.push(line)
+  })
   return lines
 }
-
