@@ -22,6 +22,10 @@ export default Ember.Component.extend({
     this.get('updateStakeholder')(shInfo);
   },
 
+  updateHoveredStakeholder: function (sHPoint) {
+    this.set('hoveredStakeholder', sHPoint)
+  },
+
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
     this._environment.updateTime(time)
