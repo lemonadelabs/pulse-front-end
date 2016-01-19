@@ -4,7 +4,7 @@ export default function data4Week() {
     {
       'id' : '0',
       'name' : 'Adrian Schnall',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/ryanbattles/128.jpg',
       'organisation' : 'Ministry of Health',
       'role' : 'Minister',
       'tags' : ['external'],
@@ -34,7 +34,7 @@ export default function data4Week() {
     {
       'id' : '1',
       'name' : 'Hemi Tomaz',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/ankitind/128.jpg',
       'organisation' : 'Ministry of Maori Affairs',
       'role' : 'Minister',
       'tags' : ['external'],
@@ -64,7 +64,7 @@ export default function data4Week() {
     {
       'id' : '2',
       'name' : 'Lee Wong',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/uxceo/128.jpg',
       'organisation' : 'Opposition',
       'role' : 'Shadow Minister',
       'tags' : ['external'],
@@ -94,7 +94,7 @@ export default function data4Week() {
     {
       'id' : '3',
       'name' : 'Melissa G',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/kfriedson/128.jpg',
       'organisation' : 'Ministry of Health',
       'role' : 'Director General',
       'tags' : ['external'],
@@ -124,7 +124,7 @@ export default function data4Week() {
     {
       'id' : '4',
       'name' : 'Adam Larkins',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/florianmascaro/128.jpg',
       'organisation' : 'Ministry of Health',
       'role' : 'General Manager - Funding',
       'tags' : ['external'],
@@ -154,7 +154,7 @@ export default function data4Week() {
     {
       'id' : '5',
       'name' : 'Edward Mcvey',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/bramk/128.jpg',
       'organisation' : 'Ministry of Health',
       'role' : 'General Manager - Primary Health Care',
       'tags' : ['external'],
@@ -184,7 +184,7 @@ export default function data4Week() {
     {
       'id' : '6',
       'name' : 'Pania Thorpe',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'http://www.teara.govt.nz/files/31565-pc.jpg',
       'organisation' : 'Local Authority',
       'role' : 'Councillor',
       'tags' : ['external'],
@@ -214,7 +214,7 @@ export default function data4Week() {
     {
       'id' : '7',
       'name' : 'Agnes Landes',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/mtnmissy/128.jpg',
       'organisation' : 'Local Authority',
       'role' : 'Mayor',
       'tags' : ['external'],
@@ -244,7 +244,7 @@ export default function data4Week() {
     {
       'id' : '8',
       'name' : 'Pita Maaka',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'http://www.teara.govt.nz/files/28353-nzh.jpg',
       'organisation' : 'Local Iwi',
       'role' : 'Kamatua',
       'tags' : ['external'],
@@ -274,7 +274,7 @@ export default function data4Week() {
     {
       'id' : '9',
       'name' : 'Dale Earley',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/joelcannon/128.jpg',
       'organisation' : 'Local DHB',
       'role' : 'CEO',
       'tags' : ['external'],
@@ -304,7 +304,7 @@ export default function data4Week() {
     {
       'id' : '10',
       'name' : 'Verna Lopez',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/taramann/128.jpg',
       'organisation' : 'DHBNZ',
       'role' : 'GM - PHO',
       'tags' : ['external'],
@@ -334,7 +334,7 @@ export default function data4Week() {
     {
       'id' : '11',
       'name' : 'Matthew Moss',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/flakerimi/128.jpg',
       'organisation' : 'DHBNZ',
       'role' : 'GM - Operations',
       'tags' : ['external'],
@@ -364,7 +364,7 @@ export default function data4Week() {
     {
       'id' : '12',
       'name' : 'Lillian Baumann',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/allisongrayce/128.jpg',
       'organisation' : 'DHBNZ',
       'role' : 'GM - Primary Health Care',
       'tags' : ['external'],
@@ -394,7 +394,7 @@ export default function data4Week() {
     {
       'id' : '13',
       'name' : 'Kenneth Maxie',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/joshaustin/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -424,7 +424,7 @@ export default function data4Week() {
     {
       'id' : '14',
       'name' : 'Leonard Luce',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/sortino/128.jpg',
       'organisation' : 'Midias PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -454,7 +454,7 @@ export default function data4Week() {
     {
       'id' : '15',
       'name' : 'Huhana Turner',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/toffeenutdesign/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -483,8 +483,8 @@ export default function data4Week() {
     },
     {
       'id' : '16',
-      'name' : 'Jo Rangi',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'name' : 'Jo Smith',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/stylecampaign/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -514,7 +514,7 @@ export default function data4Week() {
     {
       'id' : '17',
       'name' : 'Louis Hutchison',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/cacique/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -544,7 +544,7 @@ export default function data4Week() {
     {
       'id' : '18',
       'name' : 'Frank Clark',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/gorvard/128.jpg',
       'organisation' : 'Walcott Street Clinic',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -574,7 +574,7 @@ export default function data4Week() {
     {
       'id' : '19',
       'name' : 'Daniel Whitlock',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/fgosselin/128.jpg',
       'organisation' : 'Baker & Medcalf Surgery',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -604,7 +604,7 @@ export default function data4Week() {
     {
       'id' : '20',
       'name' : 'Bryan Rongo',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/eugenedemyan/128.jpg',
       'organisation' : 'Johnston Street Surgery',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -634,7 +634,7 @@ export default function data4Week() {
     {
       'id' : '21',
       'name' : 'Su Park',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/taramann/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -664,7 +664,7 @@ export default function data4Week() {
     {
       'id' : '22',
       'name' : 'Teresa Soialo',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/mtnmissy/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -694,7 +694,7 @@ export default function data4Week() {
     {
       'id' : '23',
       'name' : 'Peter Melbourne',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/rafaelks/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -724,7 +724,7 @@ export default function data4Week() {
     {
       'id' : '24',
       'name' : 'Mary Smith',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/nettatheninja/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -754,7 +754,7 @@ export default function data4Week() {
     {
       'id' : '25',
       'name' : 'Joanna Simpson',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/kfriedson/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -784,7 +784,7 @@ export default function data4Week() {
     {
       'id' : '26',
       'name' : 'Mike McDowell',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/ritu/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -814,7 +814,7 @@ export default function data4Week() {
     {
       'id' : '27',
       'name' : 'Ruchi Sharma',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
