@@ -376,7 +376,6 @@ export default function environment (component) {
         })
       }, false)
     }
-
     forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
 
 
@@ -411,14 +410,12 @@ export default function environment (component) {
 
     this.onRenderFcts.push( function () {
       if ( self.nameBadgeVisible ) {
-        var $nameBadge = $('.name-badge')
-
         var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
 
         var left = ( position.x + 10 ) + 'px'
         var top = ( position.y - 28 ) + 'px'
 
-        $nameBadge.css({top : top, left : left});
+        $('.name-badge').css({top : top, left : left});
       }
     })
 
