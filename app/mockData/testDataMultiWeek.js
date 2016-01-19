@@ -454,7 +454,7 @@ export default function data4Week() {
     {
       'id' : '15',
       'name' : 'Huhana Turner',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/toffeenutdesign/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -514,7 +514,7 @@ export default function data4Week() {
     {
       'id' : '17',
       'name' : 'Louis Hutchison',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/cacique/128.jpg',
       'organisation' : 'Midas PHO',
       'role' : 'Steering Committee',
       'tags' : ['internal'],
@@ -544,7 +544,7 @@ export default function data4Week() {
     {
       'id' : '18',
       'name' : 'Frank Clark',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/gorvard/128.jpg',
       'organisation' : 'Walcott Street Clinic',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -574,7 +574,7 @@ export default function data4Week() {
     {
       'id' : '19',
       'name' : 'Daniel Whitlock',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/fgosselin/128.jpg',
       'organisation' : 'Baker & Medcalf Surgery',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -604,7 +604,7 @@ export default function data4Week() {
     {
       'id' : '20',
       'name' : 'Bryan Rongo',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/eugenedemyan/128.jpg',
       'organisation' : 'Johnston Street Surgery',
       'role' : 'Customer (GP)',
       'tags' : ['external'],
@@ -634,7 +634,7 @@ export default function data4Week() {
     {
       'id' : '21',
       'name' : 'Su Park',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/taramann/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -664,7 +664,7 @@ export default function data4Week() {
     {
       'id' : '22',
       'name' : 'Teresa Soialo',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/mtnmissy/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -694,7 +694,7 @@ export default function data4Week() {
     {
       'id' : '23',
       'name' : 'Peter Melbourne',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/rafaelks/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -724,7 +724,7 @@ export default function data4Week() {
     {
       'id' : '24',
       'name' : 'Mary Smith',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/nettatheninja/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -754,7 +754,7 @@ export default function data4Week() {
     {
       'id' : '25',
       'name' : 'Joanna Simpson',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/kfriedson/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -784,7 +784,7 @@ export default function data4Week() {
     {
       'id' : '26',
       'name' : 'Mike McDowell',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/ritu/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
@@ -814,7 +814,7 @@ export default function data4Week() {
     {
       'id' : '27',
       'name' : 'Ruchi Sharma',
-      'image': 'http://orig13.deviantart.net/a634/f/2014/091/d/c/ash_ketchum_by_mighty355-d7cjdfg.png',
+      'image': 'https://s3.amazonaws.com/uifaces/faces/twitter/jsa/128.jpg',
       'organisation' : 'Midas PHO Clients',
       'role' : 'Customer (Patient)',
       'tags' : ['external'],
