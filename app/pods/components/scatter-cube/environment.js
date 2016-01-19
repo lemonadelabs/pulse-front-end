@@ -85,32 +85,32 @@ export default function environment (component) {
 
     ///////////////////////////////////// Stats ////////////////////////////////////////
 
-    var stats = new Stats();
+    // var stats = new Stats();
 
-    stats.setMode( 1 ); // 0: fps, 1: ms, 2: mb
+    // stats.setMode( 1 ); // 0: fps, 1: ms, 2: mb
 
-    // align top-left
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
+    // // align top-left
+    // stats.domElement.style.position = 'absolute';
+    // stats.domElement.style.left = '0px';
+    // stats.domElement.style.top = '0px';
 
-    document.body.appendChild( stats.domElement );
+    // document.body.appendChild( stats.domElement );
 
-    this.onRenderFcts.push(function () {
-      stats.begin();
-      stats.end();
-    })
+    // this.onRenderFcts.push(function () {
+    //   stats.begin();
+    //   stats.end();
+    // })
 
-    var rendererStats   = new THREEx.RendererStats()
+    // var rendererStats   = new THREEx.RendererStats()
 
-    rendererStats.domElement.style.position = 'absolute'
-    rendererStats.domElement.style.right = '0px'
-    rendererStats.domElement.style.top   = '0px'
-    document.body.appendChild( rendererStats.domElement )
+    // rendererStats.domElement.style.position = 'absolute'
+    // rendererStats.domElement.style.right = '0px'
+    // rendererStats.domElement.style.top   = '0px'
+    // document.body.appendChild( rendererStats.domElement )
 
-    this.onRenderFcts.push(function () {
-      rendererStats.update(self.renderer);
-    })
+    // this.onRenderFcts.push(function () {
+    //   rendererStats.update(self.renderer);
+    // })
 
 
 
