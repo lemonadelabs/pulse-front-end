@@ -122,7 +122,6 @@ export default function environment (component) {
 
     $(document).on('keypress', function (e) {
       if ( e.keyCode == 115 || e.keyCode == 83) {
-        console.log('show stats')
         $stats.toggle()
         $rendererStats.toggle()
       }

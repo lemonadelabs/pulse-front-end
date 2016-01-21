@@ -36,5 +36,8 @@
     "masonry": "~4.0.0",
     "stats.js": "mrdoob/stats.js#r14",
     "threex.objcoord": "*"
+  },
+  "devDependencies": {
+    "threex.rendererstats": "*"
   }
 }
