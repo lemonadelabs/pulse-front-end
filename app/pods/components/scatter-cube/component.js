@@ -37,6 +37,8 @@ export default Ember.Component.extend({
     }
   }.observes('selectedStakeholder'),
 
+
+
   onUpdateConnectionsView: function () {
     this._environment.connectionViewUpdated()
   }.observes('connectionView'),
@@ -48,4 +50,13 @@ export default Ember.Component.extend({
   onUpdateHistoryView: function () {
     this._environment.historyViewUpdated()
   }.observes('historyView'),
+
+  pauseRender: function () {
+    this._environment.pauseRender()
+  },
+
+  resumeRender: function () {
+    this._environment.resumeRender()
+  },
+
 });
