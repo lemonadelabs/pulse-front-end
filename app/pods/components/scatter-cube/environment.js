@@ -27,6 +27,8 @@ export default function environment (component) {
   environment.onMouseoverFcts = []
   environment.onMouseoutFcts = []
   environment.currentWeek = undefined
+  environment.rafId = undefined
+  environment.rendering = true
 
   environment.nameBadgeVisible = false
 
@@ -93,8 +95,10 @@ export default function environment (component) {
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.left = '0px';
     stats.domElement.style.top = '0px';
-
     document.body.appendChild( stats.domElement );
+    var $stats = $(stats.domElement)
+
+    $stats.hide()
 
     this.onRenderFcts.push(function () {
       stats.begin();
@@ -108,10 +112,21 @@ export default function environment (component) {
     rendererStats.domElement.style.top   = '0px'
     document.body.appendChild( rendererStats.domElement )
 
+    var $rendererStats = $(rendererStats.domElement)
+    $rendererStats.hide()
+
+
     this.onRenderFcts.push(function () {
       rendererStats.update(self.renderer);
     })
 
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode == 115 || e.keyCode == 83) {
+        console.log('show stats')
+        $stats.toggle()
+        $rendererStats.toggle()
+      }
+    })
 
 
     //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
@@ -459,6 +474,48 @@ export default function environment (component) {
       self.renderer.render( self.scene, self.camera );
     })
 
+
+
+    // //////////////////////////////// pause render ////////////////////////////////
+
+    // this.pauseRender = function () {
+    //   // self.controls.enabled = false
+    //   cancelAnimationFrame(self.rafId)
+    //   self.rendering = false
+    //   console.log('pause')
+    // }
+    // this.resumeRender = function () {
+    //   // self.controls.enabled = true
+    //   self.rendering = true
+    //   self.render()
+    //   console.log('resume')
+    // }
+
+    // this.oldCameraPosition = {
+    //   x: undefined,
+    //   y: undefined,
+    //   z: undefined
+    // }
+
+    // setInterval(function () {
+    //   if ( self.rendering === true && _.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
+    //     self.pauseRender()
+    //   }
+
+    //   if ( self.rendering === false && !_.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
+    //     self.resumeRender()
+    //   }
+
+    //   self.oldCameraPosition.x = self.camera.position.x
+    //   // self.oldCameraPosition.y = self.camera.position.y
+    //   // self.oldCameraPosition.z = self.camera.position.z
+
+    // }, 100)
+
+    // // this.pauseRender()
+
+
+
   }
 
   environment.render = function () {
@@ -468,7 +525,7 @@ export default function environment (component) {
     requestAnimationFrame(function animate(nowMsec){
 
       // keep looping
-      requestAnimationFrame( animate );
+      self.rafId = requestAnimationFrame( animate );
 
       // measure time
       lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
@@ -482,6 +539,8 @@ export default function environment (component) {
 
       // update TWEEN functions
       TWEEN.update(nowMsec);
+
+
     })
   }
 
