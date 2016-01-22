@@ -17,8 +17,7 @@ AutoNav.prototype.initDollyZoom = function() {
 
 AutoNav.prototype.powerXsupport = function() {
   this.dollyZoom.zoomOut({
-    z: 1500,
-
+    camDestination: new THREE.Vector3(1,1,1504.2)
   })
 
 }

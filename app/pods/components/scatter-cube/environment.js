@@ -52,8 +52,9 @@ export default function environment (component) {
     /////////////////////////// set up camera /////////////////////////////
 
     this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.0001, 10000 );
-    // this.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, - 5, 10 )
-    this.camera.position.set(-1.5,1,3)
+
+    // this.camera.position.set(-1.5,1,3)
+    this.camera.position.set(-1.8,1,3.2)
 
     this.camera.tweenDestinations = {}
 
@@ -524,10 +525,15 @@ export default function environment (component) {
       environment : self
     })
 
-    this.camera.position.set(1,1,4.2)
+    self.camera.position.set(1,1,4.2)
     setTimeout(function () {
-      self.autoNav.powerXsupport()
-    },1000)
+      // setInterval(function () {
+        // self.camera.fov = 70
+        // self.camera.updateProjectionMatrix()
+        // self.camera.position.set(1,1,4.2)
+        self.autoNav.powerXsupport()
+      // },3000)
+    }, 1000)
 
 
 
