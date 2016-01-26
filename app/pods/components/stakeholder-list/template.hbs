@@ -1,0 +1,7 @@
+{{close-button }}<h1 class="page-title">stakeholders</h1>
+<div class="stakeholder-container">
+  {{#each stakeholders as |stakeholder| }}
+    {{stakeholder-card stakeholder=stakeholder}}
+  {{/each}}
+</div>
+{{!-- onCloseAction=(action "closeStakeholderList") --}}

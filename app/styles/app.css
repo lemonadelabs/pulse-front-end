@@ -1,12 +1,14 @@
+@import "colours.css";
+@import "global.css";
 @import "helpers.css";
 @import "inputs.css";
-@import "global.css";
-@import "colours.css";
+@import "nav-bar.css";
 @import "project-card.css";
+@import "stakeholder-list.css";
+@import "stakeholder-card.css";
 @import "stakeholder-modal.css";
 @import "stakeholder-view-mode-window.css";
 @import "time-series.css";
-@import "nav-bar.css";
 
 .scatter-cube{
   position: fixed;

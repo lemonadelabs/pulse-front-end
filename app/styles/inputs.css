@@ -26,6 +26,7 @@ button:active::after,button:hover::after,button:focus::after{
 button:active::after{
   transform: translateZ(-50px);
 }
+
 button::after{
   z-index: -1;
   content: "";
