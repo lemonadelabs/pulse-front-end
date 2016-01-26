@@ -26,7 +26,6 @@ export default function NavArrows (opts) {
   }
 
   this.navControlls = {
-    // 'VitalHiLoPowerLeft' : opts.navController.vitalXsupportOrthographicLoHo()
     VitalHiLoPowerLeft: function () {
       opts.navController.vitalXsupportOrthographicLoHo()
     },
@@ -73,6 +72,12 @@ NavArrows.prototype.createCornerArrow = function(opts) {
   });
 
   var geometry = new THREE.PlaneGeometry(0.2, 0.05, 1, 1) // this is where we will user the objectLoader
+
+  if ( _.endsWith(name, 'Left') ) {
+
+  } else {
+
+  }
 
   var mesh = new THREE.Mesh(geometry, material)
 
