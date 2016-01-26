@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="262px" height="164px" viewBox="0 0 262 164" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>flatArrow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-3" sketch:type="MSArtboardGroup" transform="translate(-159.000000, -243.000000)" fill="#FFFFFF">
+            <path d="M257.282309,341 L405.27002,341 L420.27002,341 L420.27002,311 L405.27002,311 L257.282309,311 L257.282309,243.812606 L159.187394,325.047458 L257.282309,406.282309 L257.282309,341 Z" id="flatArrow" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
