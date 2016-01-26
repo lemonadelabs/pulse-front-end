@@ -539,7 +539,8 @@ export default function environment (component) {
       if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
     })
 
-    this.camera.position.set(3.2, 2.5, 3.5)
+    this.camera.position.set(3.9, 1.1, -1.2)
+
 
     this.navArrows = new NavArrows({
       scene : self.scene,

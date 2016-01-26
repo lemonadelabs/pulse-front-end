@@ -4,17 +4,18 @@ export default function NavArrows (opts) {
 
   this.scene = opts.scene
 
-  this.jsonLoader = opts.jsonLoader
+  this.jSONloader = opts.jSONloader
+  console.log(opts)
 
   this.domEvents = opts.domEvents
 
   this.coords = {
-    // , support ,
+    // (power, support , vital)
     VitalHiLoPowerLeft : new THREE.Vector3(-0.3,-0.2,2),
     VitalHiLoPowerRight : new THREE.Vector3(0,-0.2,2.3),
 
-    PowerHiHiVitalLeft : new THREE.Vector3(1,0,1),
-    PowerHiHiVitalRight : new THREE.Vector3(1,0,1),
+    PowerHiHiVitalLeft : new THREE.Vector3(2,-0.2,2.3),
+    PowerHiHiVitalRight : new THREE.Vector3(2.3, -0.2, 2),
   }
 
   this.rotation = {
@@ -29,10 +30,17 @@ export default function NavArrows (opts) {
     VitalHiLoPowerLeft: function () {
       opts.navController.vitalXsupportOrthographicLoHo()
     },
-
     VitalHiLoPowerRight : function () {
       opts.navController.powerXsupportOrthographicLoHi()
-    }
+    },
+
+    PowerHiHiVitalLeft : function () {
+      opts.navController.powerXsupportOrthographicLoHi()
+    },
+    PowerHiHiVitalRight : function () {
+      opts.navController.vitalXsupportOrthographicHiLo()
+    },
+
   }
 
   this.VitalHiLoPowerLeft = this.createCornerArrow({
@@ -71,25 +79,32 @@ NavArrows.prototype.createCornerArrow = function(opts) {
     // depthTest: false // makes the labels render in front of the danger zone
   });
 
-  var geometry = new THREE.PlaneGeometry(0.2, 0.05, 1, 1) // this is where we will user the objectLoader
+    self.jSONloader.load('./assets/geometries/rotationArrowFlat.json', function (geometry) {
+      var geometry = new THREE.PlaneGeometry(0.2, 0.05, 1, 1) // this is where we will user the objectLoader
+      var arrow = new THREE.Mesh(geometry, material)
 
-  if ( _.endsWith(name, 'Left') ) {
+      arrow.position.set( self.coords[name].x, self.coords[name].y, self.coords[name].z )
 
-  } else {
+      arrow.rotateY(self.rotation[name])
 
-  }
+      self.scene.add(arrow)
 
-  var mesh = new THREE.Mesh(geometry, material)
+      self.domEvents.addEventListener(arrow, 'click', function(){
+        self.navControlls[name]()
+      }, false)
 
-  mesh.position.set( this.coords[name].x, this.coords[name].y, this.coords[name].z )
+    })
 
-  mesh.rotateY(this.rotation[name])
 
-  this.scene.add(mesh)
 
-  this.domEvents.addEventListener(mesh, 'click', function(){
-    self.navControlls[name]()
-  }, false)
+
+
+
+
+
+  // var mesh = new THREE.Mesh(geometry, material)
+
+
 
 
 
