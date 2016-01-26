@@ -6,8 +6,12 @@ export default Ember.Component.extend({
   selectedTime: undefined,
   connectionView:false,
   distributionView:false,
+<<<<<<< HEAD
   historyView:true,
   showStakeholderList:false,
+=======
+  historyView:false,
+>>>>>>> master
 
   actions : {
     userDidSelectStakeholder(stakeHolder) {

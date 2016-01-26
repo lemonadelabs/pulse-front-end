@@ -6,7 +6,7 @@ export default Ember.Component.extend({
   visible: false,
   connections:false,
   distribution:false,
-  history:true,
+  history:false,
   "ignore-pointer":true,
   observeConnections:function(){
     this.get("toggleConnections")();

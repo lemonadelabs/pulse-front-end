@@ -22,6 +22,10 @@ export default Ember.Component.extend({
     this.get('updateStakeholder')(shInfo);
   },
 
+  updateHoveredStakeholder: function (sHPoint) {
+    this.set('hoveredStakeholder', sHPoint)
+  },
+
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
     this._environment.updateTime(time)
@@ -32,6 +36,8 @@ export default Ember.Component.extend({
       this._environment.noSelectedStakeholder()
     }
   }.observes('selectedStakeholder'),
+
+
 
   onUpdateConnectionsView: function () {
     this._environment.connectionViewUpdated()
@@ -44,4 +50,13 @@ export default Ember.Component.extend({
   onUpdateHistoryView: function () {
     this._environment.historyViewUpdated()
   }.observes('historyView'),
+
+  pauseRender: function () {
+    this._environment.pauseRender()
+  },
+
+  resumeRender: function () {
+    this._environment.resumeRender()
+  },
+
 });

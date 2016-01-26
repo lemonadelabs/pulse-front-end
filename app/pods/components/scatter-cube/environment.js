@@ -1,4 +1,4 @@
-/* global THREE, THREEx, TWEEN, requestAnimationFrame */
+/* global THREE, THREEx, TWEEN, requestAnimationFrame _ */
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -8,8 +8,8 @@ import LineGroup from './lineGroup';
 import Target from './target';
 import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
-import data4Week from '../../../mockData/testDataMultiWeek'
-import getProjects from '../../../mockData/getProjects'
+// import data4Week from '../../../mockData/testDataMultiWeek'
+// import getProjects from '../../../mockData/getProjects'
 
 
 export default function environment (component) {
@@ -24,7 +24,13 @@ export default function environment (component) {
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
   environment.onUpdateTimeFcts = []
+  environment.onMouseoverFcts = []
+  environment.onMouseoutFcts = []
   environment.currentWeek = undefined
+  environment.rafId = undefined
+  environment.rendering = true
+
+  environment.nameBadgeVisible = false
 
 
 
@@ -78,6 +84,49 @@ export default function environment (component) {
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
 
     var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
+
+    ///////////////////////////////////// Stats ////////////////////////////////////////
+
+    var stats = new Stats();
+
+    stats.setMode( 1 ); // 0: fps, 1: ms, 2: mb
+
+    // align top-left
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    document.body.appendChild( stats.domElement );
+    var $stats = $(stats.domElement)
+
+    $stats.hide()
+
+    this.onRenderFcts.push(function () {
+      stats.begin();
+      stats.end();
+    })
+
+    var rendererStats   = new THREEx.RendererStats()
+
+    rendererStats.domElement.style.position = 'absolute'
+    rendererStats.domElement.style.right = '0px'
+    rendererStats.domElement.style.top   = '0px'
+    document.body.appendChild( rendererStats.domElement )
+
+    var $rendererStats = $(rendererStats.domElement)
+    $rendererStats.hide()
+
+
+    this.onRenderFcts.push(function () {
+      rendererStats.update(self.renderer);
+    })
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode == 115 || e.keyCode == 83) {
+        $stats.toggle()
+        $rendererStats.toggle()
+      }
+    })
+
 
     //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
 
@@ -166,7 +215,7 @@ export default function environment (component) {
       } else if (self.component.distributionView) { // also takes care of history view
         self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
       } else if (self.component.historyView) {
-        var tween = self.tweenController.updateHistoryTail(sHPoint)
+        self.tweenController.updateHistoryTail(sHPoint)
       } else {
         self.target.updatePosition(sHPoint)
       }
@@ -230,6 +279,7 @@ export default function environment (component) {
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
 
     this.axisGuides = new AxisGuides()
+    console.log(this.axisGuides.lines)
     this.addObjectsToScene(this.axisGuides.lines)
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
@@ -288,7 +338,7 @@ export default function environment (component) {
 
     this.noSelectedStakeholderFcts.push( function () {
       if (self.component.connectionView) {
-        var fadeOutTween = _.last(self.tweenController.fadeOutConnections({
+        _.last(self.tweenController.fadeOutConnections({
           duration : 300,
           easing : TWEEN.Easing.Quadratic.In
         }))
@@ -319,6 +369,7 @@ export default function environment (component) {
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
 
+
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
       domEvents.addEventListener(mesh, 'click', function(){
@@ -326,8 +377,21 @@ export default function environment (component) {
           onPointClickFct(sHPoint)
         })
       }, false)
+
+      domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
+
+      domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
     }
     forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
 
     this.onPointClickFcts.push( function (sHPoint) {
       self.focussedPoint = sHPoint
@@ -340,6 +404,35 @@ export default function environment (component) {
     this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
       self.component.updateSelectedStakeholder(sHPoint)
     })
+
+    ///////////////////// name-badge on hover ////////////////////////
+
+    this.onMouseoverFcts.push(function (sHPoint) {
+      self.nameBadgeVisible = true
+      self.component.updateHoveredStakeholder(sHPoint)
+
+      $('.name-badge').show()
+    })
+
+    this.onMouseoutFcts.push(function () {
+      var $nameBadge = $('.name-badge')
+      if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) {
+        $nameBadge.hide()
+        self.nameBadgeVisible = false
+      }
+    })
+
+    this.onRenderFcts.push( function () {
+      if ( self.nameBadgeVisible ) {
+        var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
+
+        var left = ( position.x + 10 ) + 'px'
+        var top = ( position.y - 28 ) + 'px'
+
+        $('.name-badge').css({top : top, left : left});
+      }
+    })
+
 
     this.onRenderFcts.push( function () {
       forEach(self.pointCloud.sHPoints, function (sHPoint) {
@@ -380,6 +473,48 @@ export default function environment (component) {
       self.renderer.render( self.scene, self.camera );
     })
 
+
+
+    // //////////////////////////////// pause render ////////////////////////////////
+
+    // this.pauseRender = function () {
+    //   // self.controls.enabled = false
+    //   cancelAnimationFrame(self.rafId)
+    //   self.rendering = false
+    //   console.log('pause')
+    // }
+    // this.resumeRender = function () {
+    //   // self.controls.enabled = true
+    //   self.rendering = true
+    //   self.render()
+    //   console.log('resume')
+    // }
+
+    // this.oldCameraPosition = {
+    //   x: undefined,
+    //   y: undefined,
+    //   z: undefined
+    // }
+
+    // setInterval(function () {
+    //   if ( self.rendering === true && _.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
+    //     self.pauseRender()
+    //   }
+
+    //   if ( self.rendering === false && !_.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
+    //     self.resumeRender()
+    //   }
+
+    //   self.oldCameraPosition.x = self.camera.position.x
+    //   // self.oldCameraPosition.y = self.camera.position.y
+    //   // self.oldCameraPosition.z = self.camera.position.z
+
+    // }, 100)
+
+    // // this.pauseRender()
+
+
+
   }
 
   environment.render = function () {
@@ -389,7 +524,7 @@ export default function environment (component) {
     requestAnimationFrame(function animate(nowMsec){
 
       // keep looping
-      requestAnimationFrame( animate );
+      self.rafId = requestAnimationFrame( animate );
 
       // measure time
       lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
@@ -403,6 +538,8 @@ export default function environment (component) {
 
       // update TWEEN functions
       TWEEN.update(nowMsec);
+
+
     })
   }
 
