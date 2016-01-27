@@ -1,7 +1,7 @@
-/*global TWEEN,_*/
+/*jshint -W083 */
+
 export default function TweenController (opts) {
   this.environment = opts.environment
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,9 +21,10 @@ TweenController.prototype.distroCloudBirth = function(opts) {
     var y = (data[i].support) * 1.8  + 0.1
     var z = (data[i].vital) * 1.8  + 0.1
 
+
     var tween = new TWEEN.Tween(points[i].mesh.position)
-      .to({x: x, y: y, z: z}, opts.duration)
       .easing(opts.easing)
+      .to({x: x, y: y, z: z}, opts.duration)
       .onComplete(function () {
         environment.distributionCloud.transitioning = false
       })
@@ -34,7 +35,7 @@ TweenController.prototype.distroCloudBirth = function(opts) {
     var birthFadeTween = new TWEEN.Tween(points[i].mesh.material)
       .to({opacity:points[i].mesh.material.opacity}, opts.duration)
       .easing(TWEEN.Easing.Exponential.In)
-      .start();
+    birthFadeTween.start();
   }
   return tweens
 }
@@ -61,7 +62,7 @@ TweenController.prototype.distroCloudDeath = function(opts) {
     var deathFadeTween = new TWEEN.Tween(points[i].mesh.material)
       .to({opacity:0}, opts.duration)
       .easing(TWEEN.Easing.Quadratic.In)
-      .start();
+    deathFadeTween.start();
   }
   return tweens
 };
@@ -156,7 +157,7 @@ TweenController.prototype.fadeInConnections = function(opts) {
     var tween = new TWEEN.Tween(connection.mesh.material)
         .to({opacity: destinationOpacity}, opts.duration)
         .easing(opts.easing)
-        .start();
+    tween.start();
     tweens.push(tween)
   })
   return tweens
@@ -170,7 +171,7 @@ TweenController.prototype.fadeOutConnections = function(opts) {
     var tween = new TWEEN.Tween(connection.mesh.material)
         .to({opacity: 0}, opts.duration)
         .easing(opts.easing)
-        .start();
+    tween.start();
     tweens.push(tween)
   })
   return tweens
@@ -186,16 +187,14 @@ TweenController.prototype.fadeInHistory = function(opts) {
         .easing(opts.easing)
         .onComplete(function () {
           line.mesh.material.transparent = false
-
         })
-        .start();
+    tween.start();
     tweens.push(tween)
   })
   return tweens
 };
 
 TweenController.prototype.fadeOutHistory = function(opts) {
-  var self = this
   var tweens = []
   var lines = this.environment.historyTailGroup.historyTails
 
@@ -236,7 +235,6 @@ TweenController.prototype.buildHistorytails = function(sHPoint) {
 };
 
 TweenController.prototype.removeHistoryTails = function () {
-  var environment = this.environment
   var fadeOutTweens = this.fadeOutHistory({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
@@ -284,7 +282,7 @@ TweenController.prototype.removeDistroCloud = function() {
     easing : TWEEN.Easing.Quadratic.Out
   })
   var lastDeathTween = _.last(deathTweens)
-  .onComplete(function () {
+  lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
   })
 }
@@ -300,9 +298,9 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
     duration : 1500
   })
   var lastTween = _.last(tweens)
-      .onUpdate(function () {
-        environment.target.updatePosition(environment.focussedPoint)
-      })
+  lastTween.onUpdate(function () {
+    environment.target.updatePosition(environment.focussedPoint)
+  })
 };
 
 
@@ -353,7 +351,7 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
       duration : 500
     })
     var lastSHPointTween = _.last(sHPointTweens)
-    .onUpdate(function () {
+    lastSHPointTween.onUpdate(function () {
       environment.target.updatePosition(environment.focussedPoint)
     })
     .onComplete(function () {
@@ -388,7 +386,7 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime
       duration : 500
     })
     var lastSHPointTween = _.last(sHPointTweens)
-    .onUpdate(function () {
+    lastSHPointTween.onUpdate(function () {
       environment.target.updatePosition(environment.focussedPoint) // make the target follow the point
       environment.lineGroup.needsUpdate = true // make the lines follow the points
     })
@@ -464,7 +462,7 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
     easing : TWEEN.Easing.Quadratic.In
   })
   var lastDeathTween = _.last(deathTweens)
-  .onComplete(function () {
+  lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
     environment.target.updatePosition(environment.focussedPoint)
     environment.distributionCloud.selectedStakeholder = sHPoint
@@ -475,7 +473,7 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
       duration : 500,
       easing : TWEEN.Easing.Quadratic.Out
     });
-    if (environment.component.historyView) self.buildHistorytails(sHPoint)
+    if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
   })
 }
 
@@ -491,7 +489,7 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
     easing : TWEEN.Easing.Quadratic.In
   })
   var lastDeathTween = _.last(cloudDeathTweens)
-  .onComplete(function () {
+  lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
     environment.target.updatePosition(sHPoint)
     environment.distributionCloud.selectedStakeholder = sHPoint
@@ -511,7 +509,7 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
       easing : TWEEN.Easing.Quadratic.Out
     })
 
-    if (environment.component.historyView) self.buildHistorytails(sHPoint)
+    if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
 
   })
 

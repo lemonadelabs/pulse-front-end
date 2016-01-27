@@ -31,7 +31,7 @@ Label.prototype.animateLabel = function(coords) {
         self.mesh.position.set(coords[0],coords[1],coords[2])
         fadeInTween.start()
       })
-      .start();
+  fadeOutTween.start();
 
   var fadeInTween = new TWEEN.Tween(self.mesh.material)
       .to({opacity: 1.0}, 300)
@@ -39,80 +39,69 @@ Label.prototype.animateLabel = function(coords) {
 
 Label.prototype.generateCoords = function() {
   if (this.name === "Power") {
-    var coords = [
-        [1,-0.1,-0.5],
-        [1,-0.1,-0.5],
-        [1,-0.1,2.5],
-        [1,-0.1,2.5]
-      ]
-    return coords
+    return [
+      [1,-0.1,-0.5],
+      [1,-0.1,-0.5],
+      [1,-0.1,2.5],
+      [1,-0.1,2.5]
+    ]
   } else if (this.name === "Label-High-Power") {
-    var coords = [
-        [1.9,-0.1,-0.1],
-        [1.9,-0.1,-0.1],
-        [1.9,-0.1,2.1],
-        [1.9,-0.1,2.1]
-      ]
-    return coords
+    return [
+      [1.9,-0.1,-0.1],
+      [1.9,-0.1,-0.1],
+      [1.9,-0.1,2.1],
+      [1.9,-0.1,2.1]
+    ]
   } else if (this.name === "Label-Power-Low") {
-    var coords = [
-        [0.1,-0.1,-0.1],
-        [0.1,-0.1,-0.1],
-        [0.1,-0.1,2.1],
-        [0.1,-0.1,2.1]
-      ]
-    return coords
-
-
+    return [
+      [0.1,-0.1,-0.1],
+      [0.1,-0.1,-0.1],
+      [0.1,-0.1,2.1],
+      [0.1,-0.1,2.1]
+    ]
   } else if (this.name === "Vital") {
-    var coords = [
-        [-0.5,-0.1,1],
-        [2.5,-0.1,1],
-        [2.5,-0.1,1],
-        [-0.5,-0.1,1]
-      ]
-    return coords
+    return [
+      [-0.5,-0.1,1],
+      [2.5,-0.1,1],
+      [2.5,-0.1,1],
+      [-0.5,-0.1,1]
+    ]
   } else if (this.name === "Label-High-Vital") {
-    var coords = [
-        [-0.1,-0.1,1.9],
-        [2.1,-0.1,1.9],
-        [2.1,-0.1,1.9],
-        [-0.1,-0.1,1.9],
-      ]
-    return coords
+    return [
+      [-0.1,-0.1,1.9],
+      [2.1,-0.1,1.9],
+      [2.1,-0.1,1.9],
+      [-0.1,-0.1,1.9],
+    ]
   } else if (this.name === "Label-Low-Vital") {
-    var coords = [
-        [-0.1,-0.1,0.1],
-        [2.1,-0.1,0.1],
-        [2.1,-0.1,0.1],
-        [-0.1,-0.1,0.1],
-      ]
-    return coords
+    return [
+      [-0.1,-0.1,0.1],
+      [2.1,-0.1,0.1],
+      [2.1,-0.1,0.1],
+      [-0.1,-0.1,0.1],
+    ]
 
 
   } else if (this.name === "Support") {
-    var coords = [
-        [-0.3,1,2.3],
-        [-0.3,1,-0.3],
-        [2.3,1,-0.3],
-        [2.3,1,2.3]
-      ]
-    return coords
+    return [
+      [-0.3,1,2.3],
+      [-0.3,1,-0.3],
+      [2.3,1,-0.3],
+      [2.3,1,2.3]
+    ]
   } else if (this.name === "Label-Support-High") {
-    var coords = [
-        [-0.1,1.9,2.1],
-        [-0.1,1.9,-0.1],
-        [2.1,1.9,-0.1],
-        [2.1,1.9,2.1],
-      ]
-    return coords
+    return [
+      [-0.1,1.9,2.1],
+      [-0.1,1.9,-0.1],
+      [2.1,1.9,-0.1],
+      [2.1,1.9,2.1],
+    ]
   } else if (this.name === "Label-Support-Low") {
-    var coords = [
-        [-0.1,0.1,2.1],
-        [-0.1,0.1,-0.1],
-        [2.1,0.1,-0.1],
-        [2.1,0.1,2.1],
-      ]
-    return coords
+    return [
+      [-0.1,0.1,2.1],
+      [-0.1,0.1,-0.1],
+      [2.1,0.1,-0.1],
+      [2.1,0.1,2.1],
+    ]
   }
 }

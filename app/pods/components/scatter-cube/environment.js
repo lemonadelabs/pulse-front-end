@@ -1,4 +1,3 @@
-/* global THREE, THREEx, TWEEN, requestAnimationFrame _ */
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -8,10 +7,11 @@ import LineGroup from './lineGroup';
 import Target from './target';
 import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
-import NavConroller from './navConroller';
+import NavController from './navController';
 import NavArrows from './navArrows';
 
-export default function environment (component) {
+// TODO: figure out if this is the right way to define and export out environment
+export default function (component) {
   var environment = {}
   environment.component = component
   environment.container = undefined
@@ -51,11 +51,7 @@ export default function environment (component) {
 
     this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
 
-    // this.camera.position.set(-1.5,1,3)
-
-
-
-    this.camera.position.set(-1.8,1.4,3.2)
+    this.camera.position.set(4.5,1.5,-1.6)
 
     this.camera.tweenDestinations = {}
 
@@ -86,30 +82,30 @@ export default function environment (component) {
 
     ///////////////////// On Window Resize ////////////////////////
 
-    var windowResize = new THREEx.WindowResize(this.renderer, this.camera)
+    this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
 
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
 
-    var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
+    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
 
     ///////////////////////////////////// Stats ////////////////////////////////////////
 
-    var stats = new Stats();
+    this.stats = new Stats();
 
-    stats.setMode( 1 ); // 0: fps, 1: ms, 2: mb
+    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
 
     // align top-left
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
-    document.body.appendChild( stats.domElement );
-    var $stats = $(stats.domElement)
+    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.left = '0px';
+    this.stats.domElement.style.top = '0px';
+    document.body.appendChild( this.stats.domElement );
+    var $stats = $(this.stats.domElement)
 
     $stats.hide()
 
     this.onRenderFcts.push(function () {
-      stats.begin();
-      stats.end();
+      self.stats.begin();
+      self.stats.end();
     })
 
     var rendererStats   = new THREEx.RendererStats()
@@ -128,7 +124,7 @@ export default function environment (component) {
     })
 
     $(document).on('keypress', function (e) {
-      if ( e.keyCode == 115 || e.keyCode == 83) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
         $stats.toggle()
         $rendererStats.toggle()
       }
@@ -291,7 +287,7 @@ export default function environment (component) {
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
-    this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry, materials) {
+    this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry) {
       self.dangerZone = new DangerZone({
         geometry : geometry
       })
@@ -379,19 +375,19 @@ export default function environment (component) {
 
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
-      domEvents.addEventListener(mesh, 'click', function(){
+      self.domEvents.addEventListener(mesh, 'click', function(){
         self.onPointClickFcts.forEach( function(onPointClickFct) {
           onPointClickFct(sHPoint)
         })
       }, false)
 
-      domEvents.addEventListener(mesh, 'mouseover', function(){
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
         self.onMouseoverFcts.forEach( function(onMouseoverFct) {
           onMouseoverFct(sHPoint)
         })
       }, false)
 
-      domEvents.addEventListener(mesh, 'mouseout', function(){
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
         self.onMouseoutFcts.forEach( function(onMouseoutFct) {
           onMouseoutFct(sHPoint)
         })
@@ -462,7 +458,7 @@ export default function environment (component) {
 
     ///////////////////// Create history tail group ////////////////////////
 
-    this.historyTailGroup = new HistoryTailGroup({})
+    this.historyTailGroup = new HistoryTailGroup()
 
     this.noSelectedStakeholderFcts.push(function () {
       if (self.component.historyView) {
@@ -523,10 +519,33 @@ export default function environment (component) {
     /////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////// autoNav ////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////
-
-    this.navController = new NavConroller({
+    this.navController = new NavController({
       environment : self
     })
+
+    this.navArrows = new NavArrows({
+      scene : self.scene,
+      jSONloader : self.jSONloader,
+      navController : self.navController,
+      domEvents : self.domEvents
+    })
+
+    // setTimeout(function () {
+    //   self.navController.fadeOutArrows({
+    //     duration : 1000,
+    //     easing : TWEEN.Easing.Quadratic.In,
+    //     arrowType: 'sideArrows'
+    //   })
+    // }, 1000)
+
+    // setTimeout(function () {
+    //   self.navController.fadeInArrows({
+    //     duration : 1000,
+    //     easing : TWEEN.Easing.Quadratic.Out,
+    //     arrowType: 'sideArrows'
+    //   })
+    // }, 3000)
+
 
 
     $(document).on('keypress', function (e) {
@@ -539,18 +558,6 @@ export default function environment (component) {
       if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
       if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
     })
-
-    this.camera.position.set(3.9, 1.1, -1.2)
-
-
-    this.navArrows = new NavArrows({
-      scene : self.scene,
-      jSONloader : self.jSONloader,
-      navController : self.navController,
-      domEvents : domEvents
-    })
-
-
   }
 
 
