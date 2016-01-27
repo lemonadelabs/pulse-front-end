@@ -1,8 +1,15 @@
 {
   "predef": [
+    "requestAnimationFrame",
     "document",
     "window",
-    "-Promise"
+    "-Promise",
+    "_",
+    "TWEEN",
+    "THREE",
+    "THREEx",
+    "$",
+    "Stats"
   ],
   "browser": true,
   "boss": true,

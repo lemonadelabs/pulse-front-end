@@ -1,4 +1,3 @@
-/* global THREE, THREEx, _ */
 import AxisGuideLine from './axisGuideLine';
 
 export default function AxisGuides () {
