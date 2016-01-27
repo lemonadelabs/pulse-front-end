@@ -1,9 +1,9 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  classNames:['close-button'],
   actions:{
     close(){
-      console.log("get the onCloseAction and run it");
       if(typeof this.get("onCloseAction") === "function"){
         this.get("onCloseAction")();
       }

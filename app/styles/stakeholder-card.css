@@ -5,7 +5,7 @@
   min-width: 300px;
   flex-grow: 1;
   align-items: flex-start;
-  display: inline-block;
+  display: inline-flex;
   border: solid 1px white;
   background-color: color(var(--pulseBlack) alpha(-10%));
   margin: 0.5em;
@@ -18,20 +18,18 @@
   transform: translateZ(0.5em);
 }
 .stakeholder-card-info{
-  display: inline-block;
+  margin-left: 1em;
 }
 
-.stakeholder-container{
-  perspective: 1000px;
-  justify-content: space-around;
-  align-items: stretch;;
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-flow: row wrap;
+.stakholder-list-name{
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.5em;
 }
+
+/*
 
 .stakeholder-card .stakeholder-info{
   max-width: 185px;
-}
+}*/

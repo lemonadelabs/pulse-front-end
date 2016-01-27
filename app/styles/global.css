@@ -88,3 +88,9 @@ body {
   border: none;
   background-color: color(white alpha(-40%))
 }
+
+.close-button{
+  position: fixed;
+  top:1.91em;
+  left:1.91em;
+}

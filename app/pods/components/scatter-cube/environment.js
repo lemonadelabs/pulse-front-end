@@ -8,9 +8,8 @@ import LineGroup from './lineGroup';
 import Target from './target';
 import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
-// import data4Week from '../../../mockData/testDataMultiWeek'
-// import getProjects from '../../../mockData/getProjects'
-
+import NavConroller from './navConroller';
+import NavArrows from './navArrows';
 
 export default function environment (component) {
   var environment = {}
@@ -50,17 +49,25 @@ export default function environment (component) {
 
     /////////////////////////// set up camera /////////////////////////////
 
-    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.0001, 1000 );
-    this.camera.position.set(-1.5,1,3)
+    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
+
+    // this.camera.position.set(-1.5,1,3)
+
+
+
+    this.camera.position.set(-1.8,1.4,3.2)
+
+    this.camera.tweenDestinations = {}
 
     /////////////////////////// set up controls /////////////////////////////
 
     this.controls = new THREE.OrbitControls( this.camera, this.container );
-    this.controls.maxDistance = 5
-    this.controls.minDistance = 1.7
+    // this.controls.maxDistance = 5
+    // this.controls.minDistance = 1.7
     this.controls.zoomSpeed = 0.2
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
+    // this.controls.enabled = false
 
     this.onRenderFcts.push(this.controls.update)
 
@@ -513,9 +520,40 @@ export default function environment (component) {
 
     // // this.pauseRender()
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////// autoNav ////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    this.navController = new NavConroller({
+      environment : self
+    })
+
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 122) { self.navController.powerXsupportOrthographicLoHi() } // z
+      if ( e.keyCode === 120) { self.navController.powerXvitalPerspectiveHiHi() } // x
+      if ( e.keyCode === 99) { self.navController.vitalXsupportOrthographicHiLo() } // c
+      if ( e.keyCode === 118) { self.navController.vitalXpowerPerspectiveLoHi() } // v
+      if ( e.keyCode === 98) { self.navController.powerXsupportOrthographicHiLo() } // b
+      if ( e.keyCode === 110) { self.navController.powerXvitalPerspectiveLoLo() } // n
+      if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
+      if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
+    })
+
+    this.camera.position.set(3.9, 1.1, -1.2)
+
+
+    this.navArrows = new NavArrows({
+      scene : self.scene,
+      jSONloader : self.jSONloader,
+      navController : self.navController,
+      domEvents : domEvents
+    })
 
 
   }
+
+
 
   environment.render = function () {
 
@@ -539,6 +577,7 @@ export default function environment (component) {
       // update TWEEN functions
       TWEEN.update(nowMsec);
 
+      // console.log(self.camera.position)
 
     })
   }

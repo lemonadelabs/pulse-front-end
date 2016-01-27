@@ -7,7 +7,13 @@
   overflow: scroll;
 }
 
-.stakholder-list-name{
-  text-transform: uppercase;
-  font-weight: 600;
+.stakeholder-container{
+  perspective: 50% 50%;
+  justify-content: space-around;
+  align-items: stretch;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-flow: row wrap;
 }

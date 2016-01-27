@@ -35,9 +35,7 @@
     "chartist": "~0.9.5",
     "masonry": "~4.0.0",
     "stats.js": "mrdoob/stats.js#r14",
+    "threex.rendererstats": "*",
     "threex.objcoord": "*"
   },
-  "devDependencies": {
-    "threex.rendererstats": "*"
-  }
 }
