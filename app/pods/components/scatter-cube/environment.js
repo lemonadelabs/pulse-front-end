@@ -557,6 +557,10 @@ export default function (component) {
       if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
       if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
     })
+
+
+    var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
+
   }
 
 
