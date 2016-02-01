@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="520px" height="520px" viewBox="0 0 520 520" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.5 (25232) - http://www.bohemiancoding.com/sketch -->
+    <title>Persp Arrows</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Persp-Arrows-Combined" sketch:type="MSArtboardGroup" transform="translate(-60.000000, -60.000000)" fill="#FFFFFF">
+            <path d="M140,540.338434 L140.338434,540.338434 C240.067879,540.338434 331.272887,503.840978 401.325308,443.474213 L387.161542,429.274037 C320.760252,486.051202 234.553449,520.338434 140.338434,520.338434 L140,520.338434 L140,480 L60,530 L140,580 L140,540.338434 Z M540.338434,140 L540.338434,140.338434 C540.338434,239.926377 503.944474,331.014054 443.731026,401.026995 L429.5633,386.822848 C486.167636,320.467233 520.338434,234.393342 520.338434,140.338434 L520.338434,140 L480,140 L530,60 L580,140 L540.338434,140 Z" id="Persp-Arrows" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
