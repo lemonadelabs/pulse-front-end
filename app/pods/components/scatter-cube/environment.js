@@ -371,6 +371,17 @@ export default function (component) {
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
 
+    _.forEach(this.pointCloud.sHPointClickTargets, function (object) {
+      self.domEvents.addEventListener(object.mesh, 'mouseover', function(){
+        $('.scatter-cube').addClass('threejs-hover')
+      }, false)
+
+      self.domEvents.addEventListener(object.mesh, 'mouseout', function(){
+        $('.scatter-cube').removeClass('threejs-hover')
+      }, false)
+    })
+
+
 
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
@@ -528,6 +539,9 @@ export default function (component) {
       navController : self.navController,
       domEvents : self.domEvents
     })
+
+
+
 
     // setTimeout(function () {
     //   self.navController.fadeOutArrows({

@@ -8,6 +8,7 @@
 @import "time-series.css";
 @import "nav-bar.css";
 @import "name-badge.css";
+@import "scatter-cube.css";
 
 .scatter-cube{
   position: fixed;

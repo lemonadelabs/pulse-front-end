@@ -196,6 +196,16 @@ NavArrows.prototype.createArrow = function(opts) {
     }
 
     self[arrowType].push(arrow)
+
+    self.domEvents.addEventListener(arrow.mesh, 'mouseover', function(){
+      $('.scatter-cube').addClass('threejs-hover')
+    }, false)
+
+    self.domEvents.addEventListener(arrow.mesh, 'mouseout', function(){
+      $('.scatter-cube').removeClass('threejs-hover')
+    }, false)
+
+
   })
 
 

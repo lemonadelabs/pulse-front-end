@@ -1,7 +1,6 @@
 export default function NavController (opts) {
   this.environment = opts.environment
   this.focalPoint = new THREE.Vector3(1,1,1)
-  // this.dollyZoomed = false
   this.returnLocation = undefined
   this.hiddenLabels = []
 }
@@ -82,9 +81,7 @@ NavController.prototype.fadeOutMeshes = function(opts) {
 
   _.forEach(meshes, function (mesh) {
 
-    // mesh.material.opacity = 0
     mesh.material.transparent = true
-    // mesh.visible = true
 
     var tween = new TWEEN.Tween(mesh.material)
       .to( { opacity : 0 }, opts.duration )
