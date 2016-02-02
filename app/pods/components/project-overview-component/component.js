@@ -19,7 +19,7 @@ export default Ember.Component.extend({
     },
 
     userDidChangeTime(newTime) {
-      this.set('selectedTime',newTime)
+      this.set('selectedTime', newTime)
     },
 
     toggleConnections(){

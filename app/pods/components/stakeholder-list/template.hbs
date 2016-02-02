@@ -1,6 +1,24 @@
-{{close-button onCloseAction=(action "closeStakeholderList")}}<h1 class="page-title">stakeholders</h1>
+{{close-button onCloseAction=(action "closeStakeholderList")}}
+<h1 class="page-title">stakeholders</h1>
 <div class="stakeholder-container">
   {{#each stakeholders as |stakeholder| }}
-    {{stakeholder-card stakeholder=stakeholder}}
+    {{stakeholder-card
+      stakeholder=stakeholder
+      onSelectAction=(action "addStakeholderToSelection")
+      onDeselectAction=(action "removeStakeholderFromSelection")
+    }}
   {{/each}}
 </div>
+{{notification-alert alertMessage=this.alertMessage showNotification=this.showNotification}}
+<footer class="action-footer blue-footer">
+  <button>New</button>
+  {{#if this.selection}}
+    {{#unless this.multiSelection}}
+      <button>Edit</button>
+    {{/unless}}
+    <button {{action "pollStakeholders"}}>Poll</button>
+    <button {{action "removeStakeholders"}}>Delete</button>
+  {{/if}}
+
+
+</footer>

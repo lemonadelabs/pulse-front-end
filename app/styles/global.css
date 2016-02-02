@@ -37,11 +37,21 @@ body {
   display: flex;
   justify-content: center;
   position: fixed;
+  margin: auto;
   bottom: 0;
-  padding-top: 20px;
+  padding-top: 30px;
   padding-bottom: 20px;
   background-image: linear-gradient( to bottom, color(var(--pulseBlack) alpha(0)) , var(--pulseBlack) 40%);
 }
+.action-footer.blue-footer{
+  background-image: linear-gradient( to bottom, color(var(--darkBlue) alpha(0)) , var(--darkBlue) 40%);
+}
+
+.action-footer button{
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
 .fancy-corners{
   position: relative;
 }

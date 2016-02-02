@@ -1,9 +1,11 @@
+@import "animations.css";
 @import "colours.css";
 @import "global.css";
 @import "helpers.css";
 @import "inputs.css";
 @import "name-badge.css";
 @import "nav-bar.css";
+@import "notification-alert";
 @import "project-card.css";
 @import "stakeholder-card.css";
 @import "stakeholder-list.css";
