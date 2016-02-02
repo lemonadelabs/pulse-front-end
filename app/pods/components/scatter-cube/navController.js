@@ -1,12 +1,13 @@
 export default function NavController (opts) {
   this.environment = opts.environment
   this.focalPoint = new THREE.Vector3(1,1,1)
-  this.dollyZoomed = false
+  // this.dollyZoomed = false
   this.returnLocation = undefined
+  this.hiddenLabels = []
 }
 
 
-
+// add 23 lines onto the error messages from the console
 
 
 NavController.prototype.fadeOutArrows = function(opts) {
@@ -53,35 +54,86 @@ NavController.prototype.fadeInArrows = function(opts) {
   return _.last(tweens)
 };
 
+NavController.prototype.fadeInMeshes = function(opts) {
+  var meshes = opts.meshes
+  var tweens = []
+
+  _.forEach(meshes, function (mesh) {
+
+    mesh.material.opacity = 0
+    mesh.material.transparent = true
+    mesh.visible = true
+
+    var tween = new TWEEN.Tween(mesh.material)
+      .to( { opacity : 1 }, opts.duration )
+      .easing(opts.easing)
+      .onComplete(function () {
+        mesh.material.transparent = false
+      })
+      .start();
+    tweens.push(tween)
+  })
+  return _.last(tweens)
+};
+
+NavController.prototype.fadeOutMeshes = function(opts) {
+  var meshes = opts.meshes
+  var tweens = []
+
+  _.forEach(meshes, function (mesh) {
+
+    // mesh.material.opacity = 0
+    mesh.material.transparent = true
+    // mesh.visible = true
+
+    var tween = new TWEEN.Tween(mesh.material)
+      .to( { opacity : 0 }, opts.duration )
+      .easing(opts.easing)
+      .onComplete(function () {
+        mesh.visible = false
+        mesh.material.transparent = false
+      })
+      .start();
+    tweens.push(tween)
+  })
+  return _.last(tweens)
+};
+
+
 NavController.prototype.powerXsupportOrthographicLoHi = function() {
   var self = this
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
-  this.fadeOutArrows({
+  var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
   })
 
-  this.fadeInArrows({
+  // bring in the arrows
+  var toFadeIn = []
+  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerLoHiSupportLeft" ) )
+  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerLoHiSupportRight" ) )
+
+  this.fadeInMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
-    arrowType: 'sideArrows'
+    meshes : toFadeIn
   })
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
-    })
-    dollyInTween.onComplete(function () {
-      moveAndDollyOut()
-    })
-  } else {
-    moveAndDollyOut()
-  }
+  // hide the labels
+  this.hiddenLabels = []
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : self.hiddenLabels
+  })
 
+  moveAndDollyOut()
   function moveAndDollyOut () {
     self.focalPoint = new THREE.Vector3(1,1,1)
     var moveTween = self.moveCamera({
@@ -118,20 +170,18 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
     arrowType: 'cornerArrows'
   })
 
+  var dollyInTween = self.dollyZoom({
+    destination : self.returnLocation,
+    duration : 800,
+  })
+  dollyInTween.onComplete(function () {
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
+    var labelFadeIn = self.fadeInMeshes({
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : self.hiddenLabels
     })
-    dollyInTween.onComplete(function () {
-      move()
-    })
-  } else {
-    move()
-  }
 
-  function move () {
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(3.7, 1.5, 4.4),
       duration : 800,
@@ -141,7 +191,7 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
     moveTween.onComplete(function () {
       self.environment.controls.enabled = true
     })
-  }
+  })
 
 };
 
@@ -152,30 +202,42 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
 
   this.environment.controls.enabled = false
 
-  this.fadeOutArrows({
+  var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
   })
 
-  this.fadeInArrows({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.Out,
-    arrowType: 'sideArrows'
+  fadeOutTween.onComplete(function () {
+    var cornerArrows = self.environment.navArrows['cornerArrows']
+    _.forEach(cornerArrows, function (arrow) {
+      arrow.mesh.visible = false
+      arrow.mesh.transparent = false
+    })
   })
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
-    })
-    dollyInTween.onComplete(function () {
-      moveAndDollyOut()
-    })
-  } else {
-    moveAndDollyOut()
-  }
+  var toFadeIn = []
+  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalHiLoSupportLeft" ) )
+  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalHiLoSupportRight" ) )
 
+  this.fadeInMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.Out,
+    meshes : toFadeIn
+  })
+
+  // hide the labels
+  self.hiddenLabels = []
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : self.hiddenLabels
+  })
+
+  moveAndDollyOut()
   function moveAndDollyOut () {
     self.focalPoint = new THREE.Vector3(1,1,1)
     var moveTween = self.moveCamera({
@@ -187,7 +249,6 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
     // dolly zoom out
     moveTween.onComplete(function () {
       self.returnLocation = camera.position.clone()
-      // self.returnFocalPoint =
       self.focalPoint = new THREE.Vector3(2,1,1)
       self.dollyZoom({ // dolly out
         destination : new THREE.Vector3(1004.6,1,1),
@@ -196,7 +257,6 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
     })
   }
 }
-
 
 NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
   var self = this
@@ -214,19 +274,16 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
   })
 
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
+  var dollyInTween = self.dollyZoom({
+    destination : self.returnLocation,
+    duration : 800,
+  })
+  dollyInTween.onComplete(function () {
+    var labelFadeIn = self.fadeInMeshes({
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : self.hiddenLabels
     })
-    dollyInTween.onComplete(function () {
-      move()
-    })
-  } else {
-    move()
-  }
-
-  function move () {
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(4.5, 1.5, -1.6),
       duration : 800,
@@ -236,7 +293,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
     moveTween.onComplete(function () {
       self.environment.controls.enabled = true
     })
-  }
+  })
 };
 
 NavController.prototype.powerXsupportOrthographicHiLo = function() {
@@ -244,31 +301,42 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
-  this.fadeOutArrows({
+  var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
   })
 
-  this.fadeInArrows({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.Out,
-    arrowType: 'sideArrows'
+  fadeOutTween.onComplete(function () {
+    var cornerArrows = self.environment.navArrows['cornerArrows']
+    _.forEach(cornerArrows, function (arrow) {
+      arrow.mesh.visible = false
+      arrow.mesh.transparent = false
+    })
   })
 
+  var toFadeIn = []
+  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerHiLoSupportLeft" ) )
+  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerHiLoSupportRight" ) )
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
-    })
-    dollyInTween.onComplete(function () {
-      moveAndDollyOut()
-    })
-  } else {
-    moveAndDollyOut()
-  }
+  this.fadeInMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.Out,
+    meshes : toFadeIn
+  })
 
+  // hide the labels
+  self.hiddenLabels = []
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : self.hiddenLabels
+  })
+
+  moveAndDollyOut()
   function moveAndDollyOut () {
     self.focalPoint = new THREE.Vector3(1,1,1)
     var moveTween = self.moveCamera({
@@ -306,19 +374,16 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
   })
 
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
+  var dollyInTween = self.dollyZoom({
+    destination : self.returnLocation,
+    duration : 800,
+  })
+  dollyInTween.onComplete(function () {
+    var labelFadeIn = self.fadeInMeshes({
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : self.hiddenLabels
     })
-    dollyInTween.onComplete(function () {
-      move()
-    })
-  } else {
-    move()
-  }
-
-  function move () {
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-1.7, 1.6, -2.5),
       duration : 800,
@@ -328,7 +393,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     moveTween.onComplete(function () {
       self.environment.controls.enabled = true
     })
-  }
+  })
 };
 
 NavController.prototype.vitalXsupportOrthographicLoHo = function() {
@@ -336,30 +401,42 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
-  this.fadeOutArrows({
+  var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
   })
 
-  this.fadeInArrows({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.Out,
-    arrowType: 'sideArrows'
+  fadeOutTween.onComplete(function () {
+    var cornerArrows = self.environment.navArrows['cornerArrows']
+    _.forEach(cornerArrows, function (arrow) {
+      arrow.mesh.visible = false
+      arrow.mesh.transparent = false
+    })
   })
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
-    })
-    dollyInTween.onComplete(function () {
-      moveAndDollyOut()
-    })
-  } else {
-    moveAndDollyOut()
-  }
+  var toFadeIn = []
+  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalLoHiSupportLeft" ) )
+  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalLoHiSupportRight" ) )
 
+  this.fadeInMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.Out,
+    meshes : toFadeIn
+  })
+
+  // hide the labels
+  self.hiddenLabels = []
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : self.hiddenLabels
+  })
+
+  moveAndDollyOut()
   function moveAndDollyOut () {
     self.focalPoint = new THREE.Vector3(1,1,1)
     var moveTween = self.moveCamera({
@@ -371,7 +448,6 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
     // dolly zoom out
     moveTween.onComplete(function () {
       self.returnLocation = camera.position.clone()
-      // self.returnFocalPoint =
       self.focalPoint = new THREE.Vector3(0,1,1)
       self.dollyZoom({ // dolly out
         destination : new THREE.Vector3(-1002.5,1,1),
@@ -397,19 +473,16 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
   })
 
 
-  if (this.dollyZoomed) {
-    var dollyInTween = self.dollyZoom({
-      destination : self.returnLocation,
-      duration : 800,
+  var dollyInTween = self.dollyZoom({
+    destination : self.returnLocation,
+    duration : 800,
+  })
+  dollyInTween.onComplete(function () {
+    var labelFadeIn = self.fadeInMeshes({
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : self.hiddenLabels
     })
-    dollyInTween.onComplete(function () {
-      move()
-    })
-  } else {
-    move()
-  }
-
-  function move () {
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-2.5, 1.5, 3.7),
       duration : 800,
@@ -419,7 +492,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
     moveTween.onComplete(function () {
       self.environment.controls.enabled = true
     })
-  }
+  })
 };
 
 
@@ -452,13 +525,6 @@ NavController.prototype.moveCamera = function (opts) {
       .onUpdate(function () {
         camera.position.set(tweenIncrementors.x, tweenIncrementors.y, tweenIncrementors.z)
         camera.lookAt(self.focalPoint)
-
-        // var newVFOV = findVFOV({
-          // depth : camera.position.distanceTo(opts.focalPoint),
-          // height : self.screenHeight,
-        // })
-        // camera.fov = newVFOV
-        // camera.updateProjectionMatrix()
       })
       .start();
   return tween
@@ -468,6 +534,8 @@ NavController.prototype.moveCamera = function (opts) {
 NavController.prototype.dollyZoom = function (opts) {
 
   var self = this
+
+  var tween
 
   var camera = this.environment.camera
   var focalPoint = this.focalPoint
@@ -483,10 +551,10 @@ NavController.prototype.dollyZoom = function (opts) {
   var newDistance = destination.distanceTo(focalPoint)
   var easing
   if (newDistance > currentDistance) {
-    self.dollyZoomed = true
+    // self.dollyZoomed = true
     easing = TWEEN.Easing.Quartic.In
   } else {
-    self.dollyZoomed = false
+    // self.dollyZoomed = false
     easing = TWEEN.Easing.Quartic.Out
   }
 

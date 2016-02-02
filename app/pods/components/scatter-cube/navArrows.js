@@ -29,17 +29,17 @@ export default function NavArrows (opts) {
     ////////////////////////////////// sides //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     // (power, support , vital)
-    sidePowerHiLoSupportLeft : new THREE.Vector3(1.2, -0.3, 0),
-    sidePowerHiLoSupportRight : new THREE.Vector3(0.8, -0.3, 0),
+    sidePowerHiLoSupportLeft : new THREE.Vector3(1.74, -0.3, 0),
+    sidePowerHiLoSupportRight : new THREE.Vector3(0.26, -0.3, 0),
 
-    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.2),
-    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.8),
+    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.74),
+    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.26),
 
-    sidePowerLoHiSupportLeft : new THREE.Vector3(0.8, -0.3, 2),
-    sidePowerLoHiSupportRight : new THREE.Vector3(1.2, -0.3, 2),
+    sidePowerLoHiSupportLeft : new THREE.Vector3(0.26, -0.3, 2),
+    sidePowerLoHiSupportRight : new THREE.Vector3(1.74, -0.3, 2),
 
-    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.2),
-    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.8),
+    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.74),
+    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
   }
 
   this.rotation = {
@@ -120,9 +120,9 @@ export default function NavArrows (opts) {
 
   this.powerLoLovitalLeft = this.createArrow({ name : 'powerLoLovitalLeft' })
   this.powerLoLovitalRight = this.createArrow({ name : 'powerLoLovitalRight' })
-  ///////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////// sides //////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////// sides //////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
   this.sidePowerHiLoSupportLeft = this.createArrow({ name : 'sidePowerHiLoSupportLeft' })
   this.sidePowerHiLoSupportRight = this.createArrow({ name : 'sidePowerHiLoSupportRight' })
 
@@ -171,6 +171,7 @@ NavArrows.prototype.createArrow = function(opts) {
 
     var arrow = {}
     arrow.mesh = new THREE.Mesh(geometry, material)
+    arrow.mesh.name = name
 
     var matrix = new THREE.Matrix4()
 

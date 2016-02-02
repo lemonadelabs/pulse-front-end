@@ -559,7 +559,7 @@ export default function (component) {
     })
 
 
-    var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
+    // var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
 
   }
 

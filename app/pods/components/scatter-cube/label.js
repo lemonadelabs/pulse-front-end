@@ -1,6 +1,6 @@
 export default function Label (opts) {
   this.mesh = opts.mesh
-  this.name = opts.name
+  this.name = this.mesh.name = opts.name
   this.coords = this.generateCoords()
   this.currentQuadrant = undefined
 }
