@@ -6,6 +6,7 @@
   height: 80px;
   text-align: center;
   padding-top: 30px;
+  pointer-events:none;
 }
 .time-series-container hr{
   border: none;
@@ -19,6 +20,7 @@
   display: inline-flex;
   flex-wrap: nowrap;
   justify-content:space-between;
+  pointer-events:all;
 }
 
 

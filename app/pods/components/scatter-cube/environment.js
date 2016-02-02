@@ -1,4 +1,3 @@
-/* global THREE, THREEx, TWEEN, requestAnimationFrame _ */
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -8,11 +7,11 @@ import LineGroup from './lineGroup';
 import Target from './target';
 import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
-// import data4Week from '../../../mockData/testDataMultiWeek'
-// import getProjects from '../../../mockData/getProjects'
+import NavController from './navController';
+import NavArrows from './navArrows';
 
-
-export default function environment (component) {
+// TODO: figure out if this is the right way to define and export out environment
+export default function (component) {
   var environment = {}
   environment.component = component
   environment.container = undefined
@@ -50,17 +49,21 @@ export default function environment (component) {
 
     /////////////////////////// set up camera /////////////////////////////
 
-    this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.0001, 1000 );
-    this.camera.position.set(-1.5,1,3)
+    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
+
+    this.camera.position.set(4.5,1.5,-1.6)
+
+    this.camera.tweenDestinations = {}
 
     /////////////////////////// set up controls /////////////////////////////
 
     this.controls = new THREE.OrbitControls( this.camera, this.container );
-    this.controls.maxDistance = 5
-    this.controls.minDistance = 1.7
+    // this.controls.maxDistance = 5
+    // this.controls.minDistance = 1.7
     this.controls.zoomSpeed = 0.2
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
+    // this.controls.enabled = false
 
     this.onRenderFcts.push(this.controls.update)
 
@@ -79,30 +82,30 @@ export default function environment (component) {
 
     ///////////////////// On Window Resize ////////////////////////
 
-    var windowResize = new THREEx.WindowResize(this.renderer, this.camera)
+    this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
 
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
 
-    var domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
+    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
 
     ///////////////////////////////////// Stats ////////////////////////////////////////
 
-    var stats = new Stats();
+    this.stats = new Stats();
 
-    stats.setMode( 1 ); // 0: fps, 1: ms, 2: mb
+    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
 
     // align top-left
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
-    document.body.appendChild( stats.domElement );
-    var $stats = $(stats.domElement)
+    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.left = '0px';
+    this.stats.domElement.style.top = '0px';
+    document.body.appendChild( this.stats.domElement );
+    var $stats = $(this.stats.domElement)
 
     $stats.hide()
 
     this.onRenderFcts.push(function () {
-      stats.begin();
-      stats.end();
+      self.stats.begin();
+      self.stats.end();
     })
 
     var rendererStats   = new THREEx.RendererStats()
@@ -121,7 +124,7 @@ export default function environment (component) {
     })
 
     $(document).on('keypress', function (e) {
-      if ( e.keyCode == 115 || e.keyCode == 83) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
         $stats.toggle()
         $rendererStats.toggle()
       }
@@ -279,12 +282,11 @@ export default function environment (component) {
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
 
     this.axisGuides = new AxisGuides()
-    console.log(this.axisGuides.lines)
     this.addObjectsToScene(this.axisGuides.lines)
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////
 
-    this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry, materials) {
+    this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry) {
       self.dangerZone = new DangerZone({
         geometry : geometry
       })
@@ -369,22 +371,33 @@ export default function environment (component) {
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
 
+    _.forEach(this.pointCloud.sHPointClickTargets, function (object) {
+      self.domEvents.addEventListener(object.mesh, 'mouseover', function(){
+        $('.scatter-cube').addClass('threejs-hover')
+      }, false)
+
+      self.domEvents.addEventListener(object.mesh, 'mouseout', function(){
+        $('.scatter-cube').removeClass('threejs-hover')
+      }, false)
+    })
+
+
 
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
-      domEvents.addEventListener(mesh, 'click', function(){
+      self.domEvents.addEventListener(mesh, 'click', function(){
         self.onPointClickFcts.forEach( function(onPointClickFct) {
           onPointClickFct(sHPoint)
         })
       }, false)
 
-      domEvents.addEventListener(mesh, 'mouseover', function(){
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
         self.onMouseoverFcts.forEach( function(onMouseoverFct) {
           onMouseoverFct(sHPoint)
         })
       }, false)
 
-      domEvents.addEventListener(mesh, 'mouseout', function(){
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
         self.onMouseoutFcts.forEach( function(onMouseoutFct) {
           onMouseoutFct(sHPoint)
         })
@@ -455,7 +468,7 @@ export default function environment (component) {
 
     ///////////////////// Create history tail group ////////////////////////
 
-    this.historyTailGroup = new HistoryTailGroup({})
+    this.historyTailGroup = new HistoryTailGroup()
 
     this.noSelectedStakeholderFcts.push(function () {
       if (self.component.historyView) {
@@ -513,9 +526,58 @@ export default function environment (component) {
 
     // // this.pauseRender()
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////// autoNav ////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+    this.navController = new NavController({
+      environment : self
+    })
 
+    this.navArrows = new NavArrows({
+      scene : self.scene,
+      jSONloader : self.jSONloader,
+      navController : self.navController,
+      domEvents : self.domEvents
+    })
+
+
+
+
+    // setTimeout(function () {
+    //   self.navController.fadeOutArrows({
+    //     duration : 1000,
+    //     easing : TWEEN.Easing.Quadratic.In,
+    //     arrowType: 'sideArrows'
+    //   })
+    // }, 1000)
+
+    // setTimeout(function () {
+    //   self.navController.fadeInArrows({
+    //     duration : 1000,
+    //     easing : TWEEN.Easing.Quadratic.Out,
+    //     arrowType: 'sideArrows'
+    //   })
+    // }, 3000)
+
+
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 122) { self.navController.powerXsupportOrthographicLoHi() } // z
+      if ( e.keyCode === 120) { self.navController.powerXvitalPerspectiveHiHi() } // x
+      if ( e.keyCode === 99) { self.navController.vitalXsupportOrthographicHiLo() } // c
+      if ( e.keyCode === 118) { self.navController.vitalXpowerPerspectiveLoHi() } // v
+      if ( e.keyCode === 98) { self.navController.powerXsupportOrthographicHiLo() } // b
+      if ( e.keyCode === 110) { self.navController.powerXvitalPerspectiveLoLo() } // n
+      if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
+      if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
+    })
+
+
+    // var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
 
   }
+
+
 
   environment.render = function () {
 
@@ -539,6 +601,7 @@ export default function environment (component) {
       // update TWEEN functions
       TWEEN.update(nowMsec);
 
+      // console.log(self.camera.position)
 
     })
   }

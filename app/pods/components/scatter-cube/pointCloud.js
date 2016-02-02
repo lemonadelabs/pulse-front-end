@@ -13,7 +13,7 @@ export default function PointCloud (opts) {
 PointCloud.prototype.createSHPointClickTargets = function() {
   var self = this
   var sHPointClickTargets = []
-  forEach(this.data, function (stakeHolder) {
+  _.forEach(this.data, function (stakeHolder) {
     var sHPointClickTarget = new SHPointClickTarget({
       weeks : stakeHolder.data,
       id : stakeHolder.id,
@@ -32,7 +32,7 @@ PointCloud.prototype.createSHPointClickTargets = function() {
 PointCloud.prototype.createSHPoints = function() {
   var self = this
   var shPoints = []
-  forEach(this.data, function (stakeHolder) {
+  _.forEach(this.data, function (stakeHolder) {
     var point = new SHPoint({
       weeks : stakeHolder.data,
       timeFrame : self.timeFrame
@@ -42,7 +42,3 @@ PointCloud.prototype.createSHPoints = function() {
   return shPoints
 };
 
-function forEach(array, action) {
-  for (var i = 0; i < array.length; i++)
-    action(array[i]);
-}

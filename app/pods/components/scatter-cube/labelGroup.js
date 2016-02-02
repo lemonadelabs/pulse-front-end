@@ -31,14 +31,14 @@ LabelGroup.prototype.createLabels = function() {
       })
       self.labels.push(label)
       self.scene.add(label.mesh)
-    };
+    }
     self.initLocation(self.camera.position)
   })
 };
 
 LabelGroup.prototype.updateLocation = function(cameraPosition) {
   this.updateQuadrant(cameraPosition)
-  if (this.prevQuadrant != this.quadrant) {
+  if (this.prevQuadrant !== this.quadrant) {
     this.animateLabels()
   }
 };
@@ -79,6 +79,7 @@ LabelGroup.prototype.updateQuadrant = function(cameraPosition) {
 
 
 function forEach(array, action) {
-  for (var i = 0; i < array.length; i++)
+  for (var i = 0; i < array.length; i++) {
     action(array[i]);
+  }
 }

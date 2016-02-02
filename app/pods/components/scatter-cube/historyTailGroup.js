@@ -1,6 +1,6 @@
 import HistoryTail from './historyTail'
 
-export default function HistoryTailGroup (opts) {
+export default function HistoryTailGroup () {
   this.historyTails = []
 }
 

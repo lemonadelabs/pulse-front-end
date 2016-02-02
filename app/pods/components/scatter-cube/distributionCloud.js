@@ -54,8 +54,8 @@ DistributionCloud.prototype.buildData = function() {
 
   function randomise(number) {
     var randomised = parseFloat(number) + (Math.random()/4 - 0.5/4)
-    if (randomised < 0) randomised = 0
-    if (randomised > 1) randomised = 1
+    if (randomised < 0) { randomised = 0 }
+    if (randomised > 1) { randomised = 1 }
     return randomised
 
   }
