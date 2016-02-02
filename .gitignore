@@ -18,3 +18,5 @@ testem.log
 
 #design assets
 *.blend1
+
+.DS_Store
