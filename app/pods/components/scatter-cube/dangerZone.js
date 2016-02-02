@@ -1,5 +1,6 @@
 export default function DangerZone(opts) {
   this.mesh = this.createMesh(opts.geometry)
+  this.mesh.name = 'dangerZone'
 }
 
 DangerZone.prototype.createMesh = function(geometry) {

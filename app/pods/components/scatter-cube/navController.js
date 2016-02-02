@@ -124,6 +124,9 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "dangerZone" ) )
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -228,6 +231,9 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "dangerZone" ) )
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -327,6 +333,9 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "dangerZone" ) )
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -427,6 +436,9 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+
+  this.hiddenLabels.push( this.environment.scene.getObjectByName( "dangerZone" ) )
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
