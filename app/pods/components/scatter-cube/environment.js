@@ -194,6 +194,7 @@ export default function (component) {
     this.onUpdateTimeFcts.push(function (time, oldTime) {
 
       if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
 
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationDistroViews(time, oldTime)
@@ -238,6 +239,7 @@ export default function (component) {
     this.connectionViewUpdated = function () {
 
       if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
 
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
@@ -262,6 +264,7 @@ export default function (component) {
     this.distributionViewUpdated = function () {
 
       if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
 
       if (this.component.distributionView) {
         self.tweenController.buildDistroCloud()
@@ -273,6 +276,7 @@ export default function (component) {
     this.historyViewUpdated = function () {
 
       if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
 
       if (this.component.historyView) {
         self.tweenController.buildHistorytails(self.focussedPoint)
@@ -431,8 +435,6 @@ export default function (component) {
 
     this.onMouseoverFcts.push(function (sHPoint) {
 
-      if (!self.rendering) { self.resumeRender() } // resume the render
-
       self.nameBadgeVisible = true
       self.component.updateHoveredStakeholder(sHPoint)
 
@@ -520,26 +522,32 @@ export default function (component) {
       console.log('resume')
     }
 
-    this.oldCameraPosition = {
-      x: undefined,
-      y: undefined,
-      z: undefined
+    $('.scatter-cube').on('mousemove', function (e) {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    })
+
+    $('.scatter-cube').on('mouseup', function (e) {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    })
+
+    this.controls.domElement.addEventListener( 'mousewheel', function () {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    }, false );
+
+    function resetRenderTimeout() {
+      clearTimeout(self.renderTimer)
+      self.renderTimer = setTimeout(function () {
+        self.pauseRender()
+        self.renderTimer = null
+      }, 3000)
     }
 
-
-    setInterval(function () {
-
-      if ( self.rendering && _.isEqual( self.oldCameraPosition, self.camera.position ) ) {
-        self.pauseRender()
-      }
-
-      if ( !self.rendering && !_.isEqual( self.oldCameraPosition, self.camera.position ) ) {
-        self.resumeRender()
-      }
-
-      self.oldCameraPosition = self.camera.position.clone()
-
-    }, 8000)
+    setTimeout(function () { // this should be called when the page is completely loaded
+      resetRenderTimeout()
+    }, 3000)
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////// autoNav ////////////////////////////////////////
