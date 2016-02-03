@@ -59,7 +59,7 @@ export default function (component) {
 
     this.controls = new THREE.OrbitControls( this.camera, this.container );
     // this.controls.maxDistance = 5
-    // this.controls.minDistance = 1.7
+    this.controls.minDistance = 1.7
     this.controls.zoomSpeed = 0.2
     this.controls.target.set(1,1,1)
     this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
@@ -80,9 +80,40 @@ export default function (component) {
     this.renderer.sortObjects = false;
     this.container.appendChild( this.renderer.domElement );
 
+    ///////////////////////////  renderer start and stop /////////////////////////////
+
+    this.pauseRender = function () {
+      cancelAnimationFrame(self.rafId)
+      self.rendering = false
+      console.log('pause')
+    }
+    this.resumeRender = function () {
+      self.rendering = true
+      self.render()
+      console.log('resume')
+    }
+
+    this.resetRenderTimeout = function () {
+      clearTimeout(self.renderTimer)
+      self.renderTimer = setTimeout(function () {
+        self.pauseRender()
+        self.renderTimer = null
+      }, 3000)
+    }
+
+    this.triggerRender = function () {
+      if (!self.rendering) { self.resumeRender()  } // resume the render
+      self.resetRenderTimeout()
+    }
+
+    setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
+      self.resetRenderTimeout()
+    }, 3000)
+
     ///////////////////// On Window Resize ////////////////////////
 
     this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
+    window.addEventListener('resize', self.triggerRender, false)
 
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
 
@@ -193,8 +224,7 @@ export default function (component) {
 
     this.onUpdateTimeFcts.push(function (time, oldTime) {
 
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
 
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationDistroViews(time, oldTime)
@@ -238,8 +268,7 @@ export default function (component) {
 
     this.connectionViewUpdated = function () {
 
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
 
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
@@ -263,8 +292,7 @@ export default function (component) {
 
     this.distributionViewUpdated = function () {
 
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
 
       if (this.component.distributionView) {
         self.tweenController.buildDistroCloud()
@@ -275,8 +303,7 @@ export default function (component) {
 
     this.historyViewUpdated = function () {
 
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
 
       if (this.component.historyView) {
         self.tweenController.buildHistorytails(self.focussedPoint)
@@ -512,43 +539,23 @@ export default function (component) {
 
 
 
-    this.pauseRender = function () {
-      cancelAnimationFrame(self.rafId)
-      self.rendering = false
-      console.log('pause')
-    }
-    this.resumeRender = function () {
-      self.rendering = true
-      self.render()
-      console.log('resume')
-    }
+
+
+
 
     $('.scatter-cube').on('mousemove', function (e) {
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
     })
 
     $('.scatter-cube').on('mouseup', function (e) {
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
     })
 
     this.controls.domElement.addEventListener( 'mousewheel', function () {
-      if (!self.rendering) { self.resumeRender() } // resume the render
-      resetRenderTimeout()
+      self.triggerRender()
     }, false );
 
-    function resetRenderTimeout() {
-      clearTimeout(self.renderTimer)
-      self.renderTimer = setTimeout(function () {
-        self.pauseRender()
-        self.renderTimer = null
-      }, 3000)
-    }
 
-    setTimeout(function () { // this should be called when the page is completely loaded
-      resetRenderTimeout()
-    }, 3000)
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////// autoNav ////////////////////////////////////////
