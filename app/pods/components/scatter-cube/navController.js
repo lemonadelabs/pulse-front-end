@@ -1,3 +1,5 @@
+// todo:: tidy up this code so that the fading of the arrows uses the same function as the fading of the danger zone and the lables. Currently the arrows are passed as objects that have a mesh, but the lables are passed as an array of meshes. This needs to be standardised
+
 export default function NavController (opts) {
   this.environment = opts.environment
   this.focalPoint = new THREE.Vector3(1,1,1)
@@ -5,8 +7,6 @@ export default function NavController (opts) {
   this.hiddenLabels = []
 }
 
-
-// add 23 lines onto the error messages from the console
 
 
 NavController.prototype.fadeOutArrows = function(opts) {
