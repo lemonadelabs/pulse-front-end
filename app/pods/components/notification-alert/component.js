@@ -14,6 +14,7 @@ export default Ember.Component.extend({
     if(this.get('showNotification')){
       Ember.run.later(function(){
         self.set("showNotification", false);
+        self.get("finishAction")();
       }, 6000);
     }
  }.observes('showNotification')

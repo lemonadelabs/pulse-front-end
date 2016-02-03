@@ -7,9 +7,16 @@ export default Ember.Component.extend({
   selectedStakeholderCount: 0,
   selection:false,
   multiSelection:false,
+  finishAction:"finishAction",
+  deselectStakeholders:function(){
+    for (var stakeholder in this.selectedStakeholders) {
+      if (this.selectedStakeholders.hasOwnProperty(stakeholder)) {
+        delete this.selectedStakeholders[stakeholder.id];
+      }
+    }
+  },
   actions:{
     closeStakeholderList:function(){
-      console.log("hide list");
       this.get("toggleStakeholderList")();
     },
     addStakeholderToSelection:function(stakeholder){
@@ -22,7 +29,7 @@ export default Ember.Component.extend({
       var stakeholderCount = this.get("selectedStakeholderCount");
       this.set('selectedStakeholderCount',stakeholderCount-1);
     },
-    removeStakeholders:function(){
+    startRemoveStakeholders:function(){
       var stakeholderCount = this.selectedStakeholderCount;
       var selectedStakeholders = this.get("selectedStakeholders");
       var firstStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
@@ -39,6 +46,13 @@ export default Ember.Component.extend({
         this.set('alertMessage',"Removed <b>"+firstStakeholder.name+"</b> from project")
       }
       this.set("showNotification", true);
+    },
+    undoRemoveStakeholders:function(){
+      //TODO:Make this actually do something
+    },
+    finishRemoveStakeholders:function(){
+      //TODO:Here is where we would do the ember data save;
+      this.deselectStakeholders();
     },
     pollStakeholders:function(){
       var stakeholderCount = this.selectedStakeholderCount;
@@ -57,6 +71,9 @@ export default Ember.Component.extend({
         this.set('alertMessage',"Polled <b>"+firstStakeholder.name+"</b>")
       }
       this.set("showNotification", true);
+    },
+    finishAction:function(){
+      console.log("finishAction");
     }
   },
   observeSelectedStakeholderCount:function(){

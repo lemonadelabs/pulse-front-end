@@ -9,7 +9,12 @@
     }}
   {{/each}}
 </div>
-{{notification-alert alertMessage=this.alertMessage showNotification=this.showNotification}}
+{{notification-alert
+  alertMessage=this.alertMessage
+  showNotification=this.showNotification
+  undoAction=(action this.finishAction)
+  finishAction=(action this.finishAction)
+}}
 <footer class="action-footer blue-footer">
   <button>New</button>
   {{#if this.selection}}
