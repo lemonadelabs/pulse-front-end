@@ -27,7 +27,6 @@ SHPointClickTarget.prototype.createCurve = function() {
 };
 
 SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
-  var self = this
   var matrix = new THREE.Matrix4();
 
   var geometry = new THREE.SphereGeometry(400, 6, 6);
@@ -48,7 +47,6 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   var point = new THREE.Mesh( geometry, material );
 
   // sets the position for each mesh
-  var position = new THREE.Vector3();
   var x = this.weeks[noOfWeeks].power * 1.8  + 0.1
   var y = this.weeks[noOfWeeks].support * 1.8  + 0.1
   var z = this.weeks[noOfWeeks].vital * 1.8  + 0.1

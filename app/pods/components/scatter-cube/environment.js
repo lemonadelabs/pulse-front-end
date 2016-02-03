@@ -142,7 +142,7 @@ export default function (component) {
     ///////////////////////// adding & removing objects from scene /////////////////////////////////
 
     this.addObjectsToScene = function (objects) {
-      forEach(objects, self.addObjectToScene)
+      _.forEach(objects, self.addObjectToScene)
     }
 
     this.addObjectToScene = function (object) {
@@ -154,13 +154,13 @@ export default function (component) {
     }
 
     this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
-      forEach( objects, self.removeObjectFromScene )
+      _.forEach( objects, self.removeObjectFromScene )
     }
 
     //////////////////////////////////// billboarding ////////////////////////////////////////////////
 
     this.billboardObjects = function (objects) {
-      forEach(objects, function(object) {
+      _.forEach(objects, function(object) {
         self.billboardObject(object)
       })
     }
@@ -192,6 +192,10 @@ export default function (component) {
     })
 
     this.onUpdateTimeFcts.push(function (time, oldTime) {
+
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationDistroViews(time, oldTime)
       } else if (self.component.connectionView && self.focussedPoint) {
@@ -233,6 +237,10 @@ export default function (component) {
     /////////////////////// Toggle component view modes ///////////////////////
 
     this.connectionViewUpdated = function () {
+
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
         self.addObjectsToScene(this.lineGroup.primaryConnections)
@@ -254,6 +262,10 @@ export default function (component) {
     }
 
     this.distributionViewUpdated = function () {
+
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+
       if (this.component.distributionView) {
         self.tweenController.buildDistroCloud()
       } else {
@@ -262,6 +274,10 @@ export default function (component) {
     }
 
     this.historyViewUpdated = function () {
+
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+
       if (this.component.historyView) {
         self.tweenController.buildHistorytails(self.focussedPoint)
       } else {
@@ -372,6 +388,13 @@ export default function (component) {
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
 
+    // turn cursor into hand when hovering the sHPoints
+    this.onMouseoverFcts.push(function (sHPoint) {
+      $('.scatter-cube').addClass('threejs-hover')
+    })
+    this.onMouseoutFcts.push(function (sHPoint) {
+      $('.scatter-cube').removeClass('threejs-hover')
+    })
 
     this.addListnerSHPoint = function (sHPoint) {
       var mesh = sHPoint.mesh
@@ -393,7 +416,8 @@ export default function (component) {
         })
       }, false)
     }
-    forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
+    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
 
 
     this.onPointClickFcts.push( function (sHPoint) {
@@ -411,6 +435,7 @@ export default function (component) {
     ///////////////////// name-badge on hover ////////////////////////
 
     this.onMouseoverFcts.push(function (sHPoint) {
+
       self.nameBadgeVisible = true
       self.component.updateHoveredStakeholder(sHPoint)
 
@@ -438,7 +463,7 @@ export default function (component) {
 
 
     this.onRenderFcts.push( function () {
-      forEach(self.pointCloud.sHPoints, function (sHPoint) {
+      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
         sHPoint.updateColor(self.camera.position)
       })
     })
@@ -449,7 +474,7 @@ export default function (component) {
 
     this.onRenderFcts.push( function () { // update color of point
       if (self.component.distributionView && self.focussedPoint) {
-        forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
+        _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
           // dont update if they are being animated!!
           if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
         })
@@ -478,43 +503,52 @@ export default function (component) {
 
 
 
-    // //////////////////////////////// pause render ////////////////////////////////
+    //////////////////////////////// pause render ////////////////////////////////
 
-    // this.pauseRender = function () {
-    //   // self.controls.enabled = false
-    //   cancelAnimationFrame(self.rafId)
-    //   self.rendering = false
-    //   console.log('pause')
-    // }
-    // this.resumeRender = function () {
-    //   // self.controls.enabled = true
-    //   self.rendering = true
-    //   self.render()
-    //   console.log('resume')
-    // }
+    // I need to start the renderer when:
+      // I move the camera => check location
+      // A tween is active => check tweens somehow?
+      // when I hover over a sHPoint
 
-    // this.oldCameraPosition = {
-    //   x: undefined,
-    //   y: undefined,
-    //   z: undefined
-    // }
 
-    // setInterval(function () {
-    //   if ( self.rendering === true && _.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
-    //     self.pauseRender()
-    //   }
 
-    //   if ( self.rendering === false && !_.isEqual( self.oldCameraPosition.x, self.camera.position.x ) ) {
-    //     self.resumeRender()
-    //   }
+    this.pauseRender = function () {
+      cancelAnimationFrame(self.rafId)
+      self.rendering = false
+      console.log('pause')
+    }
+    this.resumeRender = function () {
+      self.rendering = true
+      self.render()
+      console.log('resume')
+    }
 
-    //   self.oldCameraPosition.x = self.camera.position.x
-    //   // self.oldCameraPosition.y = self.camera.position.y
-    //   // self.oldCameraPosition.z = self.camera.position.z
+    $('.scatter-cube').on('mousemove', function (e) {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    })
 
-    // }, 100)
+    $('.scatter-cube').on('mouseup', function (e) {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    })
 
-    // // this.pauseRender()
+    this.controls.domElement.addEventListener( 'mousewheel', function () {
+      if (!self.rendering) { self.resumeRender() } // resume the render
+      resetRenderTimeout()
+    }, false );
+
+    function resetRenderTimeout() {
+      clearTimeout(self.renderTimer)
+      self.renderTimer = setTimeout(function () {
+        self.pauseRender()
+        self.renderTimer = null
+      }, 3000)
+    }
+
+    setTimeout(function () { // this should be called when the page is completely loaded
+      resetRenderTimeout()
+    }, 3000)
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////// autoNav ////////////////////////////////////////
@@ -530,34 +564,21 @@ export default function (component) {
       domEvents : self.domEvents
     })
 
-    // setTimeout(function () {
-    //   self.navController.fadeOutArrows({
-    //     duration : 1000,
-    //     easing : TWEEN.Easing.Quadratic.In,
-    //     arrowType: 'sideArrows'
-    //   })
-    // }, 1000)
 
-    // setTimeout(function () {
-    //   self.navController.fadeInArrows({
-    //     duration : 1000,
-    //     easing : TWEEN.Easing.Quadratic.Out,
-    //     arrowType: 'sideArrows'
-    //   })
-    // }, 3000)
+    // $(document).on('keypress', function (e) {
+    //   if ( e.keyCode === 122) { self.navController.powerXsupportOrthographicLoHi() } // z
+    //   if ( e.keyCode === 120) { self.navController.powerXvitalPerspectiveHiHi() } // x
+    //   if ( e.keyCode === 99) { self.navController.vitalXsupportOrthographicHiLo() } // c
+    //   if ( e.keyCode === 118) { self.navController.vitalXpowerPerspectiveLoHi() } // v
+    //   if ( e.keyCode === 98) { self.navController.powerXsupportOrthographicHiLo() } // b
+    //   if ( e.keyCode === 110) { self.navController.powerXvitalPerspectiveLoLo() } // n
+    //   if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
+    //   if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
+    // })
 
 
+    // var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
 
-    $(document).on('keypress', function (e) {
-      if ( e.keyCode === 122) { self.navController.powerXsupportOrthographicLoHi() } // z
-      if ( e.keyCode === 120) { self.navController.powerXvitalPerspectiveHiHi() } // x
-      if ( e.keyCode === 99) { self.navController.vitalXsupportOrthographicHiLo() } // c
-      if ( e.keyCode === 118) { self.navController.vitalXpowerPerspectiveLoHi() } // v
-      if ( e.keyCode === 98) { self.navController.powerXsupportOrthographicHiLo() } // b
-      if ( e.keyCode === 110) { self.navController.powerXvitalPerspectiveLoLo() } // n
-      if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
-      if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
-    })
   }
 
 
@@ -592,8 +613,8 @@ export default function (component) {
   return environment
 }
 
-function forEach(array, action) {
-  for (var i = 0; i < array.length; i++) {
-    action(array[i])
-  }
-}
+// function forEach(array, action) {
+//   for (var i = 0; i < array.length; i++) {
+//     action(array[i])
+//   }
+// }

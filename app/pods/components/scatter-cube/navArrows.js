@@ -9,7 +9,7 @@ export default function NavArrows (opts) {
 
   this.domEvents = opts.domEvents
 
-  this.coords = {
+  this.position = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -28,49 +28,49 @@ export default function NavArrows (opts) {
     ////////////////////////////////// sides //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     // (power, support , vital)
-    sidePowerHiLoSupportLeft : new THREE.Vector3(1.2, -0.3, 0),
-    sidePowerHiLoSupportRight : new THREE.Vector3(0.8, -0.3, 0),
+    sidePowerHiLoSupportLeft : new THREE.Vector3(1.74, -0.3, 0),
+    sidePowerHiLoSupportRight : new THREE.Vector3(0.26, -0.3, 0),
 
-    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.2),
-    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.8),
+    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.74),
+    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.26),
 
-    sidePowerLoHiSupportLeft : new THREE.Vector3(0.8, -0.3, 2),
-    sidePowerLoHiSupportRight : new THREE.Vector3(1.2, -0.3, 2),
+    sidePowerLoHiSupportLeft : new THREE.Vector3(0.26, -0.3, 2),
+    sidePowerLoHiSupportRight : new THREE.Vector3(1.74, -0.3, 2),
 
-    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.2),
-    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.8),
+    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.74),
+    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
   }
 
   this.rotation = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    vitalHiLoPowerLeft : - Math.PI / 2,
-    vitalHiLoPowerRight : - Math.PI / 2,
+    vitalHiLoPowerLeft : new THREE.Euler( 0, -Math.PI / 2, 0, 'XYZ' ),
+    vitalHiLoPowerRight : new THREE.Euler( 0, -Math.PI / 2, 0, 'XYZ' ),
 
-    powerHiHiVitalLeft : 0,
-    powerHiHiVitalRight : 0,
+    powerHiHiVitalLeft : new THREE.Euler( 0, 0, 0, 'XYZ' ),
+    powerHiHiVitalRight : new THREE.Euler( 0, 0, 0, 'XYZ' ),
 
-    vitalLoHiPowerLeft : Math.PI / 2,
-    vitalLoHiPowerRight : Math.PI / 2,
+    vitalLoHiPowerLeft : new THREE.Euler( 0, Math.PI / 2, 0, 'XYZ' ),
+    vitalLoHiPowerRight : new THREE.Euler( 0, Math.PI / 2, 0, 'XYZ' ),
 
-    powerLoLovitalLeft : Math.PI,
-    powerLoLovitalRight : Math.PI,
+    powerLoLovitalLeft : new THREE.Euler( 0, Math.PI, 0, 'XYZ' ) ,
+    powerLoLovitalRight : new THREE.Euler( 0, Math.PI, 0, 'XYZ' ) ,
 
     ///////////////////////////////////////////////////////////////////////////
     ////////////////////////////////// sides //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    sidePowerHiLoSupportLeft : Math.PI,
-    sidePowerHiLoSupportRight : 0,
+    sidePowerHiLoSupportLeft : new THREE.Euler( -Math.PI / 2, Math.PI, 0, 'XYZ' ),
+    sidePowerHiLoSupportRight : new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ),
 
-    sideVitalLoHiSupportLeft : Math.PI / 2,
-    sideVitalLoHiSupportRight : -Math.PI / 2,
+    sideVitalLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI,  -Math.PI / 2, 'XYZ' ),
+    sideVitalLoHiSupportRight : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
 
-    sidePowerLoHiSupportLeft : 0,
-    sidePowerLoHiSupportRight : Math.PI,
+    sidePowerLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI, 'XYZ' ),
+    sidePowerLoHiSupportRight : new THREE.Euler( - Math.PI / 2, Math.PI, 0, 'XYZ' ),
 
-    sideVitalHiLoSupportLeft : Math.PI / 2,
-    sideVitalHiLoSupportRight : -Math.PI / 2,
+    sideVitalHiLoSupportLeft : new THREE.Euler( Math.PI / 2, 0, -Math.PI / 2, 'XYZ' ),
+    sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI / 2, 'XYZ' ),
   }
 
   this.navControlls = {
@@ -119,9 +119,9 @@ export default function NavArrows (opts) {
 
   this.powerLoLovitalLeft = this.createArrow({ name : 'powerLoLovitalLeft' })
   this.powerLoLovitalRight = this.createArrow({ name : 'powerLoLovitalRight' })
-  ///////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////// sides //////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
+  // ////////////////////////////////// sides //////////////////////////////////
+  // ///////////////////////////////////////////////////////////////////////////
   this.sidePowerHiLoSupportLeft = this.createArrow({ name : 'sidePowerHiLoSupportLeft' })
   this.sidePowerHiLoSupportRight = this.createArrow({ name : 'sidePowerHiLoSupportRight' })
 
@@ -165,23 +165,24 @@ NavArrows.prototype.createArrow = function(opts) {
     arrowType = 'sideArrows'
   }
 
-  // var path = ( _.endsWith(name, 'Left')) ? './assets/geometries/rotationArrowsLeft.json' :  './assets/geometries/rotationArrowsRight.json' ;
-  // if (_.startsWith(name, 'side')) {
-  //   path = './assets/geometries/rotationArrowFlat.json'
-  // }
 
   self.jSONloader.load(path, function (geometry) {
-    // var geometry = new THREE.PlaneGeometry(0.2, 0.05, 1, 1) // this is where we will user the objectLoader
-
-    // geometry.scale(0.7,0.7,0.7)
 
     var arrow = {}
     arrow.mesh = new THREE.Mesh(geometry, material)
+    arrow.mesh.name = name
 
+    var matrix = new THREE.Matrix4()
 
-    arrow.mesh.position.set( self.coords[name].x, self.coords[name].y, self.coords[name].z )
+    var rotation = self.rotation[name] // new THREE.Euler( 0, 0, 0, 'XYZ' );
+    var quaternion = new THREE.Quaternion()
+    quaternion.setFromEuler( rotation, false );
+    matrix.makeRotationFromQuaternion(quaternion)
 
-    arrow.mesh.rotateY(self.rotation[name])
+    var position = self.position[name] // new THREE.Vector3(1,1,1);
+    matrix.setPosition(position)
+
+    arrow.mesh.applyMatrix(matrix)
 
     self.scene.add(arrow.mesh)
 
@@ -189,7 +190,21 @@ NavArrows.prototype.createArrow = function(opts) {
       self.navControlls[name]()
     }, false)
 
+    if (arrowType === 'sideArrows') {
+      arrow.mesh.visible = false
+    }
+
     self[arrowType].push(arrow)
+
+    self.domEvents.addEventListener(arrow.mesh, 'mouseover', function(){
+      $('.scatter-cube').addClass('threejs-hover')
+    }, false)
+
+    self.domEvents.addEventListener(arrow.mesh, 'mouseout', function(){
+      $('.scatter-cube').removeClass('threejs-hover')
+    }, false)
+
+
   })
 
 
