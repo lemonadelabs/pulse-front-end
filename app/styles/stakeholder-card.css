@@ -28,8 +28,11 @@
 .stakeholder-card .stakeholder-image-container{
   min-width: 80px;
   min-height: 80px;
+  border: solid color(white alpha(-70%)) 1px;
 }
-
+.stakeholder-card.selected .stakeholder-image-container{
+  border: solid color(white alpha(-30%)) 1px;
+}
 .stakholder-list-name{
   text-transform: uppercase;
   font-weight: 600;

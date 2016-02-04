@@ -103,4 +103,17 @@ body {
   position: fixed;
   top:1.91em;
   left:1.91em;
+  transform: scale(1,1);
+}
+
+.close-button:hover{
+  transform: scale(1.2,1.2);
+}
+
+.fade-out-animation{
+  animation: 250ms ease-in fade-out;
+}
+
+.fade-in-animation{
+  animation: 250ms ease-out fade-in;
 }

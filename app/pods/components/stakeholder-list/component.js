@@ -2,12 +2,16 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames:["stakeholder-list"],
+  classNameBindings:["fade-in-animation","fade-out-animation"],
   alertMessage:"Removed <b>10</b> stakeholders from project",
   selectedStakeholders:{},
   selectedStakeholderCount: 0,
   selection:false,
   multiSelection:false,
+  'fade-in-animation':true,
+  'fade-out-animation':false,
   finishAction:"finishAction",
+
   deselectStakeholders:function(){
     for (var stakeholder in this.selectedStakeholders) {
       if (this.selectedStakeholders.hasOwnProperty(stakeholder)) {
@@ -17,7 +21,12 @@ export default Ember.Component.extend({
   },
   actions:{
     closeStakeholderList:function(){
-      this.get("toggleStakeholderList")();
+      var self = this;
+      this.set('fade-in-animation',false);
+      this.set('fade-out-animation',true);
+      Ember.run.later(function(){
+        self.get("toggleStakeholderList")();
+     }, 250);
     },
     addStakeholderToSelection:function(stakeholder){
       this.set('selectedStakeholders.'+stakeholder.id, stakeholder);
