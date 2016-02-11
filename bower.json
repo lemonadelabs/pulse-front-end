@@ -17,9 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "ember-cli-shims": "0.0.6",
+    "ember-cli-shims": "0.1.0",
     "ember-cli-test-loader": "0.2.1",
-    "ember-data": "2.3.x",
     "ember-load-initializers": "0.1.7",
     "ember-qunit-notifications": "0.1.0",
     "ember-qunit": "0.4.16",
@@ -36,9 +35,8 @@
     "masonry": "~4.0.0",
     "stats.js": "mrdoob/stats.js#r14",
     "threex.rendererstats": "*",
-    "threex.objcoord": "*"
-  },
-  "devDependencies": {
+    "threex.objcoord": "*",
     "ember": "2.3.0"
-  }
+  },
+  "devDependencies": {}
 }
