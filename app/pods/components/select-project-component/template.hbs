@@ -1,12 +1,10 @@
 <h1 class="page-title">select a project</h1>
 <div class="project-container">
-  {{project-card}}
-  {{project-card}}
-  {{project-card}}
-  {{project-card}}
-  {{project-card}}
-  {{project-card}}
-  {{project-card}}{{project-card}}{{project-card}}
+
+  {{#each this.model as | project | }}
+    {{project-card model=project}}
+  {{/each}}
+
 </div>
 <footer class="action-footer">
   <button>New Project</button>

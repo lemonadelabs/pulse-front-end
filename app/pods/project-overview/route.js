@@ -5,16 +5,48 @@ import data4Week from '../../mockData/testDataMultiWeek'
 
 export default Ember.Route.extend({
 
-  model: function() {
+  model: function (params) {
+
     var mockModel = {
-      metadata : undefined,
+      metadata : undefined, // aka project
       stakeholders : undefined,
       relationships : undefined
     }
-    mockModel.metadata = projectData();
+
+    // project from store
+    this.store.findRecord('project', 1 ).then(function (project) {
+
+
+      project.get('stakeholderSnapshots').then(function (data) {
+        console.log(data)
+      })
+
+      project.get('stakeholders').then(function (data) {
+        console.log(data)
+      })
+
+    })
+
+
+
+    // return {
+    //   project: this.store.findRecord('project', {id: params.id} ),
+    //   // stakeholders: this.store.findRecords('stakeholders', params.id),
+    //   relationships: getRelationships()
+    // }
+
+    // stakeholders for project from store
+
+    // mock relationships
+
+    mockModel.metadata = projectData()
     mockModel.stakeholders = data4Week();
     mockModel.relationships = getRelationships();
 
+    // console.log(mockModel.metadata.getContent())
+
     return mockModel;
   }
+
+
 });

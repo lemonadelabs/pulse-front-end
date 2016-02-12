@@ -6,6 +6,8 @@ export default DS.Model.extend({
   timeframe: DS.attr('number'),
   timeFormat: DS.attr('string'),
   totalStakeholders: DS.attr('number'),
-  projectOverview: DS.attr('string'),
-  stakeholderSnapshots: DS.hasMany('stakeholder-snapshot')
+  description: DS.attr('string'),
+  stakeholderSnapshots: DS.hasMany('stakeholder-snapshot', { async: true }),
+  stakeholders: DS.hasMany('stakeholder', { async: true })
+
 });
