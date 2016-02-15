@@ -98,6 +98,30 @@ export default function (component) {
     this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
     window.addEventListener('resize', this.triggerRender.bind(this), false)
   }
+  environment.initStats = function () {
+    var self = this
+    this.stats = new Stats();
+    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
+    // align top-left
+    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.left = '0px';
+    this.stats.domElement.style.top = '0px';
+    document.body.appendChild( this.stats.domElement );
+    var $stats = $(this.stats.domElement)
+    $stats.hide()
+    this.onRenderFcts.push(function () {
+      self.stats.begin();
+      self.stats.end();
+    })
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
+        $stats.toggle()
+      }
+    })
+  }
+
+
 
   environment.init = function (opts) {
 
@@ -116,32 +140,13 @@ export default function (component) {
     this.initializeRenderer()
     ///////////////////// On Window Resize ////////////////////////
     this.initWindowResize()
-
-
-
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
-
     this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
-
     ///////////////////////////////////// Stats ////////////////////////////////////////
 
-    this.stats = new Stats();
+    this.initStats()
 
-    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
 
-    // align top-left
-    this.stats.domElement.style.position = 'absolute';
-    this.stats.domElement.style.left = '0px';
-    this.stats.domElement.style.top = '0px';
-    document.body.appendChild( this.stats.domElement );
-    var $stats = $(this.stats.domElement)
-
-    $stats.hide()
-
-    this.onRenderFcts.push(function () {
-      self.stats.begin();
-      self.stats.end();
-    })
 
     var rendererStats   = new THREEx.RendererStats()
 
@@ -160,7 +165,6 @@ export default function (component) {
 
     $(document).on('keypress', function (e) {
       if ( e.keyCode === 115 || e.keyCode === 83) {
-        $stats.toggle()
         $rendererStats.toggle()
       }
     })
