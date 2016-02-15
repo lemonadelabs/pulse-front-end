@@ -22,7 +22,7 @@ export default function (component) {
   environment.onMouseoverFcts = []
   environment.onMouseoutFcts = []
 
-  environment.rendering = true
+
   environment.nameBadgeVisible = false
 
   environment.scene = new THREE.Scene();
@@ -54,12 +54,46 @@ export default function (component) {
   }
 
   environment.initializeRenderer = function () {
+    var self = this
+
     this.renderer = new THREE.WebGLRenderer( { antialias: true } );
     this.renderer.setClearColor( 0x222628 );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( window.innerWidth, window.innerHeight );
     this.renderer.sortObjects = false;
+    this.renderer.rendering = true
     this.container.appendChild( this.renderer.domElement );
+
+    ///////////////////////////  renderer start and stop /////////////////////////////
+    this.renderer.pauseRender = function () {
+      cancelAnimationFrame(this.rafId)
+      this.rendering = false
+      console.log('pause')
+    }
+    this.renderer.resumeRender = function () {
+      console.log(this)
+      this.rendering = true
+      self.render()
+      console.log('resume')
+    }
+
+    this.renderer.resetTimeout = function () {
+      clearTimeout(self.renderTimer)
+      self.renderTimer = setTimeout(function () {
+        self.renderer.pauseRender()
+        self.renderTimer = null
+      }, 3000)
+    }
+
+    this.renderer.trigger = function () {
+      if (!this.rendering) { this.resumeRender()  } // resume the render
+      this.resetTimeout()
+    }
+
+    setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
+      self.renderer.resetTimeout()
+    }, 3000)
+
   }
 
   environment.init = function (opts) {
@@ -79,43 +113,13 @@ export default function (component) {
     this.initializeControls()
 
     /////////////////////////// set up renderer /////////////////////////////
-
     this.initializeRenderer()
 
-    ///////////////////////////  renderer start and stop /////////////////////////////
-
-    this.pauseRender = function () {
-      cancelAnimationFrame(self.rafId)
-      self.rendering = false
-      console.log('pause')
-    }
-    this.resumeRender = function () {
-      self.rendering = true
-      self.render()
-      console.log('resume')
-    }
-
-    this.resetRenderTimeout = function () {
-      clearTimeout(self.renderTimer)
-      self.renderTimer = setTimeout(function () {
-        self.pauseRender()
-        self.renderTimer = null
-      }, 3000)
-    }
-
-    this.triggerRender = function () {
-      if (!self.rendering) { self.resumeRender()  } // resume the render
-      self.resetRenderTimeout()
-    }
-
-    setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
-      self.resetRenderTimeout()
-    }, 3000)
 
     ///////////////////// On Window Resize ////////////////////////
 
     this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
-    window.addEventListener('resize', self.triggerRender, false)
+    window.addEventListener('resize', self.renderer.trigger, false)
 
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
 
@@ -226,7 +230,7 @@ export default function (component) {
 
     this.onUpdateTimeFcts.push(function (time, oldTime) {
 
-      self.triggerRender()
+      self.renderer.trigger()
 
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
         self.tweenController.updateTimeRelationDistroViews(time, oldTime)
@@ -270,7 +274,7 @@ export default function (component) {
 
     this.connectionViewUpdated = function () {
 
-      self.triggerRender()
+      self.renderer.trigger()
 
       if (this.component.connectionView) {
         self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
@@ -294,7 +298,7 @@ export default function (component) {
 
     this.distributionViewUpdated = function () {
 
-      self.triggerRender()
+      self.renderer.trigger()
 
       if (this.component.distributionView) {
         self.tweenController.buildDistroCloud()
@@ -305,7 +309,7 @@ export default function (component) {
 
     this.historyViewUpdated = function () {
 
-      self.triggerRender()
+      self.renderer.trigger()
 
       if (this.component.historyView) {
         self.tweenController.buildHistorytails(self.focussedPoint)
@@ -545,15 +549,15 @@ export default function (component) {
 
 
     $('.scatter-cube').on('mousemove', function (e) {
-      self.triggerRender()
+      self.renderer.trigger()
     })
 
     $('.scatter-cube').on('mouseup', function (e) {
-      self.triggerRender()
+      self.renderer.trigger()
     })
 
     this.controls.domElement.addEventListener( 'mousewheel', function () {
-      self.triggerRender()
+      self.renderer.trigger()
     }, false );
 
 
@@ -583,7 +587,7 @@ export default function (component) {
     requestAnimationFrame(function animate(nowMsec){
 
       // keep looping
-      self.rafId = requestAnimationFrame( animate );
+      self.renderer.rafId = requestAnimationFrame( animate );
 
       // measure time
       lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
