@@ -10,10 +10,16 @@ export default Ember.Component.extend({
 
   initScatterCube: function () {
     this.set('_environment', environment(this))
+
+    // first, set up everything in the scene that is not data dependant
+
+
+
     this._environment.init({
       stakeholders : this.stakeholders,
       relationships : this.relationships,
-      metadata : this.metadata
+      metadata : this.metadata,
+      stakeholderSnapshots : this.stakeholderSnapshots
     })
     this._environment.render()
   },
@@ -36,6 +42,11 @@ export default Ember.Component.extend({
       this._environment.noSelectedStakeholder()
     }
   }.observes('selectedStakeholder'),
+
+
+
+  // put observers on all of the models, when they ar not null, do stuff
+
 
 
 

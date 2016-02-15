@@ -570,21 +570,6 @@ export default function (component) {
       domEvents : self.domEvents
     })
 
-
-    // $(document).on('keypress', function (e) {
-    //   if ( e.keyCode === 122) { self.navController.powerXsupportOrthographicLoHi() } // z
-    //   if ( e.keyCode === 120) { self.navController.powerXvitalPerspectiveHiHi() } // x
-    //   if ( e.keyCode === 99) { self.navController.vitalXsupportOrthographicHiLo() } // c
-    //   if ( e.keyCode === 118) { self.navController.vitalXpowerPerspectiveLoHi() } // v
-    //   if ( e.keyCode === 98) { self.navController.powerXsupportOrthographicHiLo() } // b
-    //   if ( e.keyCode === 110) { self.navController.powerXvitalPerspectiveLoLo() } // n
-    //   if ( e.keyCode === 109) { self.navController.vitalXsupportOrthographicLoHo() } // m
-    //   if ( e.keyCode === 44) { self.navController.vitalXpowerPerspectiveHiLo() } // ,
-    // })
-
-
-    // var axisHelper = new THREE.AxisHelper( 5 ); this.scene.add( axisHelper );
-
   }
 
 

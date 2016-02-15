@@ -7,46 +7,48 @@ export default Ember.Route.extend({
 
   model: function (params) {
 
-    var mockModel = {
-      metadata : undefined, // aka project
-      stakeholders : undefined,
-      relationships : undefined
-    }
-
-    // project from store
-    this.store.findRecord('project', 1 ).then(function (project) {
-
-
-      project.get('stakeholderSnapshots').then(function (data) {
-        console.log(data)
-      })
-
-      project.get('stakeholders').then(function (data) {
-        console.log(data)
+    return Em.RSVP.hash({
+      metadata : this.store.findRecord('project', 1 ),
+      stakeholders : this.store.findRecord('project', 1).then( function (project) {
+        project.get('stakeholders')
+      }),
+      stakeholderSnapshots : this.store.findRecord('project', 1).then( function (project) {
+        project.get('stakeholderSnapshots')
       })
 
     })
-
-
-
-    // return {
-    //   project: this.store.findRecord('project', {id: params.id} ),
-    //   // stakeholders: this.store.findRecords('stakeholders', params.id),
-    //   relationships: getRelationships()
-    // }
-
-    // stakeholders for project from store
-
-    // mock relationships
-
-    mockModel.metadata = projectData()
-    mockModel.stakeholders = data4Week();
-    mockModel.relationships = getRelationships();
-
-    // console.log(mockModel.metadata.getContent())
-
-    return mockModel;
   }
+    // var model = Ember.Object.extend({
+    //   metadata : undefined, // aka project
+    //   stakeholders : undefined,
+    //   stakeholderSnapshots : undefined,
+    //   relationships : undefined
+    // })
+    // // var model = {
+    // //   metadata : undefined, // aka project
+    // //   stakeholders : undefined,
+    // //   stakeholderSnapshots : undefined,
+    // //   relationships : undefined
+    // // }
+
+    // // project from store
+    // this.store.findRecord('project', 1 ).then(function (project) {
+    //   // Ember.set
+    //   model.set('metadata', project)
+
+    //   project.get('stakeholderSnapshots').then(function (stakeholderSnapshots) {
+    //     model.set('stakeholderSnapshots', stakeholderSnapshots)
+    //   })
+
+    //   project.get('stakeholders').then(function (stakeholders) {
+    //     model.set('stakeholders', stakeholders)
+    //   })
+
+    // })
+
+    // model.set('relationships', getRelationships())
+
+  // }
 
 
 });
