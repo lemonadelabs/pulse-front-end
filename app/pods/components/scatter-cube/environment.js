@@ -14,26 +14,25 @@ import NavArrows from './navArrows';
 export default function (component) {
   var environment = {}
   environment.component = component
-  environment.container = undefined
-  environment.camera = undefined
-  environment.controls = undefined
-  environment.scene = undefined
-  environment.renderer  = undefined
+  environment.container = document.getElementById( "container" );
   environment.onRenderFcts = []
   environment.onPointClickFcts = []
   environment.noSelectedStakeholderFcts = []
   environment.onUpdateTimeFcts = []
   environment.onMouseoverFcts = []
   environment.onMouseoutFcts = []
-  environment.currentWeek = undefined
-  environment.rafId = undefined
-  environment.rendering = true
 
+  environment.rendering = true
   environment.nameBadgeVisible = false
 
+  environment.populateCube = function () {
 
+  }
 
-  environment.lineGroup = {}
+  /////////////////////////////////////////////////////////////////////
+  ///////////////////////////// init fxns /////////////////////////////
+  /////////////////////////////////////////////////////////////////////
+
 
   environment.init = function (opts) {
 
@@ -44,8 +43,6 @@ export default function (component) {
     this.metaData = opts.metadata
 
     this.currentWeek = this.metaData[0].timeFrame
-
-    this.container = document.getElementById( "container" );
 
     /////////////////////////// set up camera /////////////////////////////
 

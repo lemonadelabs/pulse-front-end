@@ -12,6 +12,7 @@ export default Ember.Component.extend({
     this.set('_environment', environment(this))
 
     // first, set up everything in the scene that is not data dependant
+    // console.log('asdf')
 
 
 
@@ -21,6 +22,9 @@ export default Ember.Component.extend({
       metadata : this.metadata,
       stakeholderSnapshots : this.stakeholderSnapshots
     })
+
+    // this._environment.populateCube()
+
     this._environment.render()
   },
 
