@@ -6,20 +6,19 @@ export default Ember.Component.extend({
   setupTimeSeries: function() {
     var self = this
     Ember.run.later(function(){
-      console.log('log', self.metadata)
      }, 2000)
-    // var metadata = this.metadata[0]
-    // this.selectedTime = metadata.timeFrame;
-    // //reset the timeSeries
-    // this.set("timeSeries",[]);
-    // for (var i = 1; i <= metadata.timeFrame; i++) {
-    //   var selected = false;
-    //   if(i === metadata.timeFrame){
-    //     selected = true;
-    //   }
-    //   this.timeSeries.push({"title":metadata.timeFormat+i,"id":i,"selected":selected})
-    //   this.timeSeries.arrayContentDidChange(i,0,1)
-    // }
+    var metadata = this.metadata[0]
+    this.selectedTime = metadata.timeFrame;
+    //reset the timeSeries
+    this.set("timeSeries",[]);
+    for (var i = 1; i <= metadata.timeFrame; i++) {
+      var selected = false;
+      if(i === metadata.timeFrame){
+        selected = true;
+      }
+      this.timeSeries.push({"title":metadata.timeFormat+i,"id":i,"selected":selected})
+      this.timeSeries.arrayContentDidChange(i,0,1)
+    }
   }.on('init'),
   actions:{
     selectTimeSeries:function(id){
