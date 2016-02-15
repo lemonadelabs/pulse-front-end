@@ -34,6 +34,23 @@ export default function (component) {
   /////////////////////////////////////////////////////////////////////
 
 
+  environment.initializeCamera = function () {
+    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
+    this.camera.position.set(4.5,1.5,-1.6)
+  }
+
+  environment.initializeControls = function () {
+    this.controls = new THREE.OrbitControls( this.camera, this.container );
+    // this.controls.maxDistance = 5
+    this.controls.minDistance = 1.7
+    this.controls.zoomSpeed = 0.2
+    this.controls.target.set(1,1,1)
+    this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
+    this.controls.enableKeys = false
+
+    this.onRenderFcts.push(this.controls.update)
+  }
+
   environment.init = function (opts) {
 
     var self = this
@@ -41,28 +58,15 @@ export default function (component) {
     this.stakeholders = opts.stakeholders
     this.relationships = opts.relationships
     this.metaData = opts.metadata
-
     this.currentWeek = this.metaData[0].timeFrame
 
+
     /////////////////////////// set up camera /////////////////////////////
-
-    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
-
-    this.camera.position.set(4.5,1.5,-1.6)
-
-    this.camera.tweenDestinations = {}
+    this.initializeCamera()
 
     /////////////////////////// set up controls /////////////////////////////
+    this.initializeControls()
 
-    this.controls = new THREE.OrbitControls( this.camera, this.container );
-    // this.controls.maxDistance = 5
-    this.controls.minDistance = 1.7
-    this.controls.zoomSpeed = 0.2
-    this.controls.target.set(1,1,1)
-    this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
-    // this.controls.enabled = false
-
-    this.onRenderFcts.push(this.controls.update)
 
     /////////////////////////// set up scene /////////////////////////////
 
