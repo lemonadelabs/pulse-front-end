@@ -161,7 +161,8 @@ export default function (component) {
   }
 
   environment.removeObjectFromScene = function (object) {
-    this.scene.remove( object.mesh )
+    var self = this
+    environment.scene.remove( object.mesh )
   }
 
   environment.removeObjectsFromScene = function (objects) { // duplicate of ebove function
@@ -176,6 +177,17 @@ export default function (component) {
 
   environment.billboardObject = function (object) {
     object.mesh.quaternion.copy( this.camera.quaternion )
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////// Interaction With Component //////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  ///////////////////// logic when stakeholder modal is closed ////////////////////////
+  environment.noSelectedStakeholder = function () {
+    this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
+      noSelectedStakeholderFct()
+    })
   }
 
 
@@ -204,13 +216,7 @@ export default function (component) {
     this.initRendererStats()
 
 
-    ///////////////////// logic when stakeholder modal is closed ////////////////////////
 
-    this.noSelectedStakeholder = function () {
-      this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
-        noSelectedStakeholderFct()
-      })
-    }
 
     this.updateTime = function (time) {
       var oldTime = self.currentWeek
