@@ -7,16 +7,24 @@ export default Ember.Route.extend({
 
   model: function (params) {
 
-    return Em.RSVP.hash({
-      metadata : this.store.findRecord('project', 1 ),
-      stakeholders : this.store.findRecord('project', 1).then( function (project) {
-        project.get('stakeholders')
-      }),
-      stakeholderSnapshots : this.store.findRecord('project', 1).then( function (project) {
-        project.get('stakeholderSnapshots')
-      })
+    // return Em.RSVP.hash({
+    //   metadata : this.store.findRecord('project', 1 ),
+    //   stakeholders : this.store.findRecord('project', 1).then( function (project) {
+    //     project.get('stakeholders')
+    //   }),
+    //   stakeholderSnapshots : this.store.findRecord('project', 1).then( function (project) {
+    //     project.get('stakeholderSnapshots')
+    //   })
 
-    })
+    // })
+    var model = {
+      metadata : projectData(), // aka project
+      stakeholders : data4Week(),
+      // stakeholderSnapshots : undefined,
+      relationships : getRelationships()
+    }
+
+    return model
   }
     // var model = Ember.Object.extend({
     //   metadata : undefined, // aka project
@@ -24,12 +32,6 @@ export default Ember.Route.extend({
     //   stakeholderSnapshots : undefined,
     //   relationships : undefined
     // })
-    // // var model = {
-    // //   metadata : undefined, // aka project
-    // //   stakeholders : undefined,
-    // //   stakeholderSnapshots : undefined,
-    // //   relationships : undefined
-    // // }
 
     // // project from store
     // this.store.findRecord('project', 1 ).then(function (project) {
@@ -46,9 +48,6 @@ export default Ember.Route.extend({
 
     // })
 
-    // model.set('relationships', getRelationships())
-
-  // }
 
 
 });
