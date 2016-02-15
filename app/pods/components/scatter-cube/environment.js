@@ -190,6 +190,15 @@ export default function (component) {
     })
   }
 
+  ///////////////////// logic when timeseries component changes ////////////////////////
+  environment.updateTime = function (time) {
+    var oldTime = self.currentWeek
+    self.currentWeek = time
+    this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
+      onUpdateTimeFct(time, oldTime)
+    })
+  }
+
 
 
   environment.init = function (opts) {
@@ -214,17 +223,6 @@ export default function (component) {
     ///////////////////////////////////// Stats ////////////////////////////////////////
     this.initStats()
     this.initRendererStats()
-
-
-
-
-    this.updateTime = function (time) {
-      var oldTime = self.currentWeek
-      self.currentWeek = time
-      this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
-        onUpdateTimeFct(time, oldTime)
-      })
-    }
 
     /////////////////////// Create Tween Controller ///////////////////////
 
