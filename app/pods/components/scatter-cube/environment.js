@@ -25,6 +25,8 @@ export default function (component) {
   environment.rendering = true
   environment.nameBadgeVisible = false
 
+  environment.scene = new THREE.Scene();
+
   environment.populateCube = function () {
 
   }
@@ -66,11 +68,6 @@ export default function (component) {
 
     /////////////////////////// set up controls /////////////////////////////
     this.initializeControls()
-
-
-    /////////////////////////// set up scene /////////////////////////////
-
-    this.scene = new THREE.Scene();
 
     /////////////////////////// set up renderer /////////////////////////////
 
