@@ -199,6 +199,30 @@ export default function (component) {
     })
   }
 
+  environment.connectionViewUpdated = function () {
+    var self = this
+    this.triggerRender()
+
+    if (this.component.connectionView) { // for turning ON the connectionView
+      this.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
+      this.addObjectsToScene(this.lineGroup.primaryConnections)
+      this.tweenController.fadeInConnections({
+        duration : 300,
+        easing : TWEEN.Easing.Quadratic.Out
+      })
+    } else { // for turning OFF the connectionView
+      var tweens = this.tweenController.fadeOutConnections({
+        duration : 300,
+        easing : TWEEN.Easing.Quadratic.In
+      })
+      if (!_.isEmpty(tweens)) {
+        _.last(tweens).onComplete(function () {
+          self.removeConnectingLines()
+        })
+      }
+    }
+  }
+
 
 
   environment.init = function (opts) {
@@ -273,30 +297,6 @@ export default function (component) {
     })
 
     /////////////////////// Toggle component view modes ///////////////////////
-
-    this.connectionViewUpdated = function () {
-
-      self.triggerRender()
-
-      if (this.component.connectionView) {
-        self.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
-        self.addObjectsToScene(this.lineGroup.primaryConnections)
-        self.tweenController.fadeInConnections({
-          duration : 300,
-          easing : TWEEN.Easing.Quadratic.Out
-        })
-      } else {
-        var tweens = self.tweenController.fadeOutConnections({
-          duration : 300,
-          easing : TWEEN.Easing.Quadratic.In
-        })
-        if (!_.isEmpty(tweens)) {
-          _.last(tweens).onComplete(function () {
-            self.removeConnectingLines()
-          })
-        }
-      }
-    }
 
     this.distributionViewUpdated = function () {
 
