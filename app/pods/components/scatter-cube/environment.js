@@ -121,7 +121,7 @@ export default function (component) {
     })
   }
 
-  environment.initRenderStats = function  () {
+  environment.initRendererStats = function  () {
     var self = this
     this.rendererStats   = new THREEx.RendererStats()
 
@@ -166,7 +166,7 @@ export default function (component) {
     this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
     ///////////////////////////////////// Stats ////////////////////////////////////////
     this.initStats()
-    this.initRenderStats()
+    this.initRendererStats()
     //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
 
     this.jSONloader = new THREE.JSONLoader()
