@@ -53,6 +53,15 @@ export default function (component) {
     this.onRenderFcts.push(this.controls.update)
   }
 
+  environment.initializeRenderer = function () {
+    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    this.renderer.setClearColor( 0x222628 );
+    this.renderer.setPixelRatio( window.devicePixelRatio );
+    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.sortObjects = false;
+    this.container.appendChild( this.renderer.domElement );
+  }
+
   environment.init = function (opts) {
 
     var self = this
@@ -71,12 +80,7 @@ export default function (component) {
 
     /////////////////////////// set up renderer /////////////////////////////
 
-    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-    this.renderer.setClearColor( 0x222628 );
-    this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.renderer.sortObjects = false;
-    this.container.appendChild( this.renderer.domElement );
+    this.initializeRenderer()
 
     ///////////////////////////  renderer start and stop /////////////////////////////
 
