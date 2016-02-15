@@ -13,11 +13,10 @@
 
 }}
 
-{{!-- {{scatter-cube
+{{scatter-cube
   stakeholders=this.model.stakeholders
   metadata=this.model.metadata
   relationships=this.model.relationships
-  stakeholderSnapshots=this.model.stakeholderSnapshots
 
   selectedStakeholder=this.selectedStakeholder
   selectedTime=this.selectedTime
@@ -27,9 +26,9 @@
   historyView=this.historyView
 
   updateStakeholder=(action 'userDidSelectStakeholder')
-}} --}}
+}}
 
 {{time-series
-  metadata=model.metadata
+  metadata=this.model.metadata
   updateTime=(action 'userDidChangeTime')
 }}
