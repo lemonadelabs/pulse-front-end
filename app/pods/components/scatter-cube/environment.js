@@ -121,6 +121,28 @@ export default function (component) {
     })
   }
 
+  environment.initRenderStats = function  () {
+    var self = this
+    this.rendererStats   = new THREEx.RendererStats()
+
+    this.rendererStats.domElement.style.position = 'absolute'
+    this.rendererStats.domElement.style.right = '0px'
+    this.rendererStats.domElement.style.top   = '0px'
+    document.body.appendChild( this.rendererStats.domElement )
+
+    var $rendererStats = $(this.rendererStats.domElement)
+    $rendererStats.hide()
+
+    this.onRenderFcts.push(function () {
+      self.rendererStats.update(self.renderer);
+    })
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
+        $rendererStats.toggle()
+      }
+    })
+  }
 
 
   environment.init = function (opts) {
@@ -143,33 +165,8 @@ export default function (component) {
     ///////////////////////////////////// Dom Events ////////////////////////////////////////
     this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
     ///////////////////////////////////// Stats ////////////////////////////////////////
-
     this.initStats()
-
-
-
-    var rendererStats   = new THREEx.RendererStats()
-
-    rendererStats.domElement.style.position = 'absolute'
-    rendererStats.domElement.style.right = '0px'
-    rendererStats.domElement.style.top   = '0px'
-    document.body.appendChild( rendererStats.domElement )
-
-    var $rendererStats = $(rendererStats.domElement)
-    $rendererStats.hide()
-
-
-    this.onRenderFcts.push(function () {
-      rendererStats.update(self.renderer);
-    })
-
-    $(document).on('keypress', function (e) {
-      if ( e.keyCode === 115 || e.keyCode === 83) {
-        $rendererStats.toggle()
-      }
-    })
-
-
+    this.initRenderStats()
     //////////////////////////////////// initialize json loader ////////////////////////////////////////////////
 
     this.jSONloader = new THREE.JSONLoader()
