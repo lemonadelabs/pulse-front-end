@@ -145,6 +145,40 @@ export default function (component) {
     })
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// UTILITIES ////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
+
+  ///////////////////////// adding & removing objects from scene /////////////////////////////////
+
+  environment.addObjectsToScene = function (objects) {
+    _.forEach(objects, this.addObjectToScene.bind(this))
+  }
+
+  environment.addObjectToScene = function (object) {
+    console.log(this)
+    this.scene.add(object.mesh)
+  }
+
+  environment.removeObjectFromScene = function (object) {
+    this.scene.remove( object.mesh )
+  }
+
+  environment.removeObjectsFromScene = function (objects) { // duplicate of ebove function
+    _.forEach( objects, this.removeObjectFromScene )
+  }
+
+  //////////////////////////////////// billboarding ////////////////////////////////////////////////
+
+  environment.billboardObjects = function (objects) {
+    _.forEach(objects, this.billboardObject.bind(this))
+  }
+
+  environment.billboardObject = function (object) {
+    object.mesh.quaternion.copy( this.camera.quaternion )
+  }
+
+
 
   environment.init = function (opts) {
 
@@ -169,39 +203,6 @@ export default function (component) {
     this.initStats()
     this.initRendererStats()
 
-    ///////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////// UTILITIES ////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////// adding & removing objects from scene /////////////////////////////////
-
-    this.addObjectsToScene = function (objects) {
-      _.forEach(objects, self.addObjectToScene)
-    }
-
-    this.addObjectToScene = function (object) {
-      self.scene.add(object.mesh)
-    }
-
-    this.removeObjectFromScene = function (object) {
-      self.scene.remove( object.mesh )
-    }
-
-    this.removeObjectsFromScene = function (objects) { // duplicate of ebove function
-      _.forEach( objects, self.removeObjectFromScene )
-    }
-
-    //////////////////////////////////// billboarding ////////////////////////////////////////////////
-
-    this.billboardObjects = function (objects) {
-      _.forEach(objects, function(object) {
-        self.billboardObject(object)
-      })
-    }
-
-    this.billboardObject = function (object) {
-      object.mesh.quaternion.copy( self.camera.quaternion )
-    }
 
     ///////////////////// logic when stakeholder modal is closed ////////////////////////
 
