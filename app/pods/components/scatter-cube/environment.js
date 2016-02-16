@@ -249,6 +249,27 @@ export default function (component) {
 
 
 
+    ///////////////////// Create Target ////////////////////////
+
+    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
+
+      self.target = new Target ({
+        geometry : geometry
+      })
+
+      self.addObjectToScene(self.target)
+
+      self.onRenderFcts.push(function () {
+        self.billboardObject(self.target)
+      })
+
+      // hide target
+      self.noSelectedStakeholderFcts.push(hideTarget)
+      function hideTarget () {
+        self.target.mesh.visible = false
+      }
+    })
+
     //////////////////////////////////////// autoNav ////////////////////////////////////////
     this.navController = new NavController({
       environment : this
@@ -530,26 +551,7 @@ export default function (component) {
       self.billboardObjects(self.labelGroup.labels)
     })
 
-    ///////////////////// Create Target ////////////////////////
 
-    this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
-
-      self.target = new Target ({
-        geometry : geometry
-      })
-
-      self.addObjectToScene(self.target)
-
-      self.onRenderFcts.push(function () {
-        self.billboardObject(self.target)
-      })
-
-      // hide target
-      self.noSelectedStakeholderFcts.push(hideTarget)
-      function hideTarget () {
-        self.target.mesh.visible = false
-      }
-    })
 
 
 
