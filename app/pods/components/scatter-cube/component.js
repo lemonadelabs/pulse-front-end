@@ -23,7 +23,14 @@ export default Ember.Component.extend({
       stakeholderSnapshots : this.stakeholderSnapshots
     })
 
-    // this._environment.populateCube()
+    this._environment.setupCube()
+
+    this._environment.populateCube({
+      stakeholders : this.stakeholders,
+      relationships : this.relationships,
+      metadata : this.metadata,
+      stakeholderSnapshots : this.stakeholderSnapshots
+    })
 
     this._environment.render()
   },

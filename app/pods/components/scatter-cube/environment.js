@@ -28,10 +28,6 @@ export default function (component) {
   environment.scene = new THREE.Scene();
   environment.jSONloader = new THREE.JSONLoader()
 
-  environment.populateCube = function () {
-
-  }
-
   /////////////////////////////////////////////////////////////////////
   ///////////////////////////// init fxns /////////////////////////////
   /////////////////////////////////////////////////////////////////////
@@ -247,12 +243,28 @@ export default function (component) {
   }
 
 
+  environment.setupCube = function () {
+    var self = this
+
+
+  }
+
+
+  environment.populateCube = function (opts) {
+    var self = this
+
+    this.stakeholders = opts.stakeholders
+    this.relationships = opts.relationships
+    this.metaData = opts.metadata
+    this.currentWeek = this.metaData[0].timeFrame
+  }
 
 
   environment.init = function (opts) {
 
     var self = this
 
+    // delete these after refactor
     this.stakeholders = opts.stakeholders
     this.relationships = opts.relationships
     this.metaData = opts.metadata
