@@ -454,6 +454,12 @@ export default function (component) {
       }
     })
 
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.distributionView) {
+        self.tweenController.removeDistroCloud()
+      }
+    })
+
     ///////////////////// Create history tail group ////////////////////////
     this.historyTailGroup = new HistoryTailGroup()
 
@@ -502,7 +508,6 @@ export default function (component) {
     })
 
     this.onUpdateTimeFcts.push(function (time, oldTime) {
-
       self.triggerRender()
 
       if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
@@ -537,29 +542,9 @@ export default function (component) {
       }
     })
 
-    this.noSelectedStakeholderFcts.push(function () {
-      if (self.component.distributionView) {
-        self.tweenController.removeDistroCloud()
-      }
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
     //////////////////////////////////////////////////////////////////////////////
-
     this.onRenderFcts.push(function(){
       self.renderer.render( self.scene, self.camera );
     })
@@ -575,8 +560,6 @@ export default function (component) {
     this.controls.domElement.addEventListener( 'mousewheel', function () {
       self.triggerRender()
     }, false );
-
-
   }
 
 
