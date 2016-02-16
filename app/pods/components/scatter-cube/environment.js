@@ -250,6 +250,23 @@ export default function (component) {
 
 
 
+    //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
+
+    this.labelGroup = new LabelGroup({
+      scene: this.scene,
+      camera: this.camera
+    })
+
+    this.labelGroup.createLabels()
+
+    this.onRenderFcts.push(function () {
+      self.labelGroup.updateLocation(self.camera.position)
+    })
+
+    this.onRenderFcts.push(function () {
+      self.billboardObjects(self.labelGroup.labels)
+    })
+
     ///////////////////// Create Target ////////////////////////
 
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
@@ -534,23 +551,6 @@ export default function (component) {
       self.addObjectToScene(self.dangerZone)
     })
 
-
-    //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
-
-    this.labelGroup = new LabelGroup({
-      scene: this.scene,
-      camera: this.camera
-    })
-
-    this.labelGroup.createLabels()
-
-    this.onRenderFcts.push(function () {
-      self.labelGroup.updateLocation(self.camera.position)
-    })
-
-    this.onRenderFcts.push(function () {
-      self.billboardObjects(self.labelGroup.labels)
-    })
 
 
 
