@@ -359,6 +359,16 @@ export default function (component) {
       }
     })
 
+    ///////////////////// Create history tail group ////////////////////////
+    this.historyTailGroup = new HistoryTailGroup()
+
+    this.noSelectedStakeholderFcts.push( function () {
+      if (self.component.historyView) {
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        })
+      }
+    })
   }
 
 
@@ -370,10 +380,7 @@ export default function (component) {
     this.metaData = opts.metadata
     this.currentWeek = this.metaData[0].timeFrame
 
-
-
     ///////////////////// Create Connecting Lines ////////////////////////
-
     this.lineGroup = new LineGroup({
       connections: self.relationships
     })
@@ -461,16 +468,7 @@ export default function (component) {
     })
 
 
-    ///////////////////// Create history tail group ////////////////////////
-    this.historyTailGroup = new HistoryTailGroup()
 
-    this.noSelectedStakeholderFcts.push( function () {
-      if (self.component.historyView) {
-        self.tweenController.removeHistoryTails().onComplete(function () {
-          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
-        })
-      }
-    })
   }
 
 
