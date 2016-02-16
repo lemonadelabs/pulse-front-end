@@ -24,12 +24,7 @@
 }}
 
 {{scatter-cube
-  stakeholders=this.model.stakeholders
-  metadata=this.model.metadata
-  relationships=this.model.relationships
-
-  selectedStakeholder=this.selectedStakeholder
-  selectedTime=this.selectedTime
+  project=this.model
 
   connectionView=this.connectionView
   distributionView=this.distributionView
@@ -38,7 +33,7 @@
   updateStakeholder=(action 'userDidSelectStakeholder')
 }}
 
-{{time-series
+{{!-- {{time-series
   metadata=this.model.metadata
   updateTime=(action 'userDidChangeTime')
-}}
+}} --}}

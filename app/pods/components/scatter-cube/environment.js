@@ -1,3 +1,5 @@
+import Ember from 'ember';
+
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -153,7 +155,6 @@ export default function (component) {
   }
 
   environment.addObjectToScene = function (object) {
-    console.log(this)
     this.scene.add(object.mesh)
   }
 
@@ -241,6 +242,20 @@ export default function (component) {
         self.removeObjectsFromScene(self.historyTailGroup.historyTails)
       })
     }
+  }
+
+
+  environment.initPointCloud = function (opts) {
+    var project = opts.project
+
+    project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
+      stakeholders.forEach(function(stakeholder){
+        // console.log(stakeholder.get('name'))
+      })
+    })
+
+    project.get('timeframe') // this is how we get aspects of project.
+
   }
 
 

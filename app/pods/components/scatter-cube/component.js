@@ -9,54 +9,19 @@ export default Ember.Component.extend({
   },
 
   initScatterCube: function () {
+    var stakeholdersRecords
+
     this.set('_environment', environment(this))
-
-    // first, set up everything in the scene that is not data dependant
-
-
 
     this._environment.init()
     this._environment.setupScatterCube()
     this._environment.render()
 
-    // this._environment.initPointCloud({
-    //   metadata : this.metadata,
-    //   stakeholders : this.stakeholders,
-    //   stakeholderSnapshots : this.stakeholderSnapshots
-    // })
 
-    // this._environment.initLineGroup({
-    //   relationships : this.relationships,
-    // })
-
-    this._environment.populateCube({
-      stakeholders : this.stakeholders,
-      relationships : this.relationships,
-      metadata : this.metadata,
-      // stakeholderSnapshots : this.stakeholderSnapshots
+    this._environment.initPointCloud({
+      project : this.project,
     })
-
-
   },
-
-  // watchStakeholders: function(){
-  //   this.checkStakeholderDependantModels();
-
-  // }.observes('stakeholders'),
-
-  // watchStakeholderSnapshots: function(){
-  //   this.checkStakeholderDependantModels();
-  // }.observes('stakeholderSnapshots'),
-
-  // checkStakeholderDependantModels: function(){
-  //   if(this.stakeholders.get('isLoaded')&&this.stakeholderSnapshots.get('isLoaded')){
-  //     // this._environment.initPointCloud({
-  //     //   metadata : this.metadata,
-  //     //   stakeholders : this.stakeholders,
-  //     //   stakeholderSnapshots : this.stakeholderSnapshots
-  //     // })
-  //   }
-  // },
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
