@@ -20,16 +20,16 @@ export default Ember.Component.extend({
       stakeholders : this.stakeholders,
       relationships : this.relationships,
       metadata : this.metadata,
-      stakeholderSnapshots : this.stakeholderSnapshots
+      // stakeholderSnapshots : this.stakeholderSnapshots
     })
 
-    this._environment.setupCube()
+    this._environment.setupScatterCube()
 
     this._environment.populateCube({
       stakeholders : this.stakeholders,
       relationships : this.relationships,
       metadata : this.metadata,
-      stakeholderSnapshots : this.stakeholderSnapshots
+      // stakeholderSnapshots : this.stakeholderSnapshots
     })
 
     this._environment.render()

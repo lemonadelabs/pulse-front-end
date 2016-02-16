@@ -23,6 +23,7 @@ export default function (component) {
   environment.onMouseoutFcts = []
 
 
+
   environment.nameBadgeVisible = false
 
   environment.scene = new THREE.Scene();
@@ -243,7 +244,7 @@ export default function (component) {
   }
 
 
-  environment.setupCube = function () {
+  environment.setupScatterCube = function () {
     var self = this
 
 
