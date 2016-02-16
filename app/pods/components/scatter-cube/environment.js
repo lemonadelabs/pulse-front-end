@@ -257,6 +257,21 @@ export default function (component) {
     this.relationships = opts.relationships
     this.metaData = opts.metadata
     this.currentWeek = this.metaData[0].timeFrame
+
+    ///////////////////// Create history tail group ////////////////////////
+    this.historyTailGroup = new HistoryTailGroup()
+
+    this.noSelectedStakeholderFcts.push( function () {
+      if (self.component.historyView) {
+        self.tweenController.removeHistoryTails().onComplete(function () {
+          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+        })
+      }
+    })
+
+
+
+
   }
 
 
@@ -526,17 +541,6 @@ export default function (component) {
       }
     })
 
-    ///////////////////// Create history tail group ////////////////////////
-
-    this.historyTailGroup = new HistoryTailGroup()
-
-    this.noSelectedStakeholderFcts.push(function () {
-      if (self.component.historyView) {
-        self.tweenController.removeHistoryTails().onComplete(function () {
-          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
-        })
-      }
-    })
 
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
@@ -545,21 +549,6 @@ export default function (component) {
     this.onRenderFcts.push(function(){
       self.renderer.render( self.scene, self.camera );
     })
-
-
-
-    //////////////////////////////// pause render ////////////////////////////////
-
-    // I need to start the renderer when:
-      // I move the camera => check location
-      // A tween is active => check tweens somehow?
-      // when I hover over a sHPoint
-
-
-
-
-
-
 
     $('.scatter-cube').on('mousemove', function (e) {
       self.triggerRender()
