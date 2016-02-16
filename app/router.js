@@ -6,7 +6,7 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('project-overview');
+  this.route('project-overview', { path: '/project-overview/:id'});
   this.route('select-project');
 });
 

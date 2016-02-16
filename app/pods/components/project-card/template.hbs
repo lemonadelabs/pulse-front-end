@@ -1,6 +1,6 @@
-<h1 class="project-card-title">Mission Health Project</h1>
-<h2 class="project-card-client">Ministry of Health</h2>
-<p class="project-card-discription">Tousled food truck polaroid, salvia bespoke small batch Pinterest Marfa. Fingerstache authentic craft beer, food truck Banksy Carles kale chips hoodie. Trust fund artisan master cleanse fingerstache post-ironic, fashion axe art party Etsy direct trade retro organic.</p>
+<h1 class="project-card-title">{{this.model.name}}</h1>
+<h2 class="project-card-client">{{this.model.client}}</h2>
+<p class="project-card-discription">{{this.model.description}}</p>
 <header class="title-container">
   <hr class="title-rule">
   <h2 class="title-text" >overview</h2>
@@ -8,7 +8,7 @@
 </header>
 <div class="project-card-overview">
   <p class="project-card-overview-info">
-    <span class="project-card-overview-info-title">weeks:</span>4
+    <span class="project-card-overview-info-title">weeks:</span>{{this.model.timeframe}}
   </p>
   <p class="project-card-overview-info">
     <span class="project-card-overview-info-title">support:</span>64%
@@ -17,9 +17,9 @@
     <span class="project-card-overview-info-title">health:</span>MED
   </p>
   <p class="project-card-overview-info">
-    <span class="project-card-overview-info-title">stakeholders:</span>46
+    <span class="project-card-overview-info-title">stakeholders:</span>{{this.model.totalStakeholders}}
   </p>
 </div>
 <footer>
-  {{#link-to "project-overview" tagName='button'}}View{{/link-to}}
+  {{#link-to "project-overview" this.model.id tagName='button'}}View{{/link-to}}
 </footer>

@@ -4,6 +4,9 @@ export default Ember.Component.extend({
   timeSeries : [],
   selectedTime : undefined,
   setupTimeSeries: function() {
+    var self = this
+    Ember.run.later(function(){
+     }, 2000)
     var metadata = this.metadata[0]
     this.selectedTime = metadata.timeFrame;
     //reset the timeSeries
