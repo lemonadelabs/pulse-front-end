@@ -11,30 +11,34 @@ export default Ember.Component.extend({
   initScatterCube: function () {
     this.set('_environment', environment(this))
 
-    // first, set up everything in the scene that is not data dependant
-
-
-
     this._environment.init()
     this._environment.setupScatterCube()
     this._environment.render()
 
-    // this._environment.initPointCloud({
-    //   metadata : this.metadata,
-    //   stakeholders : this.stakeholders,
-    //   stakeholderSnapshots : this.stakeholderSnapshots
-    // })
+    // this.model
+
+    this._environment.initPointCloud({
+      project : this.project,
+      stakeholders : this.get('project.stakeholders'),
+      stakeholderSnapshots : this.get('project.stakeholderSnapshots')
+    })
 
     // this._environment.initLineGroup({
     //   relationships : this.relationships,
     // })
 
-    this._environment.populateCube({
-      stakeholders : this.stakeholders,
-      relationships : this.relationships,
-      metadata : this.metadata,
-      // stakeholderSnapshots : this.stakeholderSnapshots
-    })
+    // this._environment.populateCube({
+    //   stakeholders : this.stakeholders,
+    //   relationships : this.relationships,
+    //   metadata : this.metadata,
+    //   // stakeholderSnapshots : this.stakeholderSnapshots
+    // })
+
+    // console.log('model', this.get(model.stakeholders))
+    // console.log('model', this.project)
+    // console.log('model', this.get('project.stakeholders'))
+    // console.log('model', this.get('project.relationships'))
+    // console.log('model', this.get('project.stakeholderSnapshots'))
 
 
   },

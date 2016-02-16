@@ -153,7 +153,6 @@ export default function (component) {
   }
 
   environment.addObjectToScene = function (object) {
-    console.log(this)
     this.scene.add(object.mesh)
   }
 
