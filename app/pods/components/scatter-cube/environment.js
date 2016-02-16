@@ -248,7 +248,12 @@ export default function (component) {
     var self = this
 
 
-
+    //////////////////////////////////// create the cube ////////////////////////////////////////////////
+    this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
+      var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
+      var cube = new THREE.Mesh(geometry, cubeMaterial)
+      self.scene.add(cube)
+    })
 
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
     this.axisGuides = new AxisGuides()
@@ -263,7 +268,6 @@ export default function (component) {
     })
 
     //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
-
     this.labelGroup = new LabelGroup({
       scene: this.scene,
       camera: this.camera
@@ -280,7 +284,6 @@ export default function (component) {
     })
 
     ///////////////////// Create Target ////////////////////////
-
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
 
       self.target = new Target ({
@@ -538,15 +541,6 @@ export default function (component) {
       if (self.component.distributionView) {
         self.tweenController.removeDistroCloud()
       }
-    })
-
-
-    //////////////////////////////////// create the cube ////////////////////////////////////////////////
-
-    this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
-      var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
-      var cube = new THREE.Mesh(geometry, cubeMaterial)
-      self.scene.add(cube)
     })
 
 
