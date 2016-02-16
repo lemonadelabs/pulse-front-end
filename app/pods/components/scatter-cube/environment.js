@@ -380,31 +380,6 @@ export default function (component) {
     this.metaData = opts.metadata
     this.currentWeek = this.metaData[0].timeFrame
 
-    ///////////////////// Create Connecting Lines ////////////////////////
-    this.lineGroup = new LineGroup({
-      connections: self.relationships
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      if (self.component.connectionView) {
-        _.last(self.tweenController.fadeOutConnections({
-          duration : 300,
-          easing : TWEEN.Easing.Quadratic.In
-        }))
-        .onComplete( function () {
-          self.removeConnectingLines()
-        })
-      }
-    })
-
-    this.removeConnectingLines = function() {
-      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
-      self.lineGroup.primaryConnections = []
-    }
-
-    this.onRenderFcts.push(function () {
-      self.lineGroup.update()
-    })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -413,7 +388,6 @@ export default function (component) {
       timeFrame: self.metaData[0].timeFrame,
     })
 
-    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 
     this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
     this.addObjectsToScene(this.pointCloud.sHPoints)
@@ -466,6 +440,37 @@ export default function (component) {
         sHPoint.updateColor(self.camera.position)
       })
     })
+
+
+    /////////////////// Create Connecting Lines ////////////////////////
+    this.lineGroup = new LineGroup({
+      connections: self.relationships
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      if (self.component.connectionView) {
+        _.last(self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        }))
+        .onComplete( function () {
+          self.removeConnectingLines()
+        })
+      }
+    })
+
+    this.removeConnectingLines = function() {
+      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
+      self.lineGroup.primaryConnections = []
+    }
+
+    this.onRenderFcts.push(function () {
+      self.lineGroup.update()
+    })
+
+
+    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+
 
 
 

@@ -15,8 +15,8 @@ export default Ember.Route.extend({
     //   stakeholderSnapshots : this.store.findRecord('project', 1).then( function (project) {
     //     project.get('stakeholderSnapshots')
     //   })
-
     // })
+
     var model = {
       metadata : projectData(), // aka project
       stakeholders : data4Week(),

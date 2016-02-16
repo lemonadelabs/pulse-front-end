@@ -16,8 +16,18 @@ export default Ember.Component.extend({
 
 
     this._environment.init()
-
     this._environment.setupScatterCube()
+    this._environment.render()
+
+    // this._environment.initPointCloud({
+    //   metadata : this.metadata,
+    //   stakeholders : this.stakeholders,
+    //   stakeholderSnapshots : this.stakeholderSnapshots
+    // })
+
+    // this._environment.initLineGroup({
+    //   relationships : this.relationships,
+    // })
 
     this._environment.populateCube({
       stakeholders : this.stakeholders,
@@ -26,8 +36,26 @@ export default Ember.Component.extend({
       // stakeholderSnapshots : this.stakeholderSnapshots
     })
 
-    this._environment.render()
   },
+
+  // watchStakeholders: function(){
+  //   this.checkStakeholderDependantModels();
+
+  // }.observes('stakeholders'),
+
+  // watchStakeholderSnapshots: function(){
+  //   this.checkStakeholderDependantModels();
+  // }.observes('stakeholderSnapshots'),
+
+  // checkStakeholderDependantModels: function(){
+  //   if(this.stakeholders.get('isLoaded')&&this.stakeholderSnapshots.get('isLoaded')){
+  //     // this._environment.initPointCloud({
+  //     //   metadata : this.metadata,
+  //     //   stakeholders : this.stakeholders,
+  //     //   stakeholderSnapshots : this.stakeholderSnapshots
+  //     // })
+  //   }
+  // },
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
