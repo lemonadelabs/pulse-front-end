@@ -190,7 +190,7 @@ export default function (component) {
     })
   }
 
-  ///////////////////// logic when timeseries component changes ////////////////////////
+  ///////////////////// when timeseries component changes ////////////////////////
   environment.updateTime = function (time) {
     var oldTime = self.currentWeek
     self.currentWeek = time
@@ -222,6 +222,30 @@ export default function (component) {
       }
     }
   }
+
+  environment.distributionViewUpdated = function () {
+    this.triggerRender()
+
+    if (this.component.distributionView) {
+      this.tweenController.buildDistroCloud()
+    } else {
+      this.tweenController.removeDistroCloud()
+    }
+  }
+
+  environment.historyViewUpdated = function () {
+    var self = this
+    this.triggerRender()
+
+    if (this.component.historyView) {
+      this.tweenController.buildHistorytails(this.focussedPoint)
+    } else {
+      this.tweenController.removeHistoryTails().onComplete(function () {
+        self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+      })
+    }
+  }
+
 
 
 
@@ -296,31 +320,6 @@ export default function (component) {
       }
     })
 
-    /////////////////////// Toggle component view modes ///////////////////////
-
-    this.distributionViewUpdated = function () {
-
-      self.triggerRender()
-
-      if (this.component.distributionView) {
-        self.tweenController.buildDistroCloud()
-      } else {
-        this.tweenController.removeDistroCloud()
-      }
-    }
-
-    this.historyViewUpdated = function () {
-
-      self.triggerRender()
-
-      if (this.component.historyView) {
-        self.tweenController.buildHistorytails(self.focussedPoint)
-      } else {
-        self.tweenController.removeHistoryTails().onComplete(function () {
-          self.removeObjectsFromScene(self.historyTailGroup.historyTails)
-        })
-      }
-    }
 
     //////////////////////////////////// create the cube ////////////////////////////////////////////////
 
