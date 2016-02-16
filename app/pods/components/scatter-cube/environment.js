@@ -247,6 +247,19 @@ export default function (component) {
     var self = this
 
 
+
+
+    //////////////////////////////////////// autoNav ////////////////////////////////////////
+    this.navController = new NavController({
+      environment : this
+    })
+
+    this.navArrows = new NavArrows({
+      scene : this.scene,
+      jSONloader : this.jSONloader,
+      navController : this.navController,
+      domEvents : this.domEvents
+    })
   }
 
 
@@ -562,21 +575,6 @@ export default function (component) {
       self.triggerRender()
     }, false );
 
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////// autoNav ////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////
-    this.navController = new NavController({
-      environment : self
-    })
-
-    this.navArrows = new NavArrows({
-      scene : self.scene,
-      jSONloader : self.jSONloader,
-      navController : self.navController,
-      domEvents : self.domEvents
-    })
 
   }
 
