@@ -9,23 +9,28 @@ export default Ember.Component.extend({
   },
 
   initScatterCube: function () {
+    var stakeholdersRecords
+
     this.set('_environment', environment(this))
 
     this._environment.init()
     this._environment.setupScatterCube()
     this._environment.render()
 
-    // this.model
+
+    this.get('project.stakeholders').then(function(stakeholders){
+      stakeholdersRecords = stakeholders
+    })
+
 
     this._environment.initPointCloud({
       project : this.project,
-      stakeholders : this.get('project.stakeholders'),
+      stakeholders : stakeholdersRecords,
       stakeholderSnapshots : this.get('project.stakeholderSnapshots')
     })
 
-    // this._environment.initLineGroup({
-    //   relationships : this.relationships,
-    // })
+
+
 
     // this._environment.populateCube({
     //   stakeholders : this.stakeholders,
@@ -33,12 +38,6 @@ export default Ember.Component.extend({
     //   metadata : this.metadata,
     //   // stakeholderSnapshots : this.stakeholderSnapshots
     // })
-
-    // console.log('model', this.get(model.stakeholders))
-    // console.log('model', this.project)
-    // console.log('model', this.get('project.stakeholders'))
-    // console.log('model', this.get('project.relationships'))
-    // console.log('model', this.get('project.stakeholderSnapshots'))
 
 
   },

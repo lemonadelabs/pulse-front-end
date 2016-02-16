@@ -1,3 +1,5 @@
+import Ember from 'ember';
+
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -240,6 +242,22 @@ export default function (component) {
         self.removeObjectsFromScene(self.historyTailGroup.historyTails)
       })
     }
+  }
+
+
+  environment.initPointCloud = function (opts) {
+    var project = opts.project
+    var stakeholders = opts.stakeholders
+    var stakeholderSnapshots = opts.stakeholderSnapshots
+
+    project.get('stakeholders').then(function (stakeholders) {
+      stakeholders.forEach(function(stakeholder){
+        // console.log(stakeholder.get('name'))
+      })
+    })
+
+    console.log(project.get('timeframe'))
+
   }
 
 

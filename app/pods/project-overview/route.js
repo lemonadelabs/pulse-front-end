@@ -12,7 +12,17 @@ export default Ember.Route.extend({
     //   stakeholders : undefined,
     //   stakeholderSnapshots : undefined
     // }
-    return this.store.findRecord('project', 1 )
+    return this.store.findRecord('project', 1 ) // .then(function (project) {
+
+      // project.get('stakeholders').then(function (stakeholders) {
+      //   console.log(stakeholders)
+      //   stakeholders.forEach(function(stakeholder){
+      //     console.log(stakeholder.get('name'))
+      //   })
+
+      //   // stakeholder.get('name')
+      // })
+    // })
 
     // this.store.findRecord('project', 1 ).then(function (project) {
     //   // Ember.set
