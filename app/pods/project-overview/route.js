@@ -6,56 +6,6 @@ import data4Week from '../../mockData/testDataMultiWeek'
 export default Ember.Route.extend({
 
   model: function (params) {
-
-    // var model = {
-    //   metadata : undefined,
-    //   stakeholders : undefined,
-    //   stakeholderSnapshots : undefined
-    // }
-    return this.store.findRecord('project', 1 ) // .then(function (project) {
-
-      // project.get('stakeholders').then(function (stakeholders) {
-      //   console.log(stakeholders)
-      //   stakeholders.forEach(function(stakeholder){
-      //     console.log(stakeholder.get('name'))
-      //   })
-
-      //   // stakeholder.get('name')
-      // })
-    // })
-
-    // this.store.findRecord('project', 1 ).then(function (project) {
-    //   // Ember.set
-    //   model.set('metadata', project)
-
-    //   project.get('stakeholders').then(function (stakeholders) {
-    //     model.set('stakeholders', stakeholders)
-    //   })
-
-    //   project.get('stakeholderSnapshots').then(function (stakeholderSnapshots) {
-    //     model.set('stakeholderSnapshots', stakeholderSnapshots)
-    //   })
-
-
-    // })
-
-    // var model = {
-    //   metadata : projectData(), // aka project
-    //   stakeholders : data4Week(),
-    //   // stakeholderSnapshots : undefined,
-    //   relationships : getRelationships()
-    // }
+    return this.store.findRecord('project', 1 )
   },
-  // afterModel: function (model) {
-  //   var self = this
-  //   model.get('stakeholders').then(function(stakeholders) {
-  //     model.set('stakeholders', stakeholders)
-  //     // self.controllerFor('scatter-cube').set('stakeholders', stakeholders);
-  //   });
-  // },
-
-
-
-
-
 });
