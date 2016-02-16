@@ -314,6 +314,34 @@ export default function (component) {
       navController : this.navController,
       domEvents : this.domEvents
     })
+
+    ///////////////////// name-badge on hover ////////////////////////
+    this.onMouseoverFcts.push(function (sHPoint) {
+      self.nameBadgeVisible = true
+      self.component.updateHoveredStakeholder(sHPoint)
+      $('.name-badge').show()
+    })
+
+    this.onMouseoutFcts.push(function () {
+      var $nameBadge = $('.name-badge')
+      if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) {
+        $nameBadge.hide()
+        self.nameBadgeVisible = false
+      }
+    })
+
+    this.onRenderFcts.push( function () {
+      if ( self.nameBadgeVisible ) {
+        var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
+
+        var left = ( position.x + 10 ) + 'px'
+        var top = ( position.y - 28 ) + 'px'
+
+        $('.name-badge').css({top : top, left : left});
+      }
+    })
+
+
   }
 
 
@@ -415,32 +443,6 @@ export default function (component) {
       })
     })
 
-    ///////////////////// name-badge on hover ////////////////////////
-
-    this.onMouseoverFcts.push(function (sHPoint) {
-      self.nameBadgeVisible = true
-      self.component.updateHoveredStakeholder(sHPoint)
-      $('.name-badge').show()
-    })
-
-    this.onMouseoutFcts.push(function () {
-      var $nameBadge = $('.name-badge')
-      if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) {
-        $nameBadge.hide()
-        self.nameBadgeVisible = false
-      }
-    })
-
-    this.onRenderFcts.push( function () {
-      if ( self.nameBadgeVisible ) {
-        var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
-
-        var left = ( position.x + 10 ) + 'px'
-        var top = ( position.y - 28 ) + 'px'
-
-        $('.name-badge').css({top : top, left : left});
-      }
-    })
 
     ///////////////////// Create distribution Cloud ////////////////////////
     this.distributionCloud = new DistributionCloud()
