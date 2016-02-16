@@ -3,7 +3,9 @@ html {
   box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -17,11 +19,11 @@ body {
   font-feature-settings: "kern", "liga", "clig", "calt";
 }
 
-[data-ember-action]{
+[data-ember-action] {
   cursor: pointer;
 }
 
-.page-title{
+.page-title {
   width: 100%;
   text-align: center;
   text-transform: uppercase;
@@ -32,7 +34,7 @@ body {
   letter-spacing: 0.08em;
 }
 
-.action-footer{
+.action-footer {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -41,10 +43,10 @@ body {
   bottom: 0;
   padding-top: 30px;
   padding-bottom: 20px;
-  background-image: linear-gradient( to bottom, color(var(--pulseBlack) alpha(0)) , var(--pulseBlack) 40%);
+  background-image: linear-gradient(to bottom, color(var(--pulseBlack) alpha(0)), var(--pulseBlack) 40%);
 }
 .action-footer.blue-footer{
-  background-image: linear-gradient( to bottom, color(var(--darkBlue) alpha(0)) , var(--darkBlue) 40%);
+  background-image: linear-gradient(to bottom, color(var(--darkBlue) alpha(0)), var(--darkBlue) 40%);
 }
 
 .action-footer button{
@@ -101,13 +103,13 @@ body {
 
 .close-button{
   position: fixed;
-  top:1.91em;
-  left:1.91em;
-  transform: scale(1,1);
+  top: 1.91em;
+  left: 1.91em;
+  transform: scale(1, 1);
 }
 
 .close-button:hover{
-  transform: scale(1.2,1.2);
+  transform: scale(1.2, 1.2);
 }
 
 .fade-out-animation{

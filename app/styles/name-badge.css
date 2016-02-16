@@ -3,15 +3,12 @@
   top: 100px;
   left: 500px;
   display: none;
-
-  /*line-height: 0px;*/
   background-color: white;
   color: color(var(--darkBlue));
   font-size: 10pt;
   font-weight: 900;
   letter-spacing: 0.04em;
   margin: 0;
-
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   padding-left: 0.5em;

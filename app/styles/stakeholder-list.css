@@ -11,6 +11,7 @@
 .stakeholder-container{
   perspective: 100px;
   perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
   justify-content: space-around;
   align-items: stretch;
   width: 80%;
