@@ -250,8 +250,11 @@ export default function (component) {
 
 
 
-    //////////////////////////////////// create danger zone ////////////////////////////////////////////////
+    //////////////////////////////////// create axis guides ////////////////////////////////////////////////
+    this.axisGuides = new AxisGuides()
+    this.addObjectsToScene(this.axisGuides.lines)
 
+    //////////////////////////////////// create danger zone ////////////////////////////////////////////////
     this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry) {
       self.dangerZone = new DangerZone({
         geometry : geometry
@@ -545,11 +548,6 @@ export default function (component) {
       var cube = new THREE.Mesh(geometry, cubeMaterial)
       self.scene.add(cube)
     })
-
-    //////////////////////////////////// create axis guides ////////////////////////////////////////////////
-
-    this.axisGuides = new AxisGuides()
-    this.addObjectsToScene(this.axisGuides.lines)
 
 
 
