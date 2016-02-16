@@ -273,6 +273,68 @@ export default function (component) {
 
 
 
+
+    ///////////////////// Create Point Cloud ////////////////////////
+
+    this.pointCloud = new PointCloud({
+      data: self.stakeholders,
+      timeFrame: self.metaData[0].timeFrame,
+    })
+
+    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+
+    this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
+    this.addObjectsToScene(this.pointCloud.sHPoints)
+
+    // turn cursor into hand when hovering the sHPoints
+    this.onMouseoverFcts.push(function (sHPoint) {
+      $('.scatter-cube').addClass('threejs-hover')
+    })
+    this.onMouseoutFcts.push(function (sHPoint) {
+      $('.scatter-cube').removeClass('threejs-hover')
+    })
+
+    this.addListnerSHPoint = function (sHPoint) {
+      var mesh = sHPoint.mesh
+      self.domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
+    }
+
+    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.focussedPoint = sHPoint
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      self.focussedPoint = undefined
+    })
+
+    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
+      self.component.updateSelectedStakeholder(sHPoint)
+    })
+
+    this.onRenderFcts.push( function () { // depth
+      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
+        sHPoint.updateColor(self.camera.position)
+      })
+    })
+
     ///////////////////// name-badge on hover ////////////////////////
 
     this.onMouseoverFcts.push(function (sHPoint) {
@@ -490,67 +552,7 @@ export default function (component) {
       self.lineGroup.update()
     })
 
-    ///////////////////// Create Point Cloud ////////////////////////
 
-    this.pointCloud = new PointCloud({
-      data: self.stakeholders,
-      timeFrame: self.metaData[0].timeFrame,
-    })
-
-    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
-
-    this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
-    this.addObjectsToScene(this.pointCloud.sHPoints)
-
-    // turn cursor into hand when hovering the sHPoints
-    this.onMouseoverFcts.push(function (sHPoint) {
-      $('.scatter-cube').addClass('threejs-hover')
-    })
-    this.onMouseoutFcts.push(function (sHPoint) {
-      $('.scatter-cube').removeClass('threejs-hover')
-    })
-
-    this.addListnerSHPoint = function (sHPoint) {
-      var mesh = sHPoint.mesh
-      self.domEvents.addEventListener(mesh, 'click', function(){
-        self.onPointClickFcts.forEach( function(onPointClickFct) {
-          onPointClickFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseover', function(){
-        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
-          onMouseoverFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseout', function(){
-        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
-          onMouseoutFct(sHPoint)
-        })
-      }, false)
-    }
-
-    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
-
-    this.onPointClickFcts.push( function (sHPoint) {
-      self.focussedPoint = sHPoint
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      self.focussedPoint = undefined
-    })
-
-    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
-      self.component.updateSelectedStakeholder(sHPoint)
-    })
-
-    this.onRenderFcts.push( function () { // depth
-      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-        sHPoint.updateColor(self.camera.position)
-      })
-    })
 
 
 
