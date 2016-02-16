@@ -273,6 +273,32 @@ export default function (component) {
 
 
 
+    ///////////////////// Create Connecting Lines ////////////////////////
+
+    this.lineGroup = new LineGroup({
+      connections: self.relationships
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      if (self.component.connectionView) {
+        _.last(self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        }))
+        .onComplete( function () {
+          self.removeConnectingLines()
+        })
+      }
+    })
+
+    this.removeConnectingLines = function() {
+      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
+      self.lineGroup.primaryConnections = []
+    }
+
+    this.onRenderFcts.push(function () {
+      self.lineGroup.update()
+    })
 
     ///////////////////// Create Point Cloud ////////////////////////
 
@@ -525,32 +551,6 @@ export default function (component) {
       }
     })
 
-    ///////////////////// Create Connecting Lines ////////////////////////
-
-    this.lineGroup = new LineGroup({
-      connections: self.relationships
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      if (self.component.connectionView) {
-        _.last(self.tweenController.fadeOutConnections({
-          duration : 300,
-          easing : TWEEN.Easing.Quadratic.In
-        }))
-        .onComplete( function () {
-          self.removeConnectingLines()
-        })
-      }
-    })
-
-    this.removeConnectingLines = function() {
-      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
-      self.lineGroup.primaryConnections = []
-    }
-
-    this.onRenderFcts.push(function () {
-      self.lineGroup.update()
-    })
 
 
 
@@ -607,16 +607,8 @@ export default function (component) {
       // update TWEEN functions
       TWEEN.update(nowMsec);
 
-      // console.log(self.camera.position)
-
     })
   }
 
   return environment
 }
-
-// function forEach(array, action) {
-//   for (var i = 0; i < array.length; i++) {
-//     action(array[i])
-//   }
-// }
