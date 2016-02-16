@@ -21,6 +21,7 @@ export default Ember.Component.extend({
     this._environment.initPointCloud({
       project : this.project,
     })
+
   },
 
   updateSelectedStakeholder: function (shInfo) {

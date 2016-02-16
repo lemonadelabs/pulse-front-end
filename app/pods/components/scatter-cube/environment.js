@@ -246,16 +246,85 @@ export default function (component) {
 
 
   environment.initPointCloud = function (opts) {
+    var self = this
     var project = opts.project
 
-    project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
-      stakeholders.forEach(function(stakeholder){
-        // console.log(stakeholder.get('name'))
-      })
+    // project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
+    //   stakeholders.forEach(function(stakeholder){
+    //     stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
+    //       snapshots.forEach(function(snapshot){
+    //         console.log(snapshot.get('name'))
+    //       })
+    //     })
+    //   })
+    // })
+
+    ///////////////////// Create Point Cloud ////////////////////////
+
+    this.pointCloud = new PointCloud({
+      // data: self.stakeholders,
+      project: project,
+      timeFrame: project.get('timeframe'),
     })
 
-    project.get('timeframe') // this is how we get aspects of project.
 
+    setTimeout(function () {
+
+      self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
+      console.log(self.pointCloud.sHPointClickTargets.length)
+    }, 1000)
+
+
+    this.addObjectsToScene(this.pointCloud.sHPoints)
+
+    // turn cursor into hand when hovering the sHPoints
+    this.onMouseoverFcts.push(function (sHPoint) {
+      $('.scatter-cube').addClass('threejs-hover')
+    })
+    this.onMouseoutFcts.push(function (sHPoint) {
+      $('.scatter-cube').removeClass('threejs-hover')
+    })
+
+    this.addListnerSHPoint = function (sHPoint) {
+      var mesh = sHPoint.mesh
+      self.domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
+    }
+
+    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.focussedPoint = sHPoint
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      self.focussedPoint = undefined
+    })
+
+    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
+      self.component.updateSelectedStakeholder(sHPoint)
+    })
+
+    this.onRenderFcts.push( function () { // depth
+      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
+        sHPoint.updateColor(self.camera.position)
+      })
+    })
   }
 
 
@@ -394,67 +463,6 @@ export default function (component) {
     this.relationships = opts.relationships
     this.metaData = opts.metadata
     this.currentWeek = this.metaData[0].timeFrame
-
-
-    ///////////////////// Create Point Cloud ////////////////////////
-
-    this.pointCloud = new PointCloud({
-      data: self.stakeholders,
-      timeFrame: self.metaData[0].timeFrame,
-    })
-
-
-    this.addObjectsToScene(this.pointCloud.sHPointClickTargets)
-    this.addObjectsToScene(this.pointCloud.sHPoints)
-
-    // turn cursor into hand when hovering the sHPoints
-    this.onMouseoverFcts.push(function (sHPoint) {
-      $('.scatter-cube').addClass('threejs-hover')
-    })
-    this.onMouseoutFcts.push(function (sHPoint) {
-      $('.scatter-cube').removeClass('threejs-hover')
-    })
-
-    this.addListnerSHPoint = function (sHPoint) {
-      var mesh = sHPoint.mesh
-      self.domEvents.addEventListener(mesh, 'click', function(){
-        self.onPointClickFcts.forEach( function(onPointClickFct) {
-          onPointClickFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseover', function(){
-        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
-          onMouseoverFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseout', function(){
-        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
-          onMouseoutFct(sHPoint)
-        })
-      }, false)
-    }
-
-    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
-    this.onPointClickFcts.push( function (sHPoint) {
-      self.focussedPoint = sHPoint
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      self.focussedPoint = undefined
-    })
-
-    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
-      self.component.updateSelectedStakeholder(sHPoint)
-    })
-
-    this.onRenderFcts.push( function () { // depth
-      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-        sHPoint.updateColor(self.camera.position)
-      })
-    })
 
 
     /////////////////// Create Connecting Lines ////////////////////////

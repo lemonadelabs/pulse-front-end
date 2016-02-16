@@ -1,5 +1,6 @@
 export default function SHPointClickTarget (opts) {
-  this.weeks = opts.weeks
+  // this.weeks = opts.weeks
+  this.snapshots = opts.snapshots
   this.id = opts.id
   this.name = opts.name
   this.image = opts.image
@@ -13,16 +14,15 @@ export default function SHPointClickTarget (opts) {
 }
 
 SHPointClickTarget.prototype.createCurve = function() {
-  var data = this.weeks
+  var snapshots = this.snapshots
   var points = []
 
-  _.forEach(data, function (point) {
-    var x = point.power * 1.8  + 0.1
-    var y = point.support * 1.8  + 0.1
-    var z = point.vital * 1.8  + 0.1
+  snapshots.forEach(function (snapshot) {
+    var x = snapshot.get('power') * 1.8  + 0.1
+    var y = snapshot.get('support') * 1.8  + 0.1
+    var z = snapshot.get('vital') * 1.8  + 0.1
     points.push( new THREE.Vector3( x, y, z ) )
   })
-
   return new THREE.CatmullRomCurve3( points )
 };
 
@@ -41,15 +41,16 @@ SHPointClickTarget.prototype.createMesh = function(noOfWeeks) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xffffff,
-    visible: false
+    visible: true
+    // visible: false
   });
 
   var point = new THREE.Mesh( geometry, material );
 
   // sets the position for each mesh
-  var x = this.weeks[noOfWeeks].power * 1.8  + 0.1
-  var y = this.weeks[noOfWeeks].support * 1.8  + 0.1
-  var z = this.weeks[noOfWeeks].vital * 1.8  + 0.1
+  var x = this.snapshots.objectAt(noOfWeeks - 1).get('power') * 1.8  + 0.1
+  var y = this.snapshots.objectAt(noOfWeeks - 1).get('support') * 1.8  + 0.1
+  var z = this.snapshots.objectAt(noOfWeeks - 1).get('vital') * 1.8  + 0.1
 
   point.position.set(x, y, z)
 
