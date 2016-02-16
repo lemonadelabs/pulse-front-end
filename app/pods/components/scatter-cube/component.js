@@ -12,7 +12,6 @@ export default Ember.Component.extend({
     this.set('_environment', environment(this))
 
     // first, set up everything in the scene that is not data dependant
-    // console.log('asdf')
 
 
 

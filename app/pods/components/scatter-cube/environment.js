@@ -341,6 +341,23 @@ export default function (component) {
       }
     })
 
+    ///////////////////// Create distribution Cloud ////////////////////////
+    this.distributionCloud = new DistributionCloud()
+
+    this.onRenderFcts.push( function () { // update color of point
+      if (self.component.distributionView && self.focussedPoint) {
+        _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
+          // dont update if they are being animated!!
+          if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
+        })
+      }
+    })
+
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.distributionView) {
+        self.tweenController.removeDistroCloud()
+      }
+    })
 
   }
 
@@ -443,24 +460,6 @@ export default function (component) {
       })
     })
 
-
-    ///////////////////// Create distribution Cloud ////////////////////////
-    this.distributionCloud = new DistributionCloud()
-
-    this.onRenderFcts.push( function () { // update color of point
-      if (self.component.distributionView && self.focussedPoint) {
-        _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
-          // dont update if they are being animated!!
-          if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
-        })
-      }
-    })
-
-    this.noSelectedStakeholderFcts.push(function () {
-      if (self.component.distributionView) {
-        self.tweenController.removeDistroCloud()
-      }
-    })
 
     ///////////////////// Create history tail group ////////////////////////
     this.historyTailGroup = new HistoryTailGroup()
