@@ -18,48 +18,10 @@ export default Ember.Component.extend({
     this._environment.render()
 
 
-    this.get('project.stakeholders').then(function(stakeholders){
-      stakeholdersRecords = stakeholders
-    })
-
-
     this._environment.initPointCloud({
       project : this.project,
-      stakeholders : stakeholdersRecords,
-      stakeholderSnapshots : this.get('project.stakeholderSnapshots')
     })
-
-
-
-
-    // this._environment.populateCube({
-    //   stakeholders : this.stakeholders,
-    //   relationships : this.relationships,
-    //   metadata : this.metadata,
-    //   // stakeholderSnapshots : this.stakeholderSnapshots
-    // })
-
-
   },
-
-  // watchStakeholders: function(){
-  //   this.checkStakeholderDependantModels();
-
-  // }.observes('stakeholders'),
-
-  // watchStakeholderSnapshots: function(){
-  //   this.checkStakeholderDependantModels();
-  // }.observes('stakeholderSnapshots'),
-
-  // checkStakeholderDependantModels: function(){
-  //   if(this.stakeholders.get('isLoaded')&&this.stakeholderSnapshots.get('isLoaded')){
-  //     // this._environment.initPointCloud({
-  //     //   metadata : this.metadata,
-  //     //   stakeholders : this.stakeholders,
-  //     //   stakeholderSnapshots : this.stakeholderSnapshots
-  //     // })
-  //   }
-  // },
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
