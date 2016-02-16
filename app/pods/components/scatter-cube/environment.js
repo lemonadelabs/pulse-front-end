@@ -470,22 +470,11 @@ export default function (component) {
         })
       }
     })
-
-
-
-
   }
 
 
   environment.init = function (opts) {
-
     var self = this
-
-    // delete these after refactor
-    this.stakeholders = opts.stakeholders
-    this.relationships = opts.relationships
-    this.metaData = opts.metadata
-    this.currentWeek = this.metaData[0].timeFrame
 
     /////////////////////////// set up camera /////////////////////////////
     this.initializeCamera()
@@ -502,7 +491,6 @@ export default function (component) {
     this.initRendererStats()
 
     /////////////////////// Create Tween Controller ///////////////////////
-
     this.tweenController = new TweenController({
       environment : this
     })

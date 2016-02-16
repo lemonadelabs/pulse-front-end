@@ -16,12 +16,7 @@ export default Ember.Component.extend({
 
 
 
-    this._environment.init({
-      stakeholders : this.stakeholders,
-      relationships : this.relationships,
-      metadata : this.metadata,
-      // stakeholderSnapshots : this.stakeholderSnapshots
-    })
+    this._environment.init()
 
     this._environment.setupScatterCube()
 
