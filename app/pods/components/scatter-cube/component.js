@@ -36,6 +36,7 @@ export default Ember.Component.extend({
       // stakeholderSnapshots : this.stakeholderSnapshots
     })
 
+
   },
 
   // watchStakeholders: function(){
