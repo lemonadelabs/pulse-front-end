@@ -247,16 +247,14 @@ export default function (component) {
 
   environment.initPointCloud = function (opts) {
     var project = opts.project
-    var stakeholders = opts.stakeholders
-    var stakeholderSnapshots = opts.stakeholderSnapshots
 
-    project.get('stakeholders').then(function (stakeholders) {
+    project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
       stakeholders.forEach(function(stakeholder){
         // console.log(stakeholder.get('name'))
       })
     })
 
-    console.log(project.get('timeframe'))
+    project.get('timeframe') // this is how we get aspects of project.
 
   }
 
