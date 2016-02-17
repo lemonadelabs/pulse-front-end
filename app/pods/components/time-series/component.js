@@ -4,19 +4,18 @@ export default Ember.Component.extend({
   timeSeries : [],
   selectedTime : undefined,
   setupTimeSeries: function() {
-    var self = this
-    Ember.run.later(function(){
-     }, 2000)
-    var metadata = this.metadata[0]
-    this.selectedTime = metadata.timeFrame;
+    var timeframe = this.model.get('timeframe')
+    var timeFormat = this.model.get('timeFormat')
+    this.set('selectedTime', timeframe);
+
     //reset the timeSeries
     this.set("timeSeries",[]);
-    for (var i = 1; i <= metadata.timeFrame; i++) {
+    for (var i = 1; i <= timeframe; i++) {
       var selected = false;
-      if(i === metadata.timeFrame){
+      if(i === timeframe){
         selected = true;
       }
-      this.timeSeries.push({"title":metadata.timeFormat+i,"id":i,"selected":selected})
+      this.timeSeries.push({"title":timeFormat+i,"id":i,"selected":selected})
       this.timeSeries.arrayContentDidChange(i,0,1)
     }
   }.on('init'),
