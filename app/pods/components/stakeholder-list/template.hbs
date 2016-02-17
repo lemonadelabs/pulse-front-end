@@ -2,17 +2,19 @@
 <h1 class="page-title">stakeholders</h1>
 <div class="stakeholder-container">
   {{#each stakeholders as |stakeholder| }}
-    {{stakeholder-card
-      stakeholder=stakeholder
-      onSelectAction=(action "addStakeholderToSelection")
-      onDeselectAction=(action "removeStakeholderFromSelection")
-    }}
+    {{#unless stakeholder.isDeleted}}
+      {{stakeholder-card
+        stakeholder=stakeholder
+        onSelectAction=(action "addStakeholderToSelection")
+        onDeselectAction=(action "removeStakeholderFromSelection")
+      }}
+    {{/unless}}
   {{/each}}
 </div>
 {{notification-alert
   alertMessage=this.alertMessage
   showNotification=this.showNotification
-  undoAction=(action this.finishAction)
+  undoAction=(action this.undoAction)
   finishAction=(action this.finishAction)
 }}
 <footer class="action-footer blue-footer">
@@ -22,7 +24,7 @@
       <button>Edit</button>
     {{/unless}}
     <button {{action "pollStakeholders"}}>Poll</button>
-    <button {{action "removeStakeholders"}}>Delete</button>
+    <button {{action "startRemoveStakeholders"}}>Delete</button>
   {{/if}}
 
 

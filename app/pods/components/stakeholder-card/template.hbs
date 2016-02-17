@@ -1,3 +1,7 @@
+{{log stakeholder.isDeleted}}
+{{#if stakeholder.isDeleted}}
+{{/if}}
+{{#unless stakeholder.isDeleted}}
 <div class="stakeholder-image-container">
   <img src="{{stakeholder.image}}">
 </div>
@@ -6,3 +10,4 @@
   <p class="stakeholder-info">{{stakeholder.organisation}}</p>
   <p class="stakeholder-info">{{stakeholder.role}}</p>
 </div>
+{{/unless}}

@@ -11,13 +11,11 @@ export default Ember.Component.extend({
   'fade-in-animation':true,
   'fade-out-animation':false,
   finishAction:"finishAction",
+  undoAction:"undoAction",
 
   deselectStakeholders:function(){
-    for (var stakeholder in this.selectedStakeholders) {
-      if (this.selectedStakeholders.hasOwnProperty(stakeholder)) {
-        delete this.selectedStakeholders[stakeholder.id];
-      }
-    }
+    this.set('selectedStakeholders',{})
+    this.set('selectedStakeholderCount',0);
   },
   actions:{
     closeStakeholderList:function(){
@@ -43,24 +41,39 @@ export default Ember.Component.extend({
       var selectedStakeholders = this.get("selectedStakeholders");
       var firstStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
 
-      for (var stakeholder in selectedStakeholders) {
-        if (selectedStakeholders.hasOwnProperty(stakeholder)) {
-          //TODO: use ember data to remove stakeholders
+      for (var stakeholderID in selectedStakeholders) {
+        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
+          selectedStakeholders[stakeholderID].deleteRecord();
+          console.log(selectedStakeholders[stakeholderID].get('isDeleted'))
         }
       }
       if (stakeholderCount>1) {
         this.set('alertMessage',"Removed <b>"+this.selectedStakeholderCount+"</b> stakeholders from project")
       }
       else if (stakeholderCount === 1) {
-        this.set('alertMessage',"Removed <b>"+firstStakeholder.name+"</b> from project")
+        this.set('alertMessage',"Removed <b>"+firstStakeholder.get('name')+"</b> from project")
       }
+
+      this.set("undoAction","undoRemoveStakeholders")
+      this.set("finishAction","finishRemoveStakeholders")
       this.set("showNotification", true);
     },
     undoRemoveStakeholders:function(){
-      //TODO:Make this actually do something
+      var selectedStakeholders = this.get("selectedStakeholders");
+      for (var stakeholderID in selectedStakeholders) {
+        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
+          selectedStakeholders[stakeholderID].rollbackAttributes();
+        }
+      }
+      this.deselectStakeholders();
     },
     finishRemoveStakeholders:function(){
-      //TODO:Here is where we would do the ember data save;
+      var selectedStakeholders = this.get("selectedStakeholders");
+      for (var stakeholderID in selectedStakeholders) {
+        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
+          selectedStakeholders[stakeholderID].save();
+        }
+      }
       this.deselectStakeholders();
     },
     pollStakeholders:function(){
@@ -83,6 +96,10 @@ export default Ember.Component.extend({
     },
     finishAction:function(){
       console.log("finishAction");
+    },
+    undoAction:function(){
+      console.log("undoAction");
+
     }
   },
   observeSelectedStakeholderCount:function(){

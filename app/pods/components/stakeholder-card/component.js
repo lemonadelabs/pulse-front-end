@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames:["stakeholder-card"],
-  classNameBindings:['selected','deselected'],
+  classNameBindings:['selected','isDeleted'],
   selected:false,
   click(){
     if(this.get('selected')){
@@ -23,6 +23,5 @@ export default Ember.Component.extend({
         console.warn("stakeholder-card needs a function 'onSelectAction'");
       }
     }
-
   }
 });
