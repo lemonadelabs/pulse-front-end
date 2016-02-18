@@ -1,0 +1,94 @@
+.stakeholder-card{
+  cursor: pointer;
+  transition: transform 200ms;
+  flex-basis: 300px;
+  min-width: 300px;
+  flex-grow: 1;
+  align-items: flex-start;
+  display: inline-flex;
+  border: solid 1px white;
+  background-color: color(var(--pulseBlack) alpha(-10%));
+  margin: 0.5em;
+  padding: 1em;
+  transform: translateZ(0);
+}
+
+.stakeholder-card:hover{
+  transform: translateZ(0.05em);
+}
+.stakeholder-card:focus{
+  transform: translateZ(0em);
+}
+
+.stakeholder-card-info{
+  margin-left: 1em;
+  height: 80px;
+}
+
+.stakeholder-card .stakeholder-image-container{
+  min-width: 80px;
+  min-height: 80px;
+  border: solid color(white alpha(-70%)) 1px;
+}
+.stakeholder-card.selected .stakeholder-image-container{
+  border: solid color(white alpha(-30%)) 1px;
+}
+.stakholder-list-name{
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+.stakeholder-card::before{
+  transition: opacity 200ms;
+  opacity: 0;
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  display: block;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  border: solid 3px var(--teal);
+}
+.stakeholder-card::after{
+  transition: opacity 200ms;
+  opacity: 0;
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  display: block;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  background-color: color(var(--teal) alpha(-95%));
+}
+.stakeholder-card.selected::after{
+  opacity: 1;
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  display: block;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  background-color: color(var(--teal) alpha(-95%));
+}
+.stakeholder-card.selected::before{
+  opacity: 1;
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  display: block;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  border: solid 3px var(--teal);
+}
+
+.stakeholder-card.selected{
+  animation-name: stateholder-select;
+  animation-duration: 250ms;
+}

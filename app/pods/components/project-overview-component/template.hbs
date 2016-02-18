@@ -1,4 +1,14 @@
-{{nav-bar}}
+{{#if this.showStakeholderList}}
+  {{stakeholder-list
+    stakeholders=this.model.stakeholders
+    toggleStakeholderList=(action 'toggleStakeholderList')
+  }}
+{{/if}}
+
+{{nav-bar
+  toggleStakeholderList=(action 'toggleStakeholderList')
+}}
+
 
 {{stakeholder-modal
   selectedStakeholder=this.selectedStakeholder
@@ -24,7 +34,7 @@
   updateStakeholder=(action 'userDidSelectStakeholder')
 }}
 
-{{!-- {{time-series
-  metadata=this.model.metadata
+{{time-series
+  model=this.model
   updateTime=(action 'userDidChangeTime')
-}} --}}
+}}

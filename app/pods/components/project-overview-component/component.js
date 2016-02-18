@@ -8,6 +8,7 @@ export default Ember.Component.extend({
   connectionView:false,
   distributionView:false,
   historyView:false,
+  showStakeholderList:false,
   project:undefined,
   stakeholders:{},
 
@@ -55,7 +56,7 @@ export default Ember.Component.extend({
     },
 
     userDidChangeTime(newTime) {
-      this.set('selectedTime',newTime)
+      this.set('selectedTime', newTime)
     },
 
     toggleConnections(){
@@ -82,6 +83,14 @@ export default Ember.Component.extend({
       }
       else{
         this.set("historyView", true)
+      }
+    },
+    toggleStakeholderList(){
+      if(this.get("showStakeholderList")){
+        this.set("showStakeholderList", false)
+      }
+      else{
+        this.set("showStakeholderList", true)
       }
     }
   }

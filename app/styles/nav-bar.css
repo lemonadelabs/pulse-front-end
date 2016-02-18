@@ -5,9 +5,9 @@
   display: flex;
 }
 
-.main-nav .nav-items{
+.main-nav .nav-items {
   position: relative;
-  width: calc(100%/3);
+  width: calc(100% / 3);
   height: 100%;
   text-align: center;
   display: flex;
@@ -19,7 +19,7 @@
   font-weight: 600;
   letter-spacing: 0.09em;
   font-size: 10pt;
-  background-color: color(var(--pulseBlack) alpha(-5%))
+  background-color: color(var(--pulseBlack) alpha(-5%));
 }
 
 .main-nav .nav-items a{
@@ -32,7 +32,7 @@
 }
 .main-nav .nav-items::before{
   content: "";
-  top:0;
+  top: 0;
   z-index: 0;
   display: block;
   position: absolute;

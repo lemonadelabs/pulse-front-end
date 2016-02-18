@@ -3,7 +3,9 @@ html {
   box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -17,11 +19,11 @@ body {
   font-feature-settings: "kern", "liga", "clig", "calt";
 }
 
-[data-ember-action]{
+[data-ember-action] {
   cursor: pointer;
 }
 
-.page-title{
+.page-title {
   width: 100%;
   text-align: center;
   text-transform: uppercase;
@@ -32,16 +34,26 @@ body {
   letter-spacing: 0.08em;
 }
 
-.action-footer{
+.action-footer {
   width: 100%;
   display: flex;
   justify-content: center;
   position: fixed;
+  margin: auto;
   bottom: 0;
-  padding-top: 20px;
+  padding-top: 30px;
   padding-bottom: 20px;
-  background-image: linear-gradient( to bottom, color(var(--pulseBlack) alpha(0)) , var(--pulseBlack) 40%);
+  background-image: linear-gradient(to bottom, color(var(--pulseBlack) alpha(0)), var(--pulseBlack) 40%);
 }
+.action-footer.blue-footer{
+  background-image: linear-gradient(to bottom, color(var(--darkBlue) alpha(0)), var(--darkBlue) 40%);
+}
+
+.action-footer button{
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
 .fancy-corners{
   position: relative;
 }
@@ -87,4 +99,23 @@ body {
   height: 1px;
   border: none;
   background-color: color(white alpha(-40%))
+}
+
+.close-button{
+  position: fixed;
+  top: 1.91em;
+  left: 1.91em;
+  transform: scale(1, 1);
+}
+
+.close-button:hover{
+  transform: scale(1.2, 1.2);
+}
+
+.fade-out-animation{
+  animation: 250ms ease-in fade-out;
+}
+
+.fade-in-animation{
+  animation: 250ms ease-out fade-in;
 }
