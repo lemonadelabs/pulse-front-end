@@ -7,6 +7,7 @@ export default Ember.Component.extend({
     var timeframe = this.model.get('timeframe')
     var timeFormat = this.model.get('timeFormat')
     this.set('selectedTime', timeframe);
+    this.get("updateTime")(timeframe)
 
     //reset the timeSeries
     this.set("timeSeries",[]);

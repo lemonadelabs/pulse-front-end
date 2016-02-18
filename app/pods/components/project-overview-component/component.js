@@ -17,6 +17,7 @@ export default Ember.Component.extend({
     var self = this
     var store = this.get('store')
     var project = store.peekRecord('project', 1)
+
     // console.log(project.get('client'))
     var stakeholderObject = {}
     var stakeholderLength
