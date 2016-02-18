@@ -256,12 +256,6 @@ export default function (component) {
       selectedTime: opts.selectedTime,
     })
 
-
-    console.log(this.pointCloud)
-
-
-
-
     self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
     // this.addObjectsToScene(this.pointCloud.sHPoints)
 

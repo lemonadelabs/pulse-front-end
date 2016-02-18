@@ -28,7 +28,6 @@ export default Ember.Component.extend({
 
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
-    console.log(time)
   }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function (){
@@ -39,7 +38,6 @@ export default Ember.Component.extend({
 
   onStakeholderData: function () {
     var time = this.get('selectedTime')
-    console.log(time)
 
     this._environment.initPointCloud({
       project : this.project,
