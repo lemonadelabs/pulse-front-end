@@ -191,11 +191,14 @@ export default function (component) {
   ///////////////////// when timeseries component changes ////////////////////////
   environment.updateTime = function (time) {
     console.log(time)
-    var oldTime = self.currentWeek
-    self.currentWeek = time
-    this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {
-      onUpdateTimeFct(time, oldTime)
-    })
+    var oldTime = this.currentWeek
+    this.currentWeek = time
+
+    if ( this.pointCloud ) {
+      this.onUpdateTimeFcts.forEach( function( onUpdateTimeFct ) {
+        onUpdateTimeFct(time, oldTime)
+      })
+    }
   }
 
   environment.connectionViewUpdated = function () {
@@ -249,6 +252,7 @@ export default function (component) {
   environment.initPointCloud = function (opts) {
     var self = this
     var stakeholders = opts.stakeholders
+    this.oldTime = opts.selectedTime
 
     ///////////////////// Create Point Cloud ////////////////////////
 

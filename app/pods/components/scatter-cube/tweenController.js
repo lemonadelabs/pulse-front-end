@@ -72,6 +72,7 @@ TweenController.prototype.updateSHPoints = function(opts) {
   var tweens = []
   var environment = this.environment
   var pointCloud = environment.pointCloud
+  console.log(pointCloud)
 
   var deltaT = Math.abs(opts.time - opts.oldTime)
 
