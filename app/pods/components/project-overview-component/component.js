@@ -18,7 +18,6 @@ export default Ember.Component.extend({
     var store = this.get('store')
     var project = store.peekRecord('project', 1)
 
-    // console.log(project.get('client'))
     var stakeholderObject = {}
     var stakeholderLength
     project.get('stakeholders').then(function (stakeholders) {
@@ -26,25 +25,13 @@ export default Ember.Component.extend({
       stakeholders.forEach(function(stakeholder, i) {
         stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
           //TODO: make sure this works with long response times
-          if(i === stakeholderLength -1){
+          if ( i === stakeholderLength - 1) {
             self.set('stakeholders', stakeholderObject)
-
           }
         })
         stakeholderObject[stakeholder.get('id')] = stakeholder
       })
     })
-
-    // var stakeholder = store.query('stakeholder', { filter: { project: project } } ).then(function (stakeholders) {
-    //   self.set('stakeholders', stakeholders)
-    //   stakeholders.forEach(function(stakeholder) {
-    //     console.log(stakeholder.get('name'))
-    //   })
-    // })
-
-
-
-
   },
 
   actions : {

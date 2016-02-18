@@ -2,18 +2,12 @@ import Ember from 'ember';
 import environment from './environment';
 
 export default Ember.Component.extend({
-  // store: Ember.inject.service(),
 
   classNames: ['scatter-cube'],
 
   didInsertElement() {
     this.initScatterCube()
   },
-
-  // init: function () {
-  //   this.set('selectedTime', this.project.get('timeframe')) // set time to latest week
-  // },
-
   initScatterCube: function () {
     var stakeholdersRecords
 
@@ -23,29 +17,8 @@ export default Ember.Component.extend({
     this._environment.setupScatterCube()
     this._environment.render()
 
-
-
-    // project
-    // stakeholders, where project_id : id
-    // stakeholderSnapshots, where stakeholder_id : id
-
-    // var store = this.get('store')
-    // var project = store.peekRecord('project', 1)
-
-    // var stakeholder = store.peekRecord('stakeholder', 1)
-    // console.log(stakeholder.get('name'))
-
-    // setInterval(function () {
-    // }, 1000)
-
-
-
-
-
-
     // this._environment.initPointCloud({
     //   project : this.project,
-    //   store : this.get('store')
     // })
 
   },
@@ -61,7 +34,6 @@ export default Ember.Component.extend({
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
     console.log(time)
-    // this._environment.updateTime(time)
   }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function (){
@@ -96,11 +68,6 @@ export default Ember.Component.extend({
     // })
 
   }.observes('stakeholders'),
-
-  // put observers on all of the models, when they ar not null, do stuff
-
-
-
 
   onUpdateConnectionsView: function () {
     this._environment.connectionViewUpdated()
