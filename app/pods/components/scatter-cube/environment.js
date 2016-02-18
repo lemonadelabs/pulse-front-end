@@ -257,8 +257,8 @@ export default function (component) {
       selectedTime: opts.selectedTime,
     })
 
-    self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
-    // this.addObjectsToScene(this.pointCloud.sHPoints)
+    // self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
+    this.addObjectsToScene(this.pointCloud.sHPoints)
 
     // // turn cursor into hand when hovering the sHPoints
     // this.onMouseoverFcts.push(function (sHPoint) {

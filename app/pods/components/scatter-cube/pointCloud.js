@@ -8,7 +8,7 @@ export default function PointCloud (opts) {
   this.selectedPoint = undefined
 
   this.sHPointClickTargets = this.createSHPointClickTargets()
-  // this.sHPoints = this.createSHPoints()
+  this.sHPoints = this.createSHPoints()
 }
 
 PointCloud.prototype.createSHPointClickTargets = function() {
@@ -17,7 +17,7 @@ PointCloud.prototype.createSHPointClickTargets = function() {
   var sHPointClickTargets = []
   var stakeholders = this.stakeholders
 
-  _.forEach(this.stakeholders, function (stakeholder) {
+  _.forEach(stakeholders, function (stakeholder) {
 
     var snapshots = stakeholder.get('stakeholderSnapshots')
 
@@ -36,43 +36,16 @@ PointCloud.prototype.createSHPointClickTargets = function() {
   return sHPointClickTargets
 };
 
-
-
-
-
-// PointCloud.prototype.createSHPointClickTargets = function() {
-//   var self = this
-//   var sHPointClickTargets = []
-
-//     this.project.get('stakeholders').then(function (stakeholders) {
-//       stakeholders.forEach(function(stakeholder){
-//         console.log(stakeholder.get('name'))
-//       })
-//     })
-
-//   _.forEach(this.data, function (stakeHolder) {
-//     var sHPointClickTarget = new SHPointClickTarget({
-//       weeks : stakeHolder.data,
-//       id : stakeHolder.id,
-//       name : stakeHolder.name,
-//       image : stakeHolder.image,
-//       organisation : stakeHolder.organisation,
-//       role : stakeHolder.role,
-//       tags : stakeHolder.tags,
-//       timeFrame : self.timeFrame
-//     })
-//     sHPointClickTargets.push(sHPointClickTarget)
-//   })
-//   return sHPointClickTargets
-// };
-
 PointCloud.prototype.createSHPoints = function() {
   var self = this
   var shPoints = []
-  _.forEach(this.data, function (stakeHolder) {
+  var stakeholders = this.stakeholders
+
+  _.forEach(stakeholders, function (stakeHolder) {
+    var snapshots = stakeholder.get('stakeholderSnapshots')
     var point = new SHPoint({
-      weeks : stakeHolder.data,
-      timeFrame : self.timeFrame
+      snapshots : snapshots,
+      selectedTime : self.selectedTime
     })
     shPoints.push(point)
   })
