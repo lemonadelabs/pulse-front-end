@@ -41,7 +41,7 @@ PointCloud.prototype.createSHPoints = function() {
   var shPoints = []
   var stakeholders = this.stakeholders
 
-  _.forEach(stakeholders, function (stakeHolder) {
+  _.forEach(stakeholders, function (stakeholder) {
     var snapshots = stakeholder.get('stakeholderSnapshots')
     var point = new SHPoint({
       snapshots : snapshots,

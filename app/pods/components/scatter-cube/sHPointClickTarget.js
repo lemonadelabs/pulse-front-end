@@ -15,21 +15,10 @@ export default function SHPointClickTarget (opts) {
   this.mesh = this.createMesh(opts)
 }
 
-SHPointClickTarget.prototype.createCurve = function() {
-  var snapshots = this.snapshots
-  var points = []
-
-  snapshots.forEach(function (snapshot) {
-    points.push( coordsFromSnapshot(snapshot) )
-  })
-  return new THREE.CatmullRomCurve3( points )
-};
-
 SHPointClickTarget.prototype.createMesh = function(opts) {
   var matrix = new THREE.Matrix4();
 
   var geometry = new THREE.SphereGeometry(400, 6, 6);
-
   // sets the scale for each mesh
   var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
   matrix.scale(scale)
@@ -40,7 +29,9 @@ SHPointClickTarget.prototype.createMesh = function(opts) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xffffff,
-    visible: true
+    visible: true,
+    transparent: true,
+    opacity: 0.4
     // visible: false
   });
 
@@ -52,4 +43,15 @@ SHPointClickTarget.prototype.createMesh = function(opts) {
 
   return point
 }
+
+SHPointClickTarget.prototype.createCurve = function() {
+  var snapshots = this.snapshots
+  var points = []
+
+  snapshots.forEach(function (snapshot) {
+    points.push( coordsFromSnapshot(snapshot) )
+  })
+  return new THREE.CatmullRomCurve3( points )
+};
+
 
