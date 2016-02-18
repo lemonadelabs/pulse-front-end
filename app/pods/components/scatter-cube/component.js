@@ -16,11 +16,6 @@ export default Ember.Component.extend({
     this._environment.init()
     this._environment.setupScatterCube()
     this._environment.render()
-
-    // this._environment.initPointCloud({
-    //   project : this.project,
-    // })
-
   },
 
   updateSelectedStakeholder: function (shInfo) {
@@ -45,6 +40,12 @@ export default Ember.Component.extend({
   onStakeholderData: function () {
     var time = this.get('selectedTime')
     console.log(time)
+
+    this._environment.initPointCloud({
+      project : this.project,
+      stakeholders : this.stakeholders,
+      selectedTime : this.selectedTime
+    })
 
     // _.forEach(this.stakeholders, function (stakeholder) {
     //   console.log('**********************')

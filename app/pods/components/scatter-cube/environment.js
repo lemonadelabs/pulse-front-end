@@ -247,34 +247,22 @@ export default function (component) {
 
   environment.initPointCloud = function (opts) {
     var self = this
-    var project = opts.project
-
-    // project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
-    //   stakeholders.forEach(function(stakeholder){
-    //     stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
-    //       snapshots.forEach(function(snapshot){
-    //         console.log(snapshot.get('name'))
-    //       })
-    //     })
-    //   })
-    // })
+    var stakeholders = opts.stakeholders
 
     ///////////////////// Create Point Cloud ////////////////////////
 
-    // this.pointCloud = new PointCloud({
-    //   // data: self.stakeholders,
-    //   project: project,
-    //   timeFrame: project.get('timeframe'),
-    // })
+    this.pointCloud = new PointCloud({
+      stakeholders: stakeholders,
+      selectedTime: opts.selectedTime,
+    })
 
 
-    // setTimeout(function () {
-
-    //   self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
-    //   console.log(self.pointCloud.sHPointClickTargets.length)
-    // }, 1000)
+    console.log(this.pointCloud)
 
 
+
+
+    self.addObjectsToScene(self.pointCloud.sHPointClickTargets)
     // this.addObjectsToScene(this.pointCloud.sHPoints)
 
     // // turn cursor into hand when hovering the sHPoints
@@ -341,7 +329,6 @@ export default function (component) {
 
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
     this.axisGuides = new AxisGuides()
-    console.log(this.axisGuides.lines)
     this.addObjectsToScene(this.axisGuides.lines)
 
     //////////////////////////////////// create danger zone ////////////////////////////////////////////////

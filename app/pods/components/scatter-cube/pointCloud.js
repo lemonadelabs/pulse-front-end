@@ -2,56 +2,36 @@ import SHPoint from './SHPoint';
 import SHPointClickTarget from './sHPointClickTarget';
 
 export default function PointCloud (opts) {
-  // this.data = opts.data
-  // this.data = this.agragateData(opts)
-  this.project = opts.project
-  this.timeFrame = opts.timeFrame
+  this.stakeholders = opts.stakeholders
+  this.selectedTime = opts.selectedTime
+
   this.selectedPoint = undefined
 
   this.sHPointClickTargets = this.createSHPointClickTargets()
   // this.sHPoints = this.createSHPoints()
 }
 
-PointCloud.prototype.agragateData = function(opts) {
-  var project = opts.project
-  project.get('stakeholders').then(function (stakeholders) { // this is how we get relationships to the project
-    stakeholders.forEach(function(stakeholder){
-
-      stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
-        snapshots.forEach(function(snapshot){
-          console.log(snapshot.get('week'))
-        })
-      })
-
-    })
-  })
-};
-
 PointCloud.prototype.createSHPointClickTargets = function() {
+
   var self = this
   var sHPointClickTargets = []
+  var stakeholders = this.stakeholders
 
-  var project = this.project
+  _.forEach(this.stakeholders, function (stakeholder) {
 
-  project.get('stakeholders').then(function (stakeholders) {
-    stakeholders.forEach(function(stakeholder){
-      stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
+    var snapshots = stakeholder.get('stakeholderSnapshots')
 
-        var sHPointClickTarget = new SHPointClickTarget({
-          snapshots : snapshots,
-          id : stakeholder.get('id'),
-          name : stakeholder.get('name'),
-          image : stakeholder.get('image'),
-          organisation : stakeholder.get('organisation'),
-          role : stakeholder.get('role'),
-          tags : stakeholder.get('tags'),
-          timeFrame : project.get('timeframe')
-        })
-
-        sHPointClickTargets.push(sHPointClickTarget)
-
-      })
+    var sHPointClickTarget = new SHPointClickTarget({
+      snapshots : snapshots,
+      id : stakeholder.get('id'),
+      name : stakeholder.get('name'),
+      image : stakeholder.get('image'),
+      organisation : stakeholder.get('organisation'),
+      role : stakeholder.get('role'),
+      tags : stakeholder.get('tags'),
+      selectedTime : self.selectedTime
     })
+    sHPointClickTargets.push(sHPointClickTarget)
   })
   return sHPointClickTargets
 };
