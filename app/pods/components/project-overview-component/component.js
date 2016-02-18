@@ -20,12 +20,13 @@ export default Ember.Component.extend({
 
     var stakeholderObject = {}
     var stakeholderLength
+    var snapsReturned = 0
     project.get('stakeholders').then(function (stakeholders) {
       stakeholderLength = stakeholders.get('length');
-      stakeholders.forEach(function(stakeholder, i) {
+      stakeholders.forEach(function(stakeholder) {
         stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
-          //TODO: make sure this works with long response times
-          if ( i === stakeholderLength - 1) {
+          snapsReturned += 1
+          if ( snapsReturned === stakeholderLength ) {
             self.set('stakeholders', stakeholderObject)
           }
         })
