@@ -1,6 +1,6 @@
-export default function SHPoint (opts) {
-  this.weeks = opts.weeks
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 
+export default function SHPoint (opts) {
   this.mesh = this.createMesh(opts.timeFrame)
 }
 

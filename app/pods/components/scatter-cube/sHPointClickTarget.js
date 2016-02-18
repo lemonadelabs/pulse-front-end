@@ -1,3 +1,5 @@
+import coordsFromSnapshot from './services/coordsFromSnapshot';
+
 export default function SHPointClickTarget (opts) {
 
   this.snapshots = opts.snapshots
@@ -18,7 +20,7 @@ SHPointClickTarget.prototype.createCurve = function() {
   var points = []
 
   snapshots.forEach(function (snapshot) {
-    points.push( getCoords(snapshot) )
+    points.push( coordsFromSnapshot(snapshot) )
   })
   return new THREE.CatmullRomCurve3( points )
 };
@@ -46,15 +48,8 @@ SHPointClickTarget.prototype.createMesh = function(opts) {
 
   var snapshot = opts.snapshots.objectAt(opts.selectedTime - 1)
 
-  point.position.copy(getCoords(snapshot))
+  point.position.copy(coordsFromSnapshot(snapshot))
 
   return point
 }
 
-
-function getCoords(snapshot) {
-  var x = snapshot.get('power') * 1.8  + 0.1
-  var y = snapshot.get('support') * 1.8  + 0.1
-  var z = snapshot.get('vital') * 1.8  + 0.1
-  return new THREE.Vector3(x,y,z)
-}

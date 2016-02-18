@@ -190,6 +190,7 @@ export default function (component) {
 
   ///////////////////// when timeseries component changes ////////////////////////
   environment.updateTime = function (time) {
+    console.log(time)
     var oldTime = self.currentWeek
     self.currentWeek = time
     this.onUpdateTimeFcts.forEach( function(onUpdateTimeFct) {

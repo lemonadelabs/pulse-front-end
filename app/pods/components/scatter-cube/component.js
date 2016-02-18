@@ -28,6 +28,7 @@ export default Ember.Component.extend({
 
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
+    this._environment.updateTime(time)
   }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function (){
