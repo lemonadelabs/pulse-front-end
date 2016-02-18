@@ -1,3 +1,4 @@
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 /*jshint -W083 */
 
 export default function TweenController (opts) {
@@ -81,7 +82,7 @@ TweenController.prototype.updateSHPoints = function(opts) {
   } else if ( ( deltaT >= 3 ) && environment.component.historyView && environment.focussedPoint ) { // linear, focussed point is curvy
     linearAndCurve()
   } else { // all linear animations
-    allPointsLinear()
+    allPointsLinear(opts)
   }
 
   function linearAndCurve() {
@@ -104,8 +105,30 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function allPointsLinear () {
-    _.forEach(pointCloud.sHPoints, function (sHPoint) {createPointTweens(sHPoint)} )
-    _.forEach(pointCloud.sHPointClickTargets, function (sHPoint) {createPointTweens(sHPoint)} )
+    var week = opts.time
+    var sHPoints = pointCloud.sHPoints
+    var clickTargets = pointCloud.sHPointClickTargets
+
+    _.forEach(clickTargets, function (clickTarget, i) {
+      var sHPoint = sHPoints[i]
+      var snap = clickTarget.snapshots.objectAt(week-1)
+      var newCoords = coordsFromSnapshot(snap)
+      createPointTweens({
+        newCoords : newCoords,
+        point : sHPoint,
+        duration : opts.duration
+      })
+      createPointTweens({
+        newCoords : newCoords,
+        point : clickTarget,
+        duration : opts.duration
+      })
+    })
+    // for (var i = 0; i < pointCloud.sHPoints.length; i++) {
+
+    // }
+    // _.forEach(pointCloud.sHPointClickTargets, function (sHPoint) {createPointTweens(sHPoint)} )
+    // _.forEach(pointCloud.sHPoints, function (sHPoint) {createPointTweens(sHPoint)} )
   }
 
   function createPointTweensFromCurve (sHPoint, curve) {
@@ -129,17 +152,19 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function curveLocation(week) {
-    var timeFrame = self.environment.metaData[0].timeFrame
+    var timeFrame = environment.project.get('timeframe')
     return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
   }
 
-  function createPointTweens (sHPoint) {
-    var x = (sHPoint.weeks[opts.time].power) * 1.8  + 0.1
-    var y = (sHPoint.weeks[opts.time].support) * 1.8  + 0.1
-    var z = (sHPoint.weeks[opts.time].vital) * 1.8  + 0.1
 
-    var tween = new TWEEN.Tween(sHPoint.mesh.position)
-        .to({x: x, y: y, z: z}, opts.duration)
+
+
+  function createPointTweens (opts) {
+    var point = opts.point
+    var coords = opts.newCoords
+
+    var tween = new TWEEN.Tween(point.mesh.position)
+        .to({x: coords.x, y: coords.y, z: coords.z}, opts.duration)
         .easing(opts.easing)
         .start();
     tweens.push(tween)

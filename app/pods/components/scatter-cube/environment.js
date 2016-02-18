@@ -315,8 +315,9 @@ export default function (component) {
   }
 
 
-  environment.setupScatterCube = function () {
+  environment.setupScatterCube = function (opts) {
     var self = this
+    this.project = opts.project
 
 
     //////////////////////////////////// create the cube ////////////////////////////////////////////////

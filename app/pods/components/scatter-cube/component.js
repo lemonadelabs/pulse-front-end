@@ -14,7 +14,7 @@ export default Ember.Component.extend({
     this.set('_environment', environment(this))
 
     this._environment.init()
-    this._environment.setupScatterCube()
+    this._environment.setupScatterCube({project : this.project})
     this._environment.render()
   },
 
