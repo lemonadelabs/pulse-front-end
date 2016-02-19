@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import environment from './environment';
+import Environment from './environment';
 
 export default Ember.Component.extend({
 
@@ -11,17 +11,20 @@ export default Ember.Component.extend({
   initScatterCube: function () {
     var stakeholdersRecords
 
-    this.set('_environment', environment(this))
 
-    this._environment.init()
-    this._environment.setupScatterCube({project : this.project})
-    this._environment.render()
+
+    var environment = new Environment(this)
+    this.set('environment', environment)
+
+    this.environment.init()
+    this.environment.setupScatterCube({project : this.project})
+    this.environment.render()
   },
 
    onStakeholderData: function () {
     var time = this.get('selectedTime')
 
-    this._environment.initPointCloud({
+    this.environment.initPointCloud({
       project : this.project,
       stakeholders : this.stakeholders,
       selectedTime : this.selectedTime
@@ -38,33 +41,33 @@ export default Ember.Component.extend({
 
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
-    this._environment.updateTime(time)
+    this.environment.updateTime(time)
   }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function (){
     if(this.get('selectedStakeholder')===undefined){
-      this._environment.noSelectedStakeholder()
+      this.environment.noSelectedStakeholder()
     }
   }.observes('selectedStakeholder'),
 
   onUpdateConnectionsView: function () {
-    this._environment.connectionViewUpdated()
+    this.environment.connectionViewUpdated()
   }.observes('connectionView'),
 
   onUpdateDistributionView: function () {
-    this._environment.distributionViewUpdated()
+    this.environment.distributionViewUpdated()
   }.observes('distributionView'),
 
   onUpdateHistoryView: function () {
-    this._environment.historyViewUpdated()
+    this.environment.historyViewUpdated()
   }.observes('historyView'),
 
   pauseRender: function () {
-    this._environment.pauseRender()
+    this.environment.pauseRender()
   },
 
   resumeRender: function () {
-    this._environment.resumeRender()
+    this.environment.resumeRender()
   },
 
 });
