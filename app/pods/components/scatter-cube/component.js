@@ -21,11 +21,11 @@ export default Ember.Component.extend({
    onStakeholderData: function () {
     var time = this.get('selectedTime')
 
-    // this._environment.initPointCloud({
-    //   project : this.project,
-    //   stakeholders : this.stakeholders,
-    //   selectedTime : this.selectedTime
-    // })
+    this._environment.initPointCloud({
+      project : this.project,
+      stakeholders : this.stakeholders,
+      selectedTime : this.selectedTime
+    })
   }.observes('stakeholders'),
 
   updateSelectedStakeholder: function (shInfo) {

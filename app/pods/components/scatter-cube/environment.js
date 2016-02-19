@@ -31,161 +31,14 @@ export default function (component) {
   environment.scene = new THREE.Scene();
   environment.jSONloader = new THREE.JSONLoader()
 
-  /////////////////////////////////////////////////////////////////////
-  ///////////////////////////// init fxns /////////////////////////////
-  /////////////////////////////////////////////////////////////////////
 
-
-  environment.initializeCamera = function () {
-    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
-    this.camera.position.set(4.5,1.5,-1.6)
-  }
-
-  environment.initializeControls = function () {
-    this.controls = new THREE.OrbitControls( this.camera, this.container );
-    // this.controls.maxDistance = 5
-    this.controls.minDistance = 1.7
-    this.controls.zoomSpeed = 0.2
-    this.controls.target.set(1,1,1)
-    this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
-    this.controls.enableKeys = false
-
-    this.onRenderFcts.push(this.controls.update)
-  }
-
-  environment.initializeRenderer = function () {
-    var self = this
-
-    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-    this.renderer.setClearColor( 0x222628 );
-    this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.renderer.sortObjects = false;
-    this.renderer.rendering = true
-    this.container.appendChild( this.renderer.domElement );
-
-    ///////////////////////////  renderer start and stop /////////////////////////////
-    this.renderer.pauseRender = function () {
-      cancelAnimationFrame(this.rafId)
-      this.rendering = false
-      console.log('pause')
-    }
-    this.renderer.resumeRender = function () {
-      this.rendering = true
-      self.render()
-      console.log('resume')
-    }
-
-    this.renderer.resetTimeout = function () {
-      clearTimeout(self.renderTimer)
-      self.renderTimer = setTimeout(function () {
-        self.renderer.pauseRender()
-        self.renderTimer = null
-      }, 3000)
-    }
-
-    this.triggerRender = function () {
-      if (!this.renderer.rendering) { this.renderer.resumeRender()  } // resume the render
-      this.renderer.resetTimeout()
-    }
-
-    setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
-      self.renderer.resetTimeout()
-    }, 3000)
-  }
-
-  environment.initWindowResize = function () {
-    this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
-    window.addEventListener('resize', this.triggerRender.bind(this), false)
-  }
-  environment.initStats = function () {
-    var self = this
-    this.stats = new Stats();
-    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
-    // align top-left
-    this.stats.domElement.style.position = 'absolute';
-    this.stats.domElement.style.left = '0px';
-    this.stats.domElement.style.top = '0px';
-    document.body.appendChild( this.stats.domElement );
-    var $stats = $(this.stats.domElement)
-    $stats.hide()
-    this.onRenderFcts.push(function () {
-      self.stats.begin();
-      self.stats.end();
-    })
-
-    $(document).on('keypress', function (e) {
-      if ( e.keyCode === 115 || e.keyCode === 83) {
-        $stats.toggle()
-      }
-    })
-  }
-
-  environment.initRendererStats = function  () {
-    var self = this
-    this.rendererStats   = new THREEx.RendererStats()
-
-    this.rendererStats.domElement.style.position = 'absolute'
-    this.rendererStats.domElement.style.right = '0px'
-    this.rendererStats.domElement.style.top   = '0px'
-    document.body.appendChild( this.rendererStats.domElement )
-
-    var $rendererStats = $(this.rendererStats.domElement)
-    $rendererStats.hide()
-
-    this.onRenderFcts.push(function () {
-      self.rendererStats.update(self.renderer);
-    })
-
-    $(document).on('keypress', function (e) {
-      if ( e.keyCode === 115 || e.keyCode === 83) {
-        $rendererStats.toggle()
-      }
-    })
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////// UTILITIES ////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////
-
-  ///////////////////////// adding & removing objects from scene /////////////////////////////////
-
-  environment.addObjectsToScene = function (objects) {
-    _.forEach(objects, this.addObjectToScene.bind(this))
-  }
-
-  environment.addObjectToScene = function (object) {
-    if (object.mesh) {
-      this.scene.add(object.mesh)
-    } else {
-      this.scene.add(object)
-    }
-  }
-
-  environment.removeObjectFromScene = function (object) {
-    var self = this
-    environment.scene.remove( object.mesh )
-  }
-
-  environment.removeObjectsFromScene = function (objects) { // duplicate of ebove function
-    _.forEach( objects, this.removeObjectFromScene )
-  }
-
-  //////////////////////////////////// billboarding ////////////////////////////////////////////////
-
-  environment.billboardObjects = function (objects) {
-    _.forEach(objects, this.billboardObject.bind(this))
-  }
-
-  environment.billboardObject = function (object) {
-    object.mesh.quaternion.copy( this.camera.quaternion )
-  }
 
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////// Interaction With Component //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////
 
   ///////////////////// logic when stakeholder modal is closed ////////////////////////
+
   environment.noSelectedStakeholder = function () {
     this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
       noSelectedStakeholderFct()
@@ -318,6 +171,300 @@ export default function (component) {
     // })
   }
 
+  environment.setupScatterCube = function (opts) {
+    var self = this
+    this.project = opts.project
+    ////////////////////// create the cube //////////////////////////////
+    this.initCube()
+    //////////////////// create axis guides ///////////////////////////////
+    this.axisGuides = new AxisGuides()
+    this.addObjectsToScene(this.axisGuides.lines)
+    ///////////////////////// create danger zone //////////////////////////
+    this.initDangerZone()
+    ///////////////////////// create labelGroup ///////////////////////////
+    this.initLabelGroup()
+    ///////////////////// Create Target ///////////////////////////////////
+    this.initTarget()
+    /////////////////////////// nav ///////////////////////////////////////
+    this.initNav()
+    ///////////////////// configure name-badge ////////////////////////////
+    this.configureNameBadge()
+    ///////////////////// Create distribution Cloud ///////////////////////
+    this.initDistributionCloud()
+    ///////////////////// Create history tail group ///////////////////////
+    this.initHistoryTailGroup()
+
+  }
+
+
+  environment.populateCube = function (opts) {
+    var self = this
+
+    this.stakeholders = opts.stakeholders
+    this.relationships = opts.relationships
+    this.metaData = opts.metadata
+    this.currentWeek = this.metaData[0].timeFrame
+
+
+    /////////////////// Create Connecting Lines ////////////////////////
+    this.lineGroup = new LineGroup({
+      connections: self.relationships
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      if (self.component.connectionView) {
+        _.last(self.tweenController.fadeOutConnections({
+          duration : 300,
+          easing : TWEEN.Easing.Quadratic.In
+        }))
+        .onComplete( function () {
+          self.removeConnectingLines()
+        })
+      }
+    })
+
+    this.removeConnectingLines = function() {
+      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
+      self.lineGroup.primaryConnections = []
+    }
+
+    this.onRenderFcts.push(function () {
+      self.lineGroup.update()
+    })
+
+
+    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+
+
+
+
+  }
+
+
+  environment.animateViewWithTime = function (time, oldTime) {
+    this.triggerRender()
+
+    if (this.component.connectionView && this.component.distributionView && this.focussedPoint) {
+      this.tweenController.updateTimeRelationDistroViews(time, oldTime)
+    } else if (this.component.connectionView && this.focussedPoint) {
+      this.tweenController.updateTimeRelationView(time, oldTime)
+    } else if (this.component.distributionView && this.focussedPoint) {
+      this.tweenController.updateTimeDistroView(time, oldTime)
+    } else if (this.focussedPoint) { // no views but with selected stakeholder
+      this.tweenController.updateTimeNoViewsWithFocus(time, oldTime)
+    } else { // no viewsm no selected stakeholder
+      this.tweenController.updateSHPoints({
+        time : time,
+        oldTime : oldTime,
+        easing : TWEEN.Easing.Exponential.Out,
+        duration : 1500
+      })
+    }
+  }
+
+
+
+  environment.init = function (opts) {
+    var self = this
+
+    /////////////////////////// set up camera /////////////////////////////
+    this.initializeCamera()
+    /////////////////////////// set up controls /////////////////////////////
+    this.initializeControls()
+    /////////////////////////// set up renderer /////////////////////////////
+    this.initializeRenderer()
+    ///////////////////// On Window Resize ////////////////////////
+    this.initWindowResize()
+    ///////////////////////////////////// Dom Events ////////////////////////////////////////
+    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
+    ///////////////////////////////////// Stats ////////////////////////////////////////
+    this.initStats()
+    this.initRendererStats()
+
+    /////////////////////// Create Tween Controller ///////////////////////
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
+    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
+
+    this.onPointClickFcts.push(function (sHPoint) {
+      if (self.component.connectionView && self.component.distributionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderAllViews(sHPoint)
+      } else if (self.component.connectionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
+      } else if (self.component.distributionView) { // also takes care of history view
+        self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
+      } else if (self.component.historyView) {
+        self.tweenController.updateHistoryTail(sHPoint)
+      } else {
+        self.target.updatePosition(sHPoint)
+      }
+    })
+
+    //////////////////////////////////////////////////////////////////////////////
+    //                         render the scene                                 //
+    //////////////////////////////////////////////////////////////////////////////
+    this.onRenderFcts.push(function(){
+      self.renderer.render( self.scene, self.camera );
+    })
+
+    $('.scatter-cube').on('mousemove', function (e) {
+      self.triggerRender()
+    })
+
+    $('.scatter-cube').on('mouseup', function (e) {
+      self.triggerRender()
+    })
+
+    this.controls.domElement.addEventListener( 'mousewheel', function () {
+      self.triggerRender()
+    }, false );
+  }
+
+
+
+  environment.render = function () {
+
+    var self = this
+    var lastTimeMsec = null
+    requestAnimationFrame(function animate(nowMsec){
+
+      // keep looping
+      self.renderer.rafId = requestAnimationFrame( animate );
+
+      // measure time
+      lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
+      var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
+      lastTimeMsec  = nowMsec
+
+      // call each update function
+      self.onRenderFcts.forEach(function(onRenderFct){
+        onRenderFct(deltaMsec/1000, nowMsec/1000)
+      })
+
+      // update TWEEN functions
+      TWEEN.update(nowMsec);
+
+    })
+  }
+
+  /////////////////////////////////////////////////////////////////////
+  ///////////////////////////// init fxns /////////////////////////////
+  /////////////////////////////////////////////////////////////////////
+
+
+  environment.initializeCamera = function () {
+    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
+    this.camera.position.set(4.5,1.5,-1.6)
+  }
+
+  environment.initializeControls = function () {
+    this.controls = new THREE.OrbitControls( this.camera, this.container );
+    // this.controls.maxDistance = 5
+    this.controls.minDistance = 1.7
+    this.controls.zoomSpeed = 0.2
+    this.controls.target.set(1,1,1)
+    this.controls.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE };
+    this.controls.enableKeys = false
+
+    this.onRenderFcts.push(this.controls.update)
+  }
+
+  environment.initializeRenderer = function () {
+    var self = this
+
+    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    this.renderer.setClearColor( 0x222628 );
+    this.renderer.setPixelRatio( window.devicePixelRatio );
+    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.sortObjects = false;
+    this.renderer.rendering = true
+    this.container.appendChild( this.renderer.domElement );
+
+    ///////////////////////////  renderer start and stop /////////////////////////////
+    this.renderer.pauseRender = function () {
+      cancelAnimationFrame(this.rafId)
+      this.rendering = false
+      console.log('pause')
+    }
+    this.renderer.resumeRender = function () {
+      this.rendering = true
+      self.render()
+      console.log('resume')
+    }
+
+    this.renderer.resetTimeout = function () {
+      clearTimeout(self.renderTimer)
+      self.renderTimer = setTimeout(function () {
+        self.renderer.pauseRender()
+        self.renderTimer = null
+      }, 3000)
+    }
+
+    this.triggerRender = function () {
+      if (!this.renderer.rendering) { this.renderer.resumeRender()  } // resume the render
+      this.renderer.resetTimeout()
+    }
+
+    setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
+      self.renderer.resetTimeout()
+    }, 3000)
+  }
+
+  environment.initWindowResize = function () {
+    this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
+    window.addEventListener('resize', this.triggerRender.bind(this), false)
+  }
+  environment.initStats = function () {
+    var self = this
+    this.stats = new Stats();
+    this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
+    // align top-left
+    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.left = '0px';
+    this.stats.domElement.style.top = '0px';
+    document.body.appendChild( this.stats.domElement );
+    var $stats = $(this.stats.domElement)
+    $stats.hide()
+    this.onRenderFcts.push(function () {
+      self.stats.begin();
+      self.stats.end();
+    })
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
+        $stats.toggle()
+      }
+    })
+  }
+
+  environment.initRendererStats = function  () {
+    var self = this
+    this.rendererStats   = new THREEx.RendererStats()
+
+    this.rendererStats.domElement.style.position = 'absolute'
+    this.rendererStats.domElement.style.right = '0px'
+    this.rendererStats.domElement.style.top   = '0px'
+    document.body.appendChild( this.rendererStats.domElement )
+
+    var $rendererStats = $(this.rendererStats.domElement)
+    $rendererStats.hide()
+
+    this.onRenderFcts.push(function () {
+      self.rendererStats.update(self.renderer);
+    })
+
+    $(document).on('keypress', function (e) {
+      if ( e.keyCode === 115 || e.keyCode === 83) {
+        $rendererStats.toggle()
+      }
+    })
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////// scatercube init fxns //////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
 
   environment.initCube = function () {
     var self = this
@@ -442,179 +589,44 @@ export default function (component) {
     })
   }
 
-  environment.setupScatterCube = function (opts) {
-    var self = this
-    this.project = opts.project
-    ////////////////////// create the cube //////////////////////////////
-    this.initCube()
-    //////////////////// create axis guides ///////////////////////////////
-    this.axisGuides = new AxisGuides()
-    this.addObjectsToScene(this.axisGuides.lines)
-    ///////////////////////// create danger zone //////////////////////////
-    this.initDangerZone()
-    ///////////////////////// create labelGroup ///////////////////////////
-    this.initLabelGroup()
-    ///////////////////// Create Target ///////////////////////////////////
-    this.initTarget()
-    /////////////////////////// nav ///////////////////////////////////////
-    this.initNav()
-    ///////////////////// configure name-badge ////////////////////////////
-    this.configureNameBadge()
-    ///////////////////// Create distribution Cloud ///////////////////////
-    this.initDistributionCloud()
-    ///////////////////// Create history tail group ///////////////////////
-    this.initHistoryTailGroup()
+  ///////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// UTILITIES ////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////
 
+  ///////////////////////// adding & removing objects from scene /////////////////////////////////
+
+  environment.addObjectsToScene = function (objects) {
+    _.forEach(objects, this.addObjectToScene.bind(this))
   }
 
-
-  environment.populateCube = function (opts) {
-    var self = this
-
-    this.stakeholders = opts.stakeholders
-    this.relationships = opts.relationships
-    this.metaData = opts.metadata
-    this.currentWeek = this.metaData[0].timeFrame
-
-
-    /////////////////// Create Connecting Lines ////////////////////////
-    this.lineGroup = new LineGroup({
-      connections: self.relationships
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      if (self.component.connectionView) {
-        _.last(self.tweenController.fadeOutConnections({
-          duration : 300,
-          easing : TWEEN.Easing.Quadratic.In
-        }))
-        .onComplete( function () {
-          self.removeConnectingLines()
-        })
-      }
-    })
-
-    this.removeConnectingLines = function() {
-      self.removeObjectsFromScene(self.lineGroup.primaryConnections)
-      self.lineGroup.primaryConnections = []
+  environment.addObjectToScene = function (object) {
+    if (object.mesh) {
+      this.scene.add(object.mesh)
+    } else {
+      this.scene.add(object)
     }
-
-    this.onRenderFcts.push(function () {
-      self.lineGroup.update()
-    })
-
-
-    this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
-
-
-
-
   }
 
-
-  environment.init = function (opts) {
+  environment.removeObjectFromScene = function (object) {
     var self = this
+    environment.scene.remove( object.mesh )
+  }
 
-    /////////////////////////// set up camera /////////////////////////////
-    this.initializeCamera()
-    /////////////////////////// set up controls /////////////////////////////
-    this.initializeControls()
-    /////////////////////////// set up renderer /////////////////////////////
-    this.initializeRenderer()
-    ///////////////////// On Window Resize ////////////////////////
-    this.initWindowResize()
-    ///////////////////////////////////// Dom Events ////////////////////////////////////////
-    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
-    ///////////////////////////////////// Stats ////////////////////////////////////////
-    this.initStats()
-    this.initRendererStats()
+  environment.removeObjectsFromScene = function (objects) { // duplicate of ebove function
+    _.forEach( objects, this.removeObjectFromScene )
+  }
 
-    /////////////////////// Create Tween Controller ///////////////////////
-    this.tweenController = new TweenController({
-      environment : this
-    })
+  //////////////////////////////////// billboarding ////////////////////////////////////////////////
 
-    this.onUpdateTimeFcts.push(function (time, oldTime) {
-      self.triggerRender()
+  environment.billboardObjects = function (objects) {
+    _.forEach(objects, this.billboardObject.bind(this))
+  }
 
-      if (self.component.connectionView && self.component.distributionView && self.focussedPoint) {
-        self.tweenController.updateTimeRelationDistroViews(time, oldTime)
-      } else if (self.component.connectionView && self.focussedPoint) {
-        self.tweenController.updateTimeRelationView(time, oldTime)
-      } else if (self.component.distributionView && self.focussedPoint) {
-        self.tweenController.updateTimeDistroView(time, oldTime)
-      } else if (self.focussedPoint) { // no views but with selected stakeholder
-        self.tweenController.updateTimeNoViewsWithFocus(time, oldTime)
-      } else { // no viewsm no selected stakeholder
-        self.tweenController.updateSHPoints({
-          time : time,
-          oldTime : oldTime,
-          easing : TWEEN.Easing.Exponential.Out,
-          duration : 1500
-        })
-      }
-    })
-
-    this.onPointClickFcts.push(function (sHPoint) {
-      if (self.component.connectionView && self.component.distributionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderAllViews(sHPoint)
-      } else if (self.component.connectionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
-      } else if (self.component.distributionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
-      } else if (self.component.historyView) {
-        self.tweenController.updateHistoryTail(sHPoint)
-      } else {
-        self.target.updatePosition(sHPoint)
-      }
-    })
-
-    //////////////////////////////////////////////////////////////////////////////
-    //                         render the scene                                 //
-    //////////////////////////////////////////////////////////////////////////////
-    this.onRenderFcts.push(function(){
-      self.renderer.render( self.scene, self.camera );
-    })
-
-    $('.scatter-cube').on('mousemove', function (e) {
-      self.triggerRender()
-    })
-
-    $('.scatter-cube').on('mouseup', function (e) {
-      self.triggerRender()
-    })
-
-    this.controls.domElement.addEventListener( 'mousewheel', function () {
-      self.triggerRender()
-    }, false );
+  environment.billboardObject = function (object) {
+    object.mesh.quaternion.copy( this.camera.quaternion )
   }
 
 
-
-  environment.render = function () {
-
-    var self = this
-    var lastTimeMsec = null
-    requestAnimationFrame(function animate(nowMsec){
-
-      // keep looping
-      self.renderer.rafId = requestAnimationFrame( animate );
-
-      // measure time
-      lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
-      var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
-      lastTimeMsec  = nowMsec
-
-      // call each update function
-      self.onRenderFcts.forEach(function(onRenderFct){
-        onRenderFct(deltaMsec/1000, nowMsec/1000)
-      })
-
-      // update TWEEN functions
-      TWEEN.update(nowMsec);
-
-    })
-  }
 
   return environment
 }
