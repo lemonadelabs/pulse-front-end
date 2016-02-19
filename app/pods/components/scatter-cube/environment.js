@@ -434,6 +434,15 @@ export default function (component) {
     })
   }
 
+  environment.initNav = function () {
+    this.navController = new NavController( { environment : this } )
+    this.navArrows = new NavArrows({
+      scene : this.scene,
+      jSONloader : this.jSONloader,
+      navController : this.navController,
+      domEvents : this.domEvents
+    })
+  }
   environment.setupScatterCube = function (opts) {
     var self = this
     this.project = opts.project
@@ -448,14 +457,8 @@ export default function (component) {
     this.initLabelGroup()
     ///////////////////// Create Target ////////////////////////
     this.initTarget()
-    //////////////////////////////////////// autoNav ////////////////////////////////////////
-    this.navController = new NavController( { environment : this } )
-    this.navArrows = new NavArrows({
-      scene : this.scene,
-      jSONloader : this.jSONloader,
-      navController : this.navController,
-      domEvents : this.domEvents
-    })
+    //////////////////////////////////////// nav ////////////////////////////////////////
+    this.initNav()
     ///////////////////// configure name-badge ////////////////////////
     this.configureNameBadge()
     ///////////////////// Create distribution Cloud ////////////////////////
