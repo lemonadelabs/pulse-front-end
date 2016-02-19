@@ -445,7 +445,7 @@ export default function (component) {
   environment.setupScatterCube = function (opts) {
     var self = this
     this.project = opts.project
-    //////////////////////// create the cube //////////////////////////////
+    ////////////////////// create the cube //////////////////////////////
     this.initCube()
     //////////////////// create axis guides ///////////////////////////////
     this.axisGuides = new AxisGuides()
