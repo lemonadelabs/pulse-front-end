@@ -25,7 +25,7 @@ module.exports = function(environment) {
       'font-src': "'self' data: use.typekit.net",
       // 'connect-src': "'self'",
       'connect-src': "'self' http://localhost:3000",
-      'img-src': "'self' https://s3.amazonaws.com/",
+      'img-src': "'self' https://s3.amazonaws.com/ https://p.typekit.net",
       'style-src': "'self' 'unsafe-inline' https://use.typekit.net/",
       'media-src': "'self'"
     }
