@@ -155,7 +155,11 @@ export default function (component) {
   }
 
   environment.addObjectToScene = function (object) {
-    this.scene.add(object.mesh)
+    if (object.mesh) {
+      this.scene.add(object.mesh)
+    } else {
+      this.scene.add(object)
+    }
   }
 
   environment.removeObjectFromScene = function (object) {
@@ -315,17 +319,14 @@ export default function (component) {
   }
 
 
-  environment.setupScatterCube = function (opts) {
+  environment.initCube = function () {
     var self = this
-    this.project = opts.project
-
-
-    //////////////////////////////////// create the cube ////////////////////////////////////////////////
     this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
       var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
       var cube = new THREE.Mesh(geometry, cubeMaterial)
-      self.scene.add(cube)
+      self.addObjectToScene(cube)
     })
+  }
 
     //////////////////////////////////// create axis guides ////////////////////////////////////////////////
     this.axisGuides = new AxisGuides()
