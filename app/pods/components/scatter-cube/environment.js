@@ -328,17 +328,15 @@ export default function (component) {
     })
   }
 
-    //////////////////////////////////// create axis guides ////////////////////////////////////////////////
-    this.axisGuides = new AxisGuides()
-    this.addObjectsToScene(this.axisGuides.lines)
-
-    //////////////////////////////////// create danger zone ////////////////////////////////////////////////
+  environment.initDangerZone = function () {
+    var self = this
     this.jSONloader.load('./assets/geometries/danger-zone.json', function (geometry) {
       self.dangerZone = new DangerZone({
         geometry : geometry
       })
       self.addObjectToScene(self.dangerZone)
     })
+  }
 
     //////////////////////////////////// create labelGroup ////////////////////////////////////////////////
     this.labelGroup = new LabelGroup({
