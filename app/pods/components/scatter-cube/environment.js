@@ -31,14 +31,161 @@ export default function (component) {
   environment.scene = new THREE.Scene();
   environment.jSONloader = new THREE.JSONLoader()
 
-
-
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////// Interaction With Component //////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////
 
-  ///////////////////// logic when stakeholder modal is closed ////////////////////////
+  environment.init = function (opts) {
+    var self = this
+    /////////////////////////// set up camera ///////////////////////////////////////
+    this.initializeCamera()
+    /////////////////////////// set up controls /////////////////////////////////////
+    this.initializeControls()
+    /////////////////////////// set up renderer /////////////////////////////////////
+    this.initializeRenderer()
+    ///////////////////// On Window Resize //////////////////////////////////////////
+    this.initWindowResize()
+    ///////////////////////////////////// Dom Events ////////////////////////////////
+    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
+    ///////////////////////////////////// Stats /////////////////////////////////////
+    this.initStats()
+    this.initRendererStats()
+    /////////////////////// render the scene ////////////////////////////////////////
+    this.onRenderFcts.push(function(){
+      self.renderer.render( self.scene, self.camera );
+    })
 
+  }
+
+  environment.setupScatterCube = function (opts) {
+    var self = this
+    this.project = opts.project
+    ////////////////////// create the cube //////////////////////////////
+    this.initCube()
+    //////////////////// create axis guides ///////////////////////////////
+    this.axisGuides = new AxisGuides()
+    this.addObjectsToScene(this.axisGuides.lines)
+    ///////////////////////// create danger zone //////////////////////////
+    this.initDangerZone()
+    ///////////////////////// create labelGroup ///////////////////////////
+    this.initLabelGroup()
+    ///////////////////// Create Target ///////////////////////////////////
+    this.initTarget()
+    /////////////////////////// nav ///////////////////////////////////////
+    this.initNav()
+    ///////////////////// configure name-badge ////////////////////////////
+    this.configureNameBadge()
+    ///////////////////// Create distribution Cloud ///////////////////////
+    this.initDistributionCloud()
+    ///////////////////// Create history tail group ///////////////////////
+    this.initHistoryTailGroup()
+
+  }
+
+
+  environment.initPointCloud = function (opts) {
+    var self = this
+    var stakeholders = opts.stakeholders
+    this.oldTime = opts.selectedTime
+
+    ///////////////////// Create Point Cloud ////////////////////////
+
+    this.pointCloud = new PointCloud({
+      stakeholders: stakeholders,
+      selectedTime: opts.selectedTime,
+    })
+
+    this.addObjectsToScene(this.pointCloud.sHPoints)
+    this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
+
+    // turn cursor into hand when hovering the sHPoints
+    this.onMouseoverFcts.push(function (sHPoint) {
+      $('.scatter-cube').addClass('threejs-hover')
+    })
+    this.onMouseoutFcts.push(function (sHPoint) {
+      $('.scatter-cube').removeClass('threejs-hover')
+    })
+
+    this.addListnerSHPoint = function (sHPoint) {
+      var mesh = sHPoint.mesh
+      self.domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
+
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
+    }
+
+    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.focussedPoint = sHPoint
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      self.focussedPoint = undefined
+    })
+
+    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
+      self.component.updateSelectedStakeholder(sHPoint)
+    })
+
+    this.onRenderFcts.push( function () { // depth
+      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
+        sHPoint.updateColor(self.camera.position)
+      })
+    })
+
+    /////////////////////// Create Tween Controller ///////////////////////
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
+    /////////////////////// create connecting lines ///////////////////////
+    // will need configuring
+    this.initConnections()
+
+    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
+    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
+
+  }
+
+  environment.render = function () {
+    var self = this
+    var lastTimeMsec = null
+    requestAnimationFrame(function animate(nowMsec){
+
+      // keep looping
+      self.renderer.rafId = requestAnimationFrame( animate );
+
+      // measure time
+      lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
+      var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
+      lastTimeMsec  = nowMsec
+
+      // call each update function
+      self.onRenderFcts.forEach(function(onRenderFct){
+        onRenderFct(deltaMsec/1000, nowMsec/1000)
+      })
+
+      // update TWEEN functions
+      TWEEN.update(nowMsec);
+
+    })
+  }
+
+  ///////////////////// logic when stakeholder modal is closed ////////////////////////
   environment.noSelectedStakeholder = function () {
     this.noSelectedStakeholderFcts.forEach( function(noSelectedStakeholderFct) {
       noSelectedStakeholderFct()
@@ -106,105 +253,8 @@ export default function (component) {
   }
 
 
-  environment.initPointCloud = function (opts) {
+  environment.initConnections = function () {
     var self = this
-    var stakeholders = opts.stakeholders
-    this.oldTime = opts.selectedTime
-
-    ///////////////////// Create Point Cloud ////////////////////////
-
-    this.pointCloud = new PointCloud({
-      stakeholders: stakeholders,
-      selectedTime: opts.selectedTime,
-    })
-
-    this.addObjectsToScene(this.pointCloud.sHPoints)
-    this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
-
-    // turn cursor into hand when hovering the sHPoints
-    this.onMouseoverFcts.push(function (sHPoint) {
-      $('.scatter-cube').addClass('threejs-hover')
-    })
-    this.onMouseoutFcts.push(function (sHPoint) {
-      $('.scatter-cube').removeClass('threejs-hover')
-    })
-
-    this.addListnerSHPoint = function (sHPoint) {
-      var mesh = sHPoint.mesh
-      self.domEvents.addEventListener(mesh, 'click', function(){
-        self.onPointClickFcts.forEach( function(onPointClickFct) {
-          onPointClickFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseover', function(){
-        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
-          onMouseoverFct(sHPoint)
-        })
-      }, false)
-
-      self.domEvents.addEventListener(mesh, 'mouseout', function(){
-        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
-          onMouseoutFct(sHPoint)
-        })
-      }, false)
-    }
-
-    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
-    this.onPointClickFcts.push( function (sHPoint) {
-      self.focussedPoint = sHPoint
-    })
-
-    this.noSelectedStakeholderFcts.push( function () {
-      self.focussedPoint = undefined
-    })
-
-    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
-      self.component.updateSelectedStakeholder(sHPoint)
-    })
-
-    this.onRenderFcts.push( function () { // depth
-      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-        sHPoint.updateColor(self.camera.position)
-      })
-    })
-  }
-
-  environment.setupScatterCube = function (opts) {
-    var self = this
-    this.project = opts.project
-    ////////////////////// create the cube //////////////////////////////
-    this.initCube()
-    //////////////////// create axis guides ///////////////////////////////
-    this.axisGuides = new AxisGuides()
-    this.addObjectsToScene(this.axisGuides.lines)
-    ///////////////////////// create danger zone //////////////////////////
-    this.initDangerZone()
-    ///////////////////////// create labelGroup ///////////////////////////
-    this.initLabelGroup()
-    ///////////////////// Create Target ///////////////////////////////////
-    this.initTarget()
-    /////////////////////////// nav ///////////////////////////////////////
-    this.initNav()
-    ///////////////////// configure name-badge ////////////////////////////
-    this.configureNameBadge()
-    ///////////////////// Create distribution Cloud ///////////////////////
-    this.initDistributionCloud()
-    ///////////////////// Create history tail group ///////////////////////
-    this.initHistoryTailGroup()
-
-  }
-
-
-  environment.populateCube = function (opts) {
-    var self = this
-
-    this.stakeholders = opts.stakeholders
-    this.relationships = opts.relationships
-    this.metaData = opts.metadata
-    this.currentWeek = this.metaData[0].timeFrame
-
 
     /////////////////// Create Connecting Lines ////////////////////////
     this.lineGroup = new LineGroup({
@@ -232,12 +282,7 @@ export default function (component) {
       self.lineGroup.update()
     })
 
-
     this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
-
-
-
-
   }
 
 
@@ -276,79 +321,6 @@ export default function (component) {
   }
 
 
-
-  environment.init = function (opts) {
-    var self = this
-
-    /////////////////////////// set up camera /////////////////////////////
-    this.initializeCamera()
-    /////////////////////////// set up controls /////////////////////////////
-    this.initializeControls()
-    /////////////////////////// set up renderer /////////////////////////////
-    this.initializeRenderer()
-    ///////////////////// On Window Resize ////////////////////////
-    this.initWindowResize()
-    ///////////////////////////////////// Dom Events ////////////////////////////////////////
-    this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
-    ///////////////////////////////////// Stats ////////////////////////////////////////
-    this.initStats()
-    this.initRendererStats()
-
-    /////////////////////// Create Tween Controller ///////////////////////
-    this.tweenController = new TweenController({
-      environment : this
-    })
-
-    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
-
-    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
-
-    //////////////////////////////////////////////////////////////////////////////
-    //                         render the scene                                 //
-    //////////////////////////////////////////////////////////////////////////////
-    this.onRenderFcts.push(function(){
-      self.renderer.render( self.scene, self.camera );
-    })
-
-    $('.scatter-cube').on('mousemove', function (e) {
-      self.triggerRender()
-    })
-
-    $('.scatter-cube').on('mouseup', function (e) {
-      self.triggerRender()
-    })
-
-    this.controls.domElement.addEventListener( 'mousewheel', function () {
-      self.triggerRender()
-    }, false );
-  }
-
-
-
-  environment.render = function () {
-
-    var self = this
-    var lastTimeMsec = null
-    requestAnimationFrame(function animate(nowMsec){
-
-      // keep looping
-      self.renderer.rafId = requestAnimationFrame( animate );
-
-      // measure time
-      lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
-      var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
-      lastTimeMsec  = nowMsec
-
-      // call each update function
-      self.onRenderFcts.forEach(function(onRenderFct){
-        onRenderFct(deltaMsec/1000, nowMsec/1000)
-      })
-
-      // update TWEEN functions
-      TWEEN.update(nowMsec);
-
-    })
-  }
 
   /////////////////////////////////////////////////////////////////////
   ///////////////////////////// init fxns /////////////////////////////
@@ -407,6 +379,18 @@ export default function (component) {
       if (!this.renderer.rendering) { this.renderer.resumeRender()  } // resume the render
       this.renderer.resetTimeout()
     }
+
+    $('.scatter-cube').on('mousemove', function (e) {
+      self.triggerRender()
+    })
+
+    $('.scatter-cube').on('mouseup', function (e) {
+      self.triggerRender()
+    })
+
+    this.controls.domElement.addEventListener( 'mousewheel', function () {
+      self.triggerRender()
+    }, false );
 
     setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
       self.renderer.resetTimeout()
