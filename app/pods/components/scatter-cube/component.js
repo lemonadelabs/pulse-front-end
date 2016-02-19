@@ -37,38 +37,6 @@ export default Ember.Component.extend({
     }
   }.observes('selectedStakeholder'),
 
-  onStakeholderData: function () {
-    var time = this.get('selectedTime')
-
-    this._environment.initPointCloud({
-      project : this.project,
-      stakeholders : this.stakeholders,
-      selectedTime : this.selectedTime
-    })
-
-    // _.forEach(this.stakeholders, function (stakeholder) {
-    //   console.log('**********************')
-    //   console.log(stakeholder.get('name'), 'id: ', stakeholder.get('id') )
-
-    //   var snap = stakeholder.get('stakeholderSnapshots').objectAt( time - 1 )
-    //   console.log('------------')
-    //   console.log('week', snap.get('week'))
-    //   console.log('power', snap.get('power'))
-    //   console.log('vital', snap.get('vital'))
-    //   console.log('support', snap.get('support'))
-
-
-    //   // stakeholder.get('stakeholderSnapshots').forEach(function (snap) {
-    //   //   console.log('------------')
-    //   //   console.log('week', snap.get('week'))
-    //   //   console.log('power', snap.get('power'))
-    //   //   console.log('vital', snap.get('vital'))
-    //   //   console.log('support', snap.get('support'))
-    //   // })
-    // })
-
-  }.observes('stakeholders'),
-
   onUpdateConnectionsView: function () {
     this._environment.connectionViewUpdated()
   }.observes('connectionView'),
