@@ -353,7 +353,8 @@ export default function (component) {
     })
   }
 
-    ///////////////////// Create Target ////////////////////////
+  environment.initTarget = function () {
+    var self = this
     this.jSONloader.load('./assets/geometries/selected-widget.json', function (geometry) {
 
       self.target = new Target ({
@@ -372,6 +373,22 @@ export default function (component) {
         self.target.mesh.visible = false
       }
     })
+  }
+
+  environment.setupScatterCube = function (opts) {
+    var self = this
+    this.project = opts.project
+    //////////////////////// create the cube /////////////////////////////////
+    this.initCube()
+    //////////////////// create axis guides //////////////////////////////////
+    this.axisGuides = new AxisGuides()
+    this.addObjectsToScene(this.axisGuides.lines)
+    ///////////////////////// create danger zone /////////////////////////////
+    this.initDangerZone()
+    ///////////////////////// create labelGroup //////////////////////////////
+    this.initLabelGroup()
+    ///////////////////// Create Target ////////////////////////
+    this.initTarget()
 
     //////////////////////////////////////// autoNav ////////////////////////////////////////
     this.navController = new NavController({
