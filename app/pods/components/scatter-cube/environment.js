@@ -121,64 +121,54 @@ export default function (component) {
     this.addObjectsToScene(this.pointCloud.sHPoints)
     this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
-    // // turn cursor into hand when hovering the sHPoints
-    // this.onMouseoverFcts.push(function (sHPoint) {
-    //   $('.scatter-cube').addClass('threejs-hover')
-    // })
-    // this.onMouseoutFcts.push(function (sHPoint) {
-    //   $('.scatter-cube').removeClass('threejs-hover')
-    // })
-
-    // this.addListnerSHPoint = function (sHPoint) {
-    //   var mesh = sHPoint.mesh
-    //   self.domEvents.addEventListener(mesh, 'click', function(){
-    //     self.onPointClickFcts.forEach( function(onPointClickFct) {
-    //       onPointClickFct(sHPoint)
-    //     })
-    //   }, false)
-
-    //   self.domEvents.addEventListener(mesh, 'mouseover', function(){
-    //     self.onMouseoverFcts.forEach( function(onMouseoverFct) {
-    //       onMouseoverFct(sHPoint)
-    //     })
-    //   }, false)
-
-    //   self.domEvents.addEventListener(mesh, 'mouseout', function(){
-    //     self.onMouseoutFcts.forEach( function(onMouseoutFct) {
-    //       onMouseoutFct(sHPoint)
-    //     })
-    //   }, false)
-    // }
-
-    // _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
-    // this.onPointClickFcts.push( function (sHPoint) {
-    //   self.focussedPoint = sHPoint
-    // })
-
-    // this.noSelectedStakeholderFcts.push( function () {
-    //   self.focussedPoint = undefined
-    // })
-
-    // this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
-    //   self.component.updateSelectedStakeholder(sHPoint)
-    // })
-
-    // this.onRenderFcts.push( function () { // depth
-    //   _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-    //     sHPoint.updateColor(self.camera.position)
-    //   })
-    // })
-
-    /////////////////////// Create Tween Controller ///////////////////////
-    this.tweenController = new TweenController({
-      environment : this
+    // turn cursor into hand when hovering the sHPoints
+    this.onMouseoverFcts.push(function (sHPoint) {
+      $('.scatter-cube').addClass('threejs-hover')
+    })
+    this.onMouseoutFcts.push(function (sHPoint) {
+      $('.scatter-cube').removeClass('threejs-hover')
     })
 
-    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
+    this.addListnerSHPoint = function (sHPoint) {
+      var mesh = sHPoint.mesh
+      self.domEvents.addEventListener(mesh, 'click', function(){
+        self.onPointClickFcts.forEach( function(onPointClickFct) {
+          onPointClickFct(sHPoint)
+        })
+      }, false)
 
-    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
+      self.domEvents.addEventListener(mesh, 'mouseover', function(){
+        self.onMouseoverFcts.forEach( function(onMouseoverFct) {
+          onMouseoverFct(sHPoint)
+        })
+      }, false)
 
+      self.domEvents.addEventListener(mesh, 'mouseout', function(){
+        self.onMouseoutFcts.forEach( function(onMouseoutFct) {
+          onMouseoutFct(sHPoint)
+        })
+      }, false)
+    }
+
+    _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
+
+    this.onPointClickFcts.push( function (sHPoint) {
+      self.focussedPoint = sHPoint
+    })
+
+    this.noSelectedStakeholderFcts.push( function () {
+      self.focussedPoint = undefined
+    })
+
+    this.onPointClickFcts.push(function (sHPoint) { // relay current sHPoint back to the parent component
+      self.component.updateSelectedStakeholder(sHPoint)
+    })
+
+    this.onRenderFcts.push( function () { // depth
+      _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
+        sHPoint.updateColor(self.camera.position)
+      })
+    })
   }
 
   environment.setupScatterCube = function (opts) {
@@ -303,6 +293,15 @@ export default function (component) {
     ///////////////////////////////////// Stats ////////////////////////////////////////
     this.initStats()
     this.initRendererStats()
+
+    /////////////////////// Create Tween Controller ///////////////////////
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
+    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
+
+    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
 
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
