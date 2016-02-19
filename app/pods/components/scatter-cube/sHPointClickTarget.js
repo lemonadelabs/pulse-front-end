@@ -29,10 +29,7 @@ SHPointClickTarget.prototype.createMesh = function(opts) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xffffff,
-    visible: true,
-    transparent: true,
-    opacity: 0.4
-    // visible: false
+    visible: false
   });
 
   var point = new THREE.Mesh( geometry, material );
