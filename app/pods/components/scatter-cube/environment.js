@@ -403,6 +403,26 @@ export default function (component) {
     })
   }
 
+  environment.initDistributionCloud = function () {
+    var self = this
+    this.distributionCloud = new DistributionCloud()
+
+    this.onRenderFcts.push( function () { // update color of point
+      if (self.component.distributionView && self.focussedPoint) {
+        _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
+          // dont update if they are being animated!!
+          if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
+        })
+      }
+    })
+
+    this.noSelectedStakeholderFcts.push(function () {
+      if (self.component.distributionView) {
+        self.tweenController.removeDistroCloud()
+      }
+    })
+  }
+
   environment.setupScatterCube = function (opts) {
     var self = this
     this.project = opts.project
@@ -428,22 +448,7 @@ export default function (component) {
     ///////////////////// configure name-badge ////////////////////////
     this.configureNameBadge()
     ///////////////////// Create distribution Cloud ////////////////////////
-    this.distributionCloud = new DistributionCloud()
-
-    this.onRenderFcts.push( function () { // update color of point
-      if (self.component.distributionView && self.focussedPoint) {
-        _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
-          // dont update if they are being animated!!
-          if(!self.distributionCloud.transitioning) { distributionPoint.updateColor(self.camera.position) }
-        })
-      }
-    })
-
-    this.noSelectedStakeholderFcts.push(function () {
-      if (self.component.distributionView) {
-        self.tweenController.removeDistroCloud()
-      }
-    })
+    this.initDistributionCloud()
 
     ///////////////////// Create history tail group ////////////////////////
     this.historyTailGroup = new HistoryTailGroup()
