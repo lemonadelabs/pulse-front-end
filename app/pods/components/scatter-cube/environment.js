@@ -169,6 +169,16 @@ export default function (component) {
     //     sHPoint.updateColor(self.camera.position)
     //   })
     // })
+
+    /////////////////////// Create Tween Controller ///////////////////////
+    this.tweenController = new TweenController({
+      environment : this
+    })
+
+    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
+
+    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
+
   }
 
   environment.setupScatterCube = function (opts) {
@@ -293,15 +303,6 @@ export default function (component) {
     ///////////////////////////////////// Stats ////////////////////////////////////////
     this.initStats()
     this.initRendererStats()
-
-    /////////////////////// Create Tween Controller ///////////////////////
-    this.tweenController = new TweenController({
-      environment : this
-    })
-
-    this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
-
-    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
 
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
