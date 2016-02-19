@@ -26,7 +26,6 @@ ConnectingLine.prototype.createMaterial = function(strength) {
 
   return new THREE.MeshBasicMaterial({
     color: color.css(),
-    linewidth: 1,
     transparent: true,
     opacity: color.alpha()
   });
