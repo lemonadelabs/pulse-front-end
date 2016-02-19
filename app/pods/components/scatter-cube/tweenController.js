@@ -116,19 +116,16 @@ TweenController.prototype.updateSHPoints = function(opts) {
       createPointTweens({
         newCoords : newCoords,
         point : sHPoint,
-        duration : opts.duration
+        duration : opts.duration,
+        easing : opts.easing
       })
       createPointTweens({
         newCoords : newCoords,
         point : clickTarget,
-        duration : opts.duration
+        duration : opts.duration,
+        easing : opts.easing
       })
     })
-    // for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-
-    // }
-    // _.forEach(pointCloud.sHPointClickTargets, function (sHPoint) {createPointTweens(sHPoint)} )
-    // _.forEach(pointCloud.sHPoints, function (sHPoint) {createPointTweens(sHPoint)} )
   }
 
   function createPointTweensFromCurve (sHPoint, curve) {
