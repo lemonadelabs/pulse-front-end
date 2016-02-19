@@ -375,34 +375,8 @@ export default function (component) {
     })
   }
 
-  environment.setupScatterCube = function (opts) {
+  environment.configureNameBadge = function () {
     var self = this
-    this.project = opts.project
-    //////////////////////// create the cube /////////////////////////////////
-    this.initCube()
-    //////////////////// create axis guides //////////////////////////////////
-    this.axisGuides = new AxisGuides()
-    this.addObjectsToScene(this.axisGuides.lines)
-    ///////////////////////// create danger zone /////////////////////////////
-    this.initDangerZone()
-    ///////////////////////// create labelGroup //////////////////////////////
-    this.initLabelGroup()
-    ///////////////////// Create Target ////////////////////////
-    this.initTarget()
-
-    //////////////////////////////////////// autoNav ////////////////////////////////////////
-    this.navController = new NavController({
-      environment : this
-    })
-
-    this.navArrows = new NavArrows({
-      scene : this.scene,
-      jSONloader : this.jSONloader,
-      navController : this.navController,
-      domEvents : this.domEvents
-    })
-
-    ///////////////////// name-badge on hover ////////////////////////
     this.onMouseoverFcts.push(function (sHPoint) {
       self.nameBadgeVisible = true
       self.component.updateHoveredStakeholder(sHPoint)
@@ -427,7 +401,32 @@ export default function (component) {
         $('.name-badge').css({top : top, left : left});
       }
     })
+  }
 
+  environment.setupScatterCube = function (opts) {
+    var self = this
+    this.project = opts.project
+    //////////////////////// create the cube /////////////////////////////////
+    this.initCube()
+    //////////////////// create axis guides //////////////////////////////////
+    this.axisGuides = new AxisGuides()
+    this.addObjectsToScene(this.axisGuides.lines)
+    ///////////////////////// create danger zone /////////////////////////////
+    this.initDangerZone()
+    ///////////////////////// create labelGroup //////////////////////////////
+    this.initLabelGroup()
+    ///////////////////// Create Target ////////////////////////
+    this.initTarget()
+    //////////////////////////////////////// autoNav ////////////////////////////////////////
+    this.navController = new NavController( { environment : this } )
+    this.navArrows = new NavArrows({
+      scene : this.scene,
+      jSONloader : this.jSONloader,
+      navController : this.navController,
+      domEvents : this.domEvents
+    })
+    ///////////////////// configure name-badge ////////////////////////
+    this.configureNameBadge()
     ///////////////////// Create distribution Cloud ////////////////////////
     this.distributionCloud = new DistributionCloud()
 
