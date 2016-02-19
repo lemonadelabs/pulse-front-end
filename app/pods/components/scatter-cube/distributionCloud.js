@@ -21,13 +21,6 @@ DistributionCloud.prototype.createDistributionPoints = function(currentWeek) {
       })
     )
   })
-
-  // for (var i = 0; i < data[0].length; i++) {
-  //   Things[i]
-  // };
-  // _.forEach(data[0], function (pointData) {
-  // })
-
 };
 
 

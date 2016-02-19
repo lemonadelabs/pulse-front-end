@@ -12,7 +12,6 @@ import TweenController from './tweenController';
 import NavController from './navController';
 import NavArrows from './navArrows';
 
-// TODO: figure out if this is the right way to define and export out environment
 export default function Environment (component) {
   this.component = component
   this.container = document.getElementById( "container" );
@@ -511,6 +510,7 @@ Environment.prototype.initDistributionCloud = function () {
       })
     }
   })
+
   this.noSelectedStakeholderFcts.push(function () {
     if (self.component.distributionView) {
       self.tweenController.removeDistroCloud()
