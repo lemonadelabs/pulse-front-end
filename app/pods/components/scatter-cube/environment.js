@@ -243,7 +243,6 @@ export default function (component) {
 
   environment.animateViewWithTime = function (time, oldTime) {
     this.triggerRender()
-
     if (this.component.connectionView && this.component.distributionView && this.focussedPoint) {
       this.tweenController.updateTimeRelationDistroViews(time, oldTime)
     } else if (this.component.connectionView && this.focussedPoint) {
@@ -259,6 +258,20 @@ export default function (component) {
         easing : TWEEN.Easing.Exponential.Out,
         duration : 1500
       })
+    }
+  }
+
+  environment.animateViewWithSelectedStakeholder = function (sHPoint) {
+     if (this.component.connectionView && this.component.distributionView) { // also takes care of history view
+      this.tweenController.updateSelectedStakeholderAllViews(sHPoint)
+    } else if (this.component.connectionView) { // also takes care of history view
+      this.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
+    } else if (this.component.distributionView) { // also takes care of history view
+      this.tweenController.updateSelectedStakeholderDistroView(sHPoint)
+    } else if (this.component.historyView) {
+      this.tweenController.updateHistoryTail(sHPoint)
+    } else {
+      this.target.updatePosition(sHPoint)
     }
   }
 
@@ -288,19 +301,7 @@ export default function (component) {
 
     this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
 
-    this.onPointClickFcts.push(function (sHPoint) {
-      if (self.component.connectionView && self.component.distributionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderAllViews(sHPoint)
-      } else if (self.component.connectionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderConnectionView(sHPoint)
-      } else if (self.component.distributionView) { // also takes care of history view
-        self.tweenController.updateSelectedStakeholderDistroView(sHPoint)
-      } else if (self.component.historyView) {
-        self.tweenController.updateHistoryTail(sHPoint)
-      } else {
-        self.target.updatePosition(sHPoint)
-      }
-    })
+    this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
 
     //////////////////////////////////////////////////////////////////////////////
     //                         render the scene                                 //
