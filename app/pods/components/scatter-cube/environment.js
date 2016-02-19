@@ -422,7 +422,7 @@ export default function (component) {
     })
   }
 
-  this.initHistoryTailGroup = function () {
+  environment.initHistoryTailGroup = function () {
     var self = this
     this.historyTailGroup = new HistoryTailGroup()
     this.noSelectedStakeholderFcts.push( function () {
