@@ -596,7 +596,7 @@ Environment.prototype.removeObjectFromScene = function (object) {
 }
 
 Environment.prototype.removeObjectsFromScene = function (objects) { // duplicate of ebove function
-  _.forEach( objects, this.removeObjectFromScene )
+  _.forEach( objects, this.removeObjectFromScene.bind(this) )
 }
 
 //////////////////////////////////// billboarding ////////////////////////////////////////////////
