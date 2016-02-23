@@ -7,4 +7,6 @@ export default DS.Model.extend({
   power: DS.attr('number'),
   support: DS.attr('number'),
   vital: DS.attr('number')
+
+  relationships: DS.hasMany('relationship', { async: true } ),
 });
