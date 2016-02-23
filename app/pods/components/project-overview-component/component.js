@@ -10,7 +10,7 @@ export default Ember.Component.extend({
   historyView:false,
   showStakeholderList:false,
   project:undefined,
-  stakeholders:{},
+  data:undefined,
 
   init : function () {
     this._super()
@@ -21,17 +21,24 @@ export default Ember.Component.extend({
     var stakeholderObject = {}
     var stakeholderLength
     var snapsReturned = 0
-    project.get('stakeholders').then(function (stakeholders) {
-      stakeholderLength = stakeholders.get('length');
-      stakeholders.forEach(function(stakeholder) {
-        stakeholder.get('stakeholderSnapshots').then(function (snapshots) {
-          snapsReturned += 1
-          if ( snapsReturned === stakeholderLength ) {
-            self.set('stakeholders', stakeholderObject)
-          }
+
+
+    var promises = {
+      stakeholders: project.get('stakeholders').then(function (stakeholders) {
+        return stakeholders
+      }).then( function (stakeholders) {
+        var snapshots = stakeholders.getEach('stakeholderSnapshots');
+
+        return Ember.RSVP.all(snapshots).then(function(){
+          console.log(stakeholders)
+          return stakeholders;
         })
-        stakeholderObject[stakeholder.get('id')] = stakeholder
       })
+    }
+
+    Ember.RSVP.hash(promises).then(function(results){
+      console.log(results);
+      self.set('data', results)
     })
   },
 
