@@ -2,6 +2,7 @@ import Ember from 'ember';
 import Environment from './environment';
 
 export default Ember.Component.extend({
+  store: Ember.inject.service(),
 
   classNames: ['scatter-cube'],
 
@@ -30,6 +31,13 @@ export default Ember.Component.extend({
       selectedTime : this.selectedTime
     })
   }.observes('stakeholders'),
+
+  onConnectionsData: function () {
+    var connections = this.get('connections')
+    this.environment.initConnections({
+      connections : connections
+    })
+  }.observes('connections'),
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);

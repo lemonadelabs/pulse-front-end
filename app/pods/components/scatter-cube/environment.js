@@ -147,14 +147,46 @@ Environment.prototype.initPointCloud = function (opts) {
     environment : this
   })
 
-  /////////////////////// create connecting lines ///////////////////////
-  // will need configuring
-  this.initConnections()
-
   this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
   this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
 
 }
+
+Environment.prototype.initConnections = function (opts) {
+  var self = this
+
+  var connections = opts.connections
+
+  /////////////////// Create Connecting Lines ////////////////////////
+  // console.log(this.currentWeek)
+  this.lineGroup = new LineGroup({
+    connections : connections
+  })
+
+  this.noSelectedStakeholderFcts.push( function () {
+    if (self.component.connectionView) {
+      _.last(self.tweenController.fadeOutConnections({
+        duration : 300,
+        easing : TWEEN.Easing.Quadratic.In
+      }))
+      .onComplete( function () {
+        self.removeConnectingLines()
+      })
+    }
+  })
+
+  this.removeConnectingLines = function() {
+    self.removeObjectsFromScene(self.lineGroup.primaryConnections)
+    self.lineGroup.primaryConnections = []
+  }
+
+  this.onRenderFcts.push(function () {
+    self.lineGroup.update()
+  })
+
+  this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+}
+
 
 Environment.prototype.render = function () {
   var self = this
@@ -189,7 +221,6 @@ Environment.prototype.noSelectedStakeholder = function () {
 
 ///////////////////// when timeseries component changes ////////////////////////
 Environment.prototype.updateTime = function (time) {
-  console.log(time)
   var oldTime = this.currentWeek
   this.currentWeek = time
 
@@ -205,7 +236,10 @@ Environment.prototype.connectionViewUpdated = function () {
   this.triggerRender()
 
   if (this.component.connectionView) { // for turning ON the connectionView
-    this.lineGroup.drawConnections(this.focussedPoint, this.currentWeek)
+    this.lineGroup.drawConnections({
+      sHPoint : this.focussedPoint,
+      currentWeek : this.currentWeek
+    })
     this.addObjectsToScene(this.lineGroup.primaryConnections)
     this.tweenController.fadeInConnections({
       duration : 300,
@@ -538,38 +572,6 @@ Environment.prototype.initNav = function () {
     navController : this.navController,
     domEvents : this.domEvents
   })
-}
-
-Environment.prototype.initConnections = function () {
-  var self = this
-
-  /////////////////// Create Connecting Lines ////////////////////////
-  this.lineGroup = new LineGroup({
-    connections: self.relationships
-  })
-
-  this.noSelectedStakeholderFcts.push( function () {
-    if (self.component.connectionView) {
-      _.last(self.tweenController.fadeOutConnections({
-        duration : 300,
-        easing : TWEEN.Easing.Quadratic.In
-      }))
-      .onComplete( function () {
-        self.removeConnectingLines()
-      })
-    }
-  })
-
-  this.removeConnectingLines = function() {
-    self.removeObjectsFromScene(self.lineGroup.primaryConnections)
-    self.lineGroup.primaryConnections = []
-  }
-
-  this.onRenderFcts.push(function () {
-    self.lineGroup.update()
-  })
-
-  this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 }
 
 

@@ -330,7 +330,10 @@ TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
   var environment = this.environment
 
   environment.removeConnectingLines()
-  environment.lineGroup.drawConnections(environment.focussedPoint, time)
+  environment.lineGroup.drawConnections({
+    sHPoint : environment.focussedPoint,
+    currentWeek: time
+  })
   environment.addObjectsToScene(environment.lineGroup.primaryConnections)
 
   var sHPointTweens = this.updateSHPoints({
@@ -454,7 +457,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     var lastFadeOutTween = _.last(fadeOutTweens)
     lastFadeOutTween.onComplete(function () {
       environment.removeConnectingLines()
-      environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+      environment.lineGroup.drawConnections({
+        sHPoint : sHPoint,
+        currentWeek: environment.currentWeek
+      })
       environment.addObjectsToScene(environment.lineGroup.primaryConnections)
       self.fadeInConnections({
         duration : 500,
@@ -462,7 +468,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       })
     })
   } else { // clicking a point after having the modal closed
-    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.lineGroup.drawConnections({
+      sHPoint : sHpoint,
+      currentWeek: environment.currentWeek
+    })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
     self.fadeInConnections({
       duration : 500,
@@ -524,7 +533,10 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
     })
 
     environment.removeConnectingLines()
-    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.lineGroup.drawConnections({
+      sHPoint : sHpoint,
+      currentWeek: environment.currentWeek
+    })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
     self.fadeInConnections({
       duration : 150,
