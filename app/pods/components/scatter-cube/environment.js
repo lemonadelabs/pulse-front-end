@@ -532,7 +532,7 @@ Environment.prototype.configureNameBadge = function () {
 
 Environment.prototype.initDistributionCloud = function (opts) {
   var self = this
-  this.distributionCloud = new DistributionCloud({getVotes : opts.getVotes})
+  this.distributionCloud = new DistributionCloud( { getVotes : opts.getVotes } )
 
   this.onRenderFcts.push( function () { // update color of point
     if (self.component.distributionView && self.focussedPoint) {

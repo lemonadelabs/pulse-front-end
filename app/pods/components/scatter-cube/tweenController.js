@@ -309,17 +309,8 @@ TweenController.prototype.buildDistroCloud = function() {
       duration : 400,
       easing : TWEEN.Easing.Quadratic.Out
     })
-
-
-
-
-
-
   })
-
 };
-
-
 
 TweenController.prototype.removeDistroCloud = function() {
   var environment = this.environment
@@ -404,13 +395,7 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
       environment.target.updatePosition(environment.focussedPoint)
     })
     .onComplete(function () {
-      environment.distributionCloud.createDistributionPoints(time)
-      environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-      self.distroCloudBirth({
-        time : time,
-        duration : 700,
-        easing : TWEEN.Easing.Exponential.Out
-      })
+      self.buildDistroCloud()
     })
   })
 }
@@ -441,16 +426,9 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime
     })
     .onComplete(function () {
       environment.lineGroup.needsUpdate = false
-      environment.distributionCloud.createDistributionPoints(time)
-      environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-      self.distroCloudBirth({
-        time : time,
-        duration : 300,
-        easing : TWEEN.Easing.Exponential.Out
-      })
+      self.buildDistroCloud()
     });
   })
-
 };
 
 ////////////////////////////////////// updateSelectedStakeholder //////////////////////////////////////
@@ -516,18 +494,12 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
   })
+
   var lastDeathTween = _.last(deathTweens)
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
     environment.target.updatePosition(environment.focussedPoint)
-    environment.distributionCloud.selectedStakeholder = sHPoint
-    environment.distributionCloud.createDistributionPoints(time)
-    environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-    self.distroCloudBirth({
-      time : time,
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
-    });
+    self.buildDistroCloud()
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
   })
 }
@@ -547,15 +519,7 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
     environment.target.updatePosition(sHPoint)
-    environment.distributionCloud.selectedStakeholder = sHPoint
-    environment.distributionCloud.createDistributionPoints(time)
-    environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-    self.distroCloudBirth({
-      time : time,
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
-    })
-
+    self.buildDistroCloud()
     environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
       sHPoint : sHpoint,
@@ -566,11 +530,8 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
-
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
-
   })
-
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
     this.fadeOutConnections({
       duration : 300,

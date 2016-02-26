@@ -10,6 +10,7 @@ export default function DistributionCloud (opts) {
 
 DistributionCloud.prototype.createDistributionPoints = function(opts) {
   var self = this
+  this.selectedStakeholder = opts.sHPoint
   this.distributionPoints = []
   _.forEach(opts.votes, function (vote) {
     self.distributionPoints.push(
