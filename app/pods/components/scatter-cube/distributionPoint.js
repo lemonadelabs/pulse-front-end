@@ -1,40 +1,24 @@
 export default function DistributionPoint (opts) {
-  this.selectedStakeholder = opts.selectedStakeholder
-
-  this.mesh = this.createMesh()
+  this.destination = new THREE.Vector3(opts.vote.power, opts.vote.support, opts.vote.vital)
+  this.mesh = this.createMesh(opts)
 }
 
-DistributionPoint.prototype.createMesh = function() {
-
+DistributionPoint.prototype.createMesh = function(opts) {
   var matrix = new THREE.Matrix4();
-
   var geometry = new THREE.SphereGeometry(150, 8, 8);
-
-
   // sets the scale for each mesh
   var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
   matrix.scale(scale)
-
   // transform the geometry
   geometry.applyMatrix(matrix)
-
   var material = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 0.5,
     shading: THREE.FlatShading,
-    // color: 0x42f06a
-    // color: 0x42b5f0
-    // color: 0xb02834
-    // color: 0xff8213
-    // color: 0xc900e0
-    // color: 0xff0082
     color: 0xffffff
-
   });
-
   var point = new THREE.Mesh( geometry, material );
-
-  point.position.copy(this.selectedStakeholder.mesh.position)
+  point.position.copy(opts.sHPoint.mesh.position)
 
   return point
 };

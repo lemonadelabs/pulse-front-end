@@ -70,8 +70,6 @@ Environment.prototype.setupScatterCube = function (opts) {
   this.initNav()
   ///////////////////// configure name-badge ////////////////////////////
   this.configureNameBadge()
-  ///////////////////// Create distribution Cloud ///////////////////////
-  this.initDistributionCloud()
   ///////////////////// Create history tail group ///////////////////////
   this.initHistoryTailGroup()
 
@@ -532,9 +530,9 @@ Environment.prototype.configureNameBadge = function () {
   })
 }
 
-Environment.prototype.initDistributionCloud = function () {
+Environment.prototype.initDistributionCloud = function (opts) {
   var self = this
-  this.distributionCloud = new DistributionCloud()
+  this.distributionCloud = new DistributionCloud({getVotes : opts.getVotes})
 
   this.onRenderFcts.push( function () { // update color of point
     if (self.component.distributionView && self.focussedPoint) {

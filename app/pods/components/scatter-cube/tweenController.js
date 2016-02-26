@@ -14,16 +14,17 @@ TweenController.prototype.distroCloudBirth = function(opts) {
   var environment = this.environment
   var tweens = []
   var points = environment.distributionCloud.distributionPoints
-  var data = environment.distributionCloud.data[opts.time]
+  // var data = environment.distributionCloud.data[opts.time]
 
   environment.distributionCloud.transitioning = true
-  for (var i = 0; i < points.length; i++) {
-    var x = (data[i].power) * 1.8  + 0.1
-    var y = (data[i].support) * 1.8  + 0.1
-    var z = (data[i].vital) * 1.8  + 0.1
+  _.forEach(points, function (point) {
+    var destination = point.destination
+    var x = (destination.x) * 1.8  + 0.1
+    var y = (destination.y) * 1.8  + 0.1
+    var z = (destination.z) * 1.8  + 0.1
 
 
-    var tween = new TWEEN.Tween(points[i].mesh.position)
+    var tween = new TWEEN.Tween(point.mesh.position)
       .easing(opts.easing)
       .to({x: x, y: y, z: z}, opts.duration)
       .onComplete(function () {
@@ -32,12 +33,12 @@ TweenController.prototype.distroCloudBirth = function(opts) {
       .start();
     tweens.push(tween)
 
-    points[i].updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
-    var birthFadeTween = new TWEEN.Tween(points[i].mesh.material)
-      .to({opacity:points[i].mesh.material.opacity}, opts.duration)
+    point.updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
+    var birthFadeTween = new TWEEN.Tween(point.mesh.material)
+      .to({opacity : point.mesh.material.opacity}, opts.duration)
       .easing(TWEEN.Easing.Exponential.In)
     birthFadeTween.start();
-  }
+  })
   return tweens
 }
 
@@ -284,15 +285,38 @@ TweenController.prototype.updateHistoryTail = function(sHPoint) {
 };
 
 TweenController.prototype.buildDistroCloud = function() {
+  var self = this
   var environment = this.environment
-  environment.distributionCloud.selectedStakeholder = environment.focussedPoint
-  environment.distributionCloud.createDistributionPoints(environment.currentWeek)
-  environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-  this.distroCloudBirth({
-    time : environment.currentWeek,
-    duration : 400,
-    easing : TWEEN.Easing.Quadratic.Out
+  var distributionCloud = environment.distributionCloud
+  var week = environment.currentWeek
+  var sh_id = environment.focussedPoint.id
+  var project_id = environment.project.get('id')
+
+  distributionCloud.getVotes({
+    week : week,
+    stakeholder_id : sh_id,
+    project_id : project_id
+  }).then(function (votes) {
+
+    distributionCloud.createDistributionPoints({
+      votes : votes,
+      sHPoint : environment.focussedPoint
+    })
+
+    environment.addObjectsToScene(distributionCloud.distributionPoints)
+    self.distroCloudBirth({
+      time : week,
+      duration : 400,
+      easing : TWEEN.Easing.Quadratic.Out
+    })
+
+
+
+
+
+
   })
+
 };
 
 
