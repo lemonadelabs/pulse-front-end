@@ -505,6 +505,7 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
 }
 
 TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) {
+  console.log(sHPoint)
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
@@ -518,11 +519,12 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
   var lastDeathTween = _.last(cloudDeathTweens)
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+
     environment.target.updatePosition(sHPoint)
     self.buildDistroCloud()
     environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
-      sHPoint : sHpoint,
+      sHPoint : sHPoint,
       currentWeek: environment.currentWeek
     })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
@@ -530,6 +532,9 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
+
+
+    // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
   })
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
