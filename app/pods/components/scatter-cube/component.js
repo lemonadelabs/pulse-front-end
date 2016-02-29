@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     this.set('environment', environment)
 
     this.environment.init()
-    this.environment.setupScatterCube({project : this.project})
+    this.environment.setupScatterCube({ project : this.project })
     this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
     this.environment.render()
   },
@@ -43,10 +43,6 @@ export default Ember.Component.extend({
       connections : connections
     })
   }.observes('connections'),
-
-  buildDistributionCloud: function () {
-
-  },
 
   getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
     var store = this.get('store')
