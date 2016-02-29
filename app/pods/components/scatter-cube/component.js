@@ -10,10 +10,6 @@ export default Ember.Component.extend({
     this.initScatterCube()
   },
   initScatterCube: function () {
-    var stakeholdersRecords
-
-
-
     var environment = new Environment(this)
     this.set('environment', environment)
 
