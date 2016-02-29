@@ -8,7 +8,6 @@ export default function AxisGuides () {
 AxisGuides.prototype.createMaterial = function() {
   return new THREE.MeshBasicMaterial({
     color: 0xffffff,
-    linewidth: 1,
     transparent: true,
     opacity: 0.1
   });

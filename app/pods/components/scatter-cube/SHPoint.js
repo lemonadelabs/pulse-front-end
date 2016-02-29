@@ -1,7 +1,34 @@
-export default function SHPoint (opts) {
-  this.weeks = opts.weeks
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 
-  this.mesh = this.createMesh(opts.timeFrame)
+export default function SHPoint (opts) {
+  this.mesh = this.createMesh(opts)
+}
+
+SHPoint.prototype.createMesh = function(opts) {
+  var matrix = new THREE.Matrix4();
+
+  var geometry = new THREE.SphereGeometry(150, 8, 8);
+  // sets the scale for each mesh
+  var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
+  matrix.scale(scale)
+
+  // transform the geometry
+  geometry.applyMatrix(matrix)
+
+  var material = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 1,
+    shading: THREE.FlatShading,
+    color: 0x4AE3C4
+  });
+
+  var point = new THREE.Mesh( geometry, material );
+
+  var snapshot = opts.snapshots.objectAt(opts.selectedTime - 1)
+
+  point.position.copy(coordsFromSnapshot(snapshot))
+
+  return point
 }
 
 SHPoint.prototype.updateColor = function(cameraPosition) {
@@ -24,36 +51,3 @@ SHPoint.prototype.updateColor = function(cameraPosition) {
   this.mesh.material.opacity = zeroOneFloat
 
 };
-
-SHPoint.prototype.createMesh = function(noOfWeeks) {
-  var matrix = new THREE.Matrix4();
-
-  var geometry = new THREE.SphereGeometry(150, 8, 8);
-
-
-  // sets the scale for each mesh
-  var scale = new THREE.Vector3(0.00008,0.00008,0.00008);
-  matrix.scale(scale)
-
-  // transform the geometry
-  geometry.applyMatrix(matrix)
-
-  var material = new THREE.MeshBasicMaterial({
-    transparent: true,
-    opacity: 1,
-    shading: THREE.FlatShading,
-    color: 0x4AE3C4
-  });
-
-  var point = new THREE.Mesh( geometry, material );
-
-  // sets the position for each mesh
-  var position = new THREE.Vector3();
-  var x = this.weeks[noOfWeeks].power * 1.8  + 0.1
-  var y = this.weeks[noOfWeeks].support * 1.8  + 0.1
-  var z = this.weeks[noOfWeeks].vital * 1.8  + 0.1
-
-  point.position.set(x, y, z)
-
-  return point
-}

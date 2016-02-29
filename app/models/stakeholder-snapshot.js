@@ -6,5 +6,7 @@ export default DS.Model.extend({
   week: DS.attr('number'),
   power: DS.attr('number'),
   support: DS.attr('number'),
-  vital: DS.attr('number')
+  vital: DS.attr('number'),
+
+  relationships: DS.hasMany('relationship', { async: true } ),
 });

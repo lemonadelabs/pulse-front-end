@@ -1,26 +1,58 @@
 import Ember from 'ember';
-import environment from './environment';
+import Environment from './environment';
 
 export default Ember.Component.extend({
+  store: Ember.inject.service(),
+
   classNames: ['scatter-cube'],
 
   didInsertElement() {
     this.initScatterCube()
   },
-
   initScatterCube: function () {
     var stakeholdersRecords
 
-    this.set('_environment', environment(this))
-
-    this._environment.init()
-    this._environment.setupScatterCube()
-    this._environment.render()
 
 
-    this._environment.initPointCloud({
+    var environment = new Environment(this)
+    this.set('environment', environment)
+
+    this.environment.init()
+    this.environment.setupScatterCube({project : this.project})
+    // this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
+    this.environment.render()
+  },
+
+  getVotes: function (opts) {
+    return Ember.$.getJSON('projects/' +  opts.project_id + '/stakeholders/' + opts.stakeholder_id + '/snapshots/votes?week=' + opts.week)
+  },
+
+   onStakeholderData: function () {
+    var time = this.get('selectedTime')
+
+    this.environment.initPointCloud({
       project : this.project,
+      stakeholders : this.stakeholders,
+      selectedTime : this.selectedTime
     })
+  }.observes('stakeholders'),
+
+  onConnectionsData: function () {
+    var connections = this.get('connections')
+    // this.environment.initConnections({
+    //   connections : connections
+    // })
+  }.observes('connections'),
+
+  buildDistributionCloud: function () {
+
+  },
+
+  getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
+    var store = this.get('store')
+    var stakeholder = store.peekRecord('stakeholder', id)
+    return stakeholder.get
+    // store.
   },
 
   updateSelectedStakeholder: function (shInfo) {
@@ -33,40 +65,33 @@ export default Ember.Component.extend({
 
   checkIfUpdatedTime: function (){
     var time = this.get('selectedTime')
-    this._environment.updateTime(time)
+    this.environment.updateTime(time)
   }.observes('selectedTime'),
 
   checkUndefinedStakeholder: function (){
     if(this.get('selectedStakeholder')===undefined){
-      this._environment.noSelectedStakeholder()
+      this.environment.noSelectedStakeholder()
     }
   }.observes('selectedStakeholder'),
 
-
-
-  // put observers on all of the models, when they ar not null, do stuff
-
-
-
-
   onUpdateConnectionsView: function () {
-    this._environment.connectionViewUpdated()
+    this.environment.connectionViewUpdated()
   }.observes('connectionView'),
 
   onUpdateDistributionView: function () {
-    this._environment.distributionViewUpdated()
+    this.environment.distributionViewUpdated()
   }.observes('distributionView'),
 
   onUpdateHistoryView: function () {
-    this._environment.historyViewUpdated()
+    this.environment.historyViewUpdated()
   }.observes('historyView'),
 
   pauseRender: function () {
-    this._environment.pauseRender()
+    this.environment.pauseRender()
   },
 
   resumeRender: function () {
-    this._environment.resumeRender()
+    this.environment.resumeRender()
   },
 
 });

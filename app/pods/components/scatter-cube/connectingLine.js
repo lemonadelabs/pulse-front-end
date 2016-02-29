@@ -4,10 +4,8 @@ export default function ConnectingLine (opts) {
   this.pointA = opts.pointA
   this.pointB = opts.pointB
 
-  this.material = this.createMaterial(opts.strength)
-  this.mesh = this.createMesh()
+  this.mesh = this.createMesh(opts)
 
-  // this.debug()
 }
 
 ConnectingLine.prototype.createMaterial = function(strength) {
@@ -26,35 +24,22 @@ ConnectingLine.prototype.createMaterial = function(strength) {
 
   return new THREE.MeshBasicMaterial({
     color: color.css(),
-    linewidth: 1,
     transparent: true,
     opacity: color.alpha()
   });
 };
 
-ConnectingLine.prototype.createMesh = function() {
+ConnectingLine.prototype.createMesh = function(opts) {
   var geometry = new THREE.Geometry();
   geometry.dynamic = true
 
   geometry.vertices.push(this.pointA.mesh.position);
   geometry.vertices.push(this.pointB.mesh.position);
 
-  var line = new THREE.Line(geometry, this.material)
+  var line = new THREE.Line(geometry, this.createMaterial(opts.strength))
   return line
 };
 
 ConnectingLine.prototype.updateVertices = function() {
   this.mesh.geometry.verticesNeedUpdate = true
-};
-
-ConnectingLine.prototype.debug = function() {
-  var self = this
-  setInterval(function() {
-    if (self.pointB.name === 'Adrian Schnall') {
-      console.log(self.pointB.name)
-      console.log(self.mesh.geometry.vertices)
-      console.log('********')
-    }
-  }, 4000)
-  return undefined
 };
