@@ -91,8 +91,26 @@ TweenController.prototype.updateSHPoints = function(opts) {
         createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
         createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
       } else {
-        createPointTweens(pointCloud.sHPoints[i])
-        createPointTweens(pointCloud.sHPointClickTargets[i])
+
+        var sHPoint = pointCloud.sHPoints[i]
+        var clickTarget = pointCloud.sHPointClickTargets[i]
+        var snap = clickTarget.snapshots.objectAt( opts.time - 1 )
+        var newCoords = coordsFromSnapshot(snap)
+
+        createPointTweens({
+          newCoords : newCoords,
+          point : sHPoint,
+          duration : opts.duration,
+          easing : opts.easing
+        })
+
+        createPointTweens({
+          newCoords : newCoords,
+          point : clickTarget,
+          duration : opts.duration,
+          easing : opts.easing
+        })
+
       }
     }
   }
