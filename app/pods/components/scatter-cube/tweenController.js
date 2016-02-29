@@ -170,9 +170,6 @@ TweenController.prototype.updateSHPoints = function(opts) {
     return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
   }
 
-
-
-
   function createPointTweens (opts) {
     var point = opts.point
     var coords = opts.newCoords
@@ -183,7 +180,6 @@ TweenController.prototype.updateSHPoints = function(opts) {
         .start();
     tweens.push(tween)
   }
-
   return tweens
 };
 
@@ -250,8 +246,6 @@ TweenController.prototype.fadeOutHistory = function(opts) {
   })
   return tweens
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// chained animations //////////////////////////////////////
@@ -549,7 +543,6 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
-
 
     // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
