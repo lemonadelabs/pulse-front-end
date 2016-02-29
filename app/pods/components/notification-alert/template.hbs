@@ -1,0 +1,8 @@
+{{#if showNotification}}
+  <div class="notifcation-alert fancy-corners">
+    <p class='alert-message'>{{alertMessageStringSafe}}</p>
+    {{#if undoableAlert}}
+      <button {{action 'undo'}}>Undo</button>
+    {{/if}}
+  </div>
+{{/if}}

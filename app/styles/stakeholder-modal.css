@@ -1,29 +1,45 @@
 .stakeholder-modal{
-  transition: opacity 300ms;
+  transition: opacity 300ms,  max-width 200ms;
   position: absolute;
   left:30px;
-  top:80px;
+  top:10vh;
   min-width: 300px;
-  height: auto;
-  padding: 30px;
+  height: 80vh;
+  padding-top: 30px;
+  padding-bottom: 30px;
   z-index: 1;
   border: solid 1px var(--borderBlue);
   background: color(var(--darkBlue) alpha(-5%));
   opacity: 0;
+
+}
+.stakeholder-modal-container{
+  overflow-x: scroll;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.stakeholder-modal section{
+.stakeholder-modal-container section{
   margin: 0 10px 0 10px;
   min-height: 30px;
   display: flex;
 }
 
 .stakeholder-modal footer{
-  position: relative;
+  position: absolute;
+  z-index: 1;
   bottom: 0px;
+  left: 0;
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  width: 100%;
+  padding-bottom: 30px;
+  padding-top: 20px;
+  background-image: linear-gradient( to bottom, color(var(--darkBlue) alpha(0)) , var(--darkBlue) 35%);
 }
 
 

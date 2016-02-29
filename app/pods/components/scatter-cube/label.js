@@ -1,4 +1,5 @@
 export default function Label (opts) {
+  this.tweenCounter = {}
   this.mesh = opts.mesh
   this.name = this.mesh.name = opts.name
   this.coords = this.generateCoords()
@@ -24,17 +25,26 @@ Label.prototype.initLocation = function(quadrant) {
 
 Label.prototype.animateLabel = function(coords) {
   var self = this
-  var fadeOutTween = new TWEEN.Tween(this.mesh.material)
+  var material = this.mesh.material
+  this.tweenCounter.opacity = material.opacity
+  var fadeOutTween = new TWEEN.Tween(this.tweenCounter)
       .to({opacity: 0.0}, 250)
       .easing(TWEEN.Easing.Exponential.Out)
+      .onUpdate(function () {
+        material.opacity = self.tweenCounter.opacity
+      })
       .onComplete(function () {
         self.mesh.position.set(coords[0],coords[1],coords[2])
         fadeInTween.start()
       })
   fadeOutTween.start();
 
-  var fadeInTween = new TWEEN.Tween(self.mesh.material)
+  var fadeInTween = new TWEEN.Tween(this.tweenCounter)
       .to({opacity: 1.0}, 300)
+      .easing(TWEEN.Easing.Exponential.In)
+      .onUpdate(function () {
+        material.opacity = self.tweenCounter.opacity
+      })
 };
 
 Label.prototype.generateCoords = function() {

@@ -1,3 +1,5 @@
+// todo:: tidy up this code so that the fading of the arrows uses the same function as the fading of the danger zone and the lables. Currently the arrows are passed as objects that have a mesh, but the lables are passed as an array of meshes. This needs to be standardised
+
 export default function NavController (opts) {
   this.environment = opts.environment
   this.focalPoint = new THREE.Vector3(1,1,1)
@@ -5,8 +7,6 @@ export default function NavController (opts) {
   this.hiddenLabels = []
 }
 
-
-// add 23 lines onto the error messages from the console
 
 
 NavController.prototype.fadeOutArrows = function(opts) {
@@ -53,6 +53,7 @@ NavController.prototype.fadeInArrows = function(opts) {
   return _.last(tweens)
 };
 
+
 NavController.prototype.fadeInMeshes = function(opts) {
   var meshes = opts.meshes
   var tweens = []
@@ -64,10 +65,12 @@ NavController.prototype.fadeInMeshes = function(opts) {
     mesh.visible = true
 
     var tween = new TWEEN.Tween(mesh.material)
-      .to( { opacity : 1 }, opts.duration )
+      .to( { opacity : opts.opacity }, opts.duration )
       .easing(opts.easing)
       .onComplete(function () {
-        mesh.material.transparent = false
+        if ( opts.opacity === 1 ) {
+          mesh.material.transparent = false
+        }
       })
       .start();
     tweens.push(tween)
@@ -116,7 +119,8 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   this.fadeInMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
-    meshes : toFadeIn
+    meshes : toFadeIn,
+    opacity : 1
   })
 
   // hide the labels
@@ -124,6 +128,13 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+  })
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -174,9 +185,17 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   dollyInTween.onComplete(function () {
 
     var labelFadeIn = self.fadeInMeshes({
+      opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
+    })
+
+    var dangerZoneFadeIn = self.fadeInMeshes({
+      opacity : 0.5,
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
 
     var moveTween = self.moveCamera({
@@ -218,6 +237,7 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalHiLoSupportRight" ) )
 
   this.fadeInMeshes({
+    opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
     meshes : toFadeIn
@@ -228,6 +248,13 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+  })
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -277,9 +304,17 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
   })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
+      opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
+    })
+
+    var dangerZoneFadeIn = self.fadeInMeshes({
+      opacity : 0.5,
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(4.5, 1.5, -1.6),
@@ -317,6 +352,7 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerHiLoSupportRight" ) )
 
   this.fadeInMeshes({
+    opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
     meshes : toFadeIn
@@ -327,6 +363,13 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
+
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+  })
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -377,9 +420,17 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
   })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
+      opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
+    })
+
+    var dangerZoneFadeIn = self.fadeInMeshes({
+      opacity : 0.5,
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-1.7, 1.6, -2.5),
@@ -417,6 +468,7 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalLoHiSupportRight" ) )
 
   this.fadeInMeshes({
+    opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
     meshes : toFadeIn
@@ -427,6 +479,13 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
+
+  this.fadeOutMeshes({
+    duration : 1000,
+    easing : TWEEN.Easing.Quadratic.In,
+    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+  })
+
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -476,9 +535,17 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
   })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
+      opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
+    })
+
+    var dangerZoneFadeIn = self.fadeInMeshes({
+      opacity : 0.5,
+      duration : 1000,
+      easing : TWEEN.Easing.Quadratic.Out,
+      meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-2.5, 1.5, 3.7),

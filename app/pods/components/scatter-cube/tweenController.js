@@ -1,3 +1,4 @@
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 /*jshint -W083 */
 
 export default function TweenController (opts) {
@@ -13,16 +14,17 @@ TweenController.prototype.distroCloudBirth = function(opts) {
   var environment = this.environment
   var tweens = []
   var points = environment.distributionCloud.distributionPoints
-  var data = environment.distributionCloud.data[opts.time]
+  // var data = environment.distributionCloud.data[opts.time]
 
   environment.distributionCloud.transitioning = true
-  for (var i = 0; i < points.length; i++) {
-    var x = (data[i].power) * 1.8  + 0.1
-    var y = (data[i].support) * 1.8  + 0.1
-    var z = (data[i].vital) * 1.8  + 0.1
+  _.forEach(points, function (point) {
+    var destination = point.destination
+    var x = (destination.x) * 1.8  + 0.1
+    var y = (destination.y) * 1.8  + 0.1
+    var z = (destination.z) * 1.8  + 0.1
 
 
-    var tween = new TWEEN.Tween(points[i].mesh.position)
+    var tween = new TWEEN.Tween(point.mesh.position)
       .easing(opts.easing)
       .to({x: x, y: y, z: z}, opts.duration)
       .onComplete(function () {
@@ -31,12 +33,12 @@ TweenController.prototype.distroCloudBirth = function(opts) {
       .start();
     tweens.push(tween)
 
-    points[i].updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
-    var birthFadeTween = new TWEEN.Tween(points[i].mesh.material)
-      .to({opacity:points[i].mesh.material.opacity}, opts.duration)
+    point.updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
+    var birthFadeTween = new TWEEN.Tween(point.mesh.material)
+      .to({opacity : point.mesh.material.opacity}, opts.duration)
       .easing(TWEEN.Easing.Exponential.In)
     birthFadeTween.start();
-  }
+  })
   return tweens
 }
 
@@ -80,31 +82,67 @@ TweenController.prototype.updateSHPoints = function(opts) {
   } else if ( ( deltaT >= 3 ) && environment.component.historyView && environment.focussedPoint ) { // linear, focussed point is curvy
     linearAndCurve()
   } else { // all linear animations
-    allPointsLinear()
+    allPointsLinear(opts)
   }
 
   function linearAndCurve() {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      if (pointCloud.sHPointClickTargets[i].id === environment.focussedPoint.id) {
-        createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-        createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
+
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+
+      if (clickTarget.id === environment.focussedPoint.id) {
+        createPointTweensFromCurve(sHPoint, clickTarget.curve)
+        createPointTweensFromCurve(clickTarget, clickTarget.curve)
       } else {
-        createPointTweens(pointCloud.sHPoints[i])
-        createPointTweens(pointCloud.sHPointClickTargets[i])
+        var snap = clickTarget.snapshots.objectAt( opts.time - 1 )
+        var newCoords = coordsFromSnapshot(snap)
+
+        createPointTweens({
+          newCoords : newCoords,
+          point : sHPoint,
+          duration : opts.duration,
+          easing : opts.easing
+        })
+        createPointTweens({
+          newCoords : newCoords,
+          point : clickTarget,
+          duration : opts.duration,
+          easing : opts.easing
+        })
       }
-    }
+    })
   }
 
   function allPointsFromCurve () {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
-      createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-    }
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+      createPointTweensFromCurve(clickTarget, clickTarget.curve)
+      createPointTweensFromCurve(sHPoint, clickTarget.curve)
+    })
   }
 
   function allPointsLinear () {
-    _.forEach(pointCloud.sHPoints, function (sHPoint) {createPointTweens(sHPoint)} )
-    _.forEach(pointCloud.sHPointClickTargets, function (sHPoint) {createPointTweens(sHPoint)} )
+    var week = opts.time
+    var sHPoints = pointCloud.sHPoints
+    var clickTargets = pointCloud.sHPointClickTargets
+
+    _.forEach(clickTargets, function (clickTarget, i) {
+      var sHPoint = sHPoints[i]
+      var snap = clickTarget.snapshots.objectAt(week-1)
+      var newCoords = coordsFromSnapshot(snap)
+      createPointTweens({
+        newCoords : newCoords,
+        point : sHPoint,
+        duration : opts.duration,
+        easing : opts.easing
+      })
+      createPointTweens({
+        newCoords : newCoords,
+        point : clickTarget,
+        duration : opts.duration,
+        easing : opts.easing
+      })
+    })
   }
 
   function createPointTweensFromCurve (sHPoint, curve) {
@@ -128,22 +166,20 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function curveLocation(week) {
-    var timeFrame = self.environment.metaData[0].timeFrame
+    var timeFrame = environment.project.get('timeframe')
     return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
   }
 
-  function createPointTweens (sHPoint) {
-    var x = (sHPoint.weeks[opts.time].power) * 1.8  + 0.1
-    var y = (sHPoint.weeks[opts.time].support) * 1.8  + 0.1
-    var z = (sHPoint.weeks[opts.time].vital) * 1.8  + 0.1
+  function createPointTweens (opts) {
+    var point = opts.point
+    var coords = opts.newCoords
 
-    var tween = new TWEEN.Tween(sHPoint.mesh.position)
-        .to({x: x, y: y, z: z}, opts.duration)
+    var tween = new TWEEN.Tween(point.mesh.position)
+        .to({x: coords.x, y: coords.y, z: coords.z}, opts.duration)
         .easing(opts.easing)
         .start();
     tweens.push(tween)
   }
-
   return tweens
 };
 
@@ -211,8 +247,6 @@ TweenController.prototype.fadeOutHistory = function(opts) {
   return tweens
 };
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// chained animations //////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,18 +296,32 @@ TweenController.prototype.updateHistoryTail = function(sHPoint) {
 };
 
 TweenController.prototype.buildDistroCloud = function() {
+  var self = this
   var environment = this.environment
-  environment.distributionCloud.selectedStakeholder = environment.focussedPoint
-  environment.distributionCloud.createDistributionPoints(environment.currentWeek)
-  environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-  this.distroCloudBirth({
-    time : environment.currentWeek,
-    duration : 400,
-    easing : TWEEN.Easing.Quadratic.Out
+  var distributionCloud = environment.distributionCloud
+  var week = environment.currentWeek
+  var sh_id = environment.focussedPoint.id
+  var project_id = environment.project.get('id')
+
+  distributionCloud.getVotes({
+    week : week,
+    stakeholder_id : sh_id,
+    project_id : project_id
+  }).then(function (votes) {
+
+    distributionCloud.createDistributionPoints({
+      votes : votes,
+      sHPoint : environment.focussedPoint
+    })
+
+    environment.addObjectsToScene(distributionCloud.distributionPoints)
+    self.distroCloudBirth({
+      time : week,
+      duration : 400,
+      easing : TWEEN.Easing.Quadratic.Out
+    })
   })
 };
-
-
 
 TweenController.prototype.removeDistroCloud = function() {
   var environment = this.environment
@@ -308,7 +356,10 @@ TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
   var environment = this.environment
 
   environment.removeConnectingLines()
-  environment.lineGroup.drawConnections(environment.focussedPoint, time)
+  environment.lineGroup.drawConnections({
+    sHPoint : environment.focussedPoint,
+    currentWeek: time
+  })
   environment.addObjectsToScene(environment.lineGroup.primaryConnections)
 
   var sHPointTweens = this.updateSHPoints({
@@ -355,13 +406,7 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
       environment.target.updatePosition(environment.focussedPoint)
     })
     .onComplete(function () {
-      environment.distributionCloud.createDistributionPoints(time)
-      environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-      self.distroCloudBirth({
-        time : time,
-        duration : 700,
-        easing : TWEEN.Easing.Exponential.Out
-      })
+      self.buildDistroCloud()
     })
   })
 }
@@ -392,16 +437,9 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime
     })
     .onComplete(function () {
       environment.lineGroup.needsUpdate = false
-      environment.distributionCloud.createDistributionPoints(time)
-      environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-      self.distroCloudBirth({
-        time : time,
-        duration : 300,
-        easing : TWEEN.Easing.Exponential.Out
-      })
+      self.buildDistroCloud()
     });
   })
-
 };
 
 ////////////////////////////////////// updateSelectedStakeholder //////////////////////////////////////
@@ -432,7 +470,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     var lastFadeOutTween = _.last(fadeOutTweens)
     lastFadeOutTween.onComplete(function () {
       environment.removeConnectingLines()
-      environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+      environment.lineGroup.drawConnections({
+        sHPoint : sHPoint,
+        currentWeek: environment.currentWeek
+      })
       environment.addObjectsToScene(environment.lineGroup.primaryConnections)
       self.fadeInConnections({
         duration : 500,
@@ -440,7 +481,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       })
     })
   } else { // clicking a point after having the modal closed
-    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.lineGroup.drawConnections({
+      sHPoint : sHpoint,
+      currentWeek: environment.currentWeek
+    })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
     self.fadeInConnections({
       duration : 500,
@@ -461,23 +505,18 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
   })
+
   var lastDeathTween = _.last(deathTweens)
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
     environment.target.updatePosition(environment.focussedPoint)
-    environment.distributionCloud.selectedStakeholder = sHPoint
-    environment.distributionCloud.createDistributionPoints(time)
-    environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-    self.distroCloudBirth({
-      time : time,
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
-    });
+    self.buildDistroCloud()
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
   })
 }
 
 TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) {
+  console.log(sHPoint)
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
@@ -491,28 +530,23 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
   var lastDeathTween = _.last(cloudDeathTweens)
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
-    environment.target.updatePosition(sHPoint)
-    environment.distributionCloud.selectedStakeholder = sHPoint
-    environment.distributionCloud.createDistributionPoints(time)
-    environment.addObjectsToScene(environment.distributionCloud.distributionPoints)
-    self.distroCloudBirth({
-      time : time,
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
-    })
 
+    environment.target.updatePosition(sHPoint)
+    self.buildDistroCloud()
     environment.removeConnectingLines()
-    environment.lineGroup.drawConnections(sHPoint, environment.currentWeek)
+    environment.lineGroup.drawConnections({
+      sHPoint : sHPoint,
+      currentWeek: environment.currentWeek
+    })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
     self.fadeInConnections({
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
 
+    // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
-
   })
-
   if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
     this.fadeOutConnections({
       duration : 300,

@@ -23,8 +23,9 @@ module.exports = function(environment) {
       'default-src': "'none'",
       'script-src': "'self' 'unsafe-inline' https://use.typekit.net/ ('sha256-5kMb497w7ItxXRHeDONhgk1HOjOqzAVeP4/0KPiMW0Y=')",
       'font-src': "'self' data: use.typekit.net",
-      'connect-src': "'self'",
-      'img-src': "'self' https://p.typekit.net/",
+      // 'connect-src': "'self'",
+      'connect-src': "'self' http://localhost:3000",
+      'img-src': "'self' https://s3.amazonaws.com/ https://p.typekit.net",
       'style-src': "'self' 'unsafe-inline' https://use.typekit.net/",
       'media-src': "'self'"
     }

@@ -1,3 +1,8 @@
+model generators Will used:
+  ember generate model stakeholder name:string image:string organisation:string role:string tags:string notes:string stakeholder-snapshots:has-many
+
+
+
 # Pulse
 
 This README outlines the details of collaborating on this Ember application.

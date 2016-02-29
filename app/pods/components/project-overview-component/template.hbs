@@ -1,4 +1,14 @@
-{{nav-bar}}
+{{#if this.showStakeholderList}}
+  {{stakeholder-list
+    stakeholders=this.model.stakeholders
+    toggleStakeholderList=(action 'toggleStakeholderList')
+  }}
+{{/if}}
+
+{{nav-bar
+  toggleStakeholderList=(action 'toggleStakeholderList')
+}}
+
 
 {{stakeholder-modal
   selectedStakeholder=this.selectedStakeholder
@@ -14,10 +24,9 @@
 }}
 
 {{scatter-cube
-  stakeholders=this.model.stakeholders
-  metadata=this.model.metadata
-  relationships=this.model.relationships
-
+  project=this.model
+  stakeholders=this.data.stakeholders
+  connections=this.connections
   selectedStakeholder=this.selectedStakeholder
   selectedTime=this.selectedTime
 
@@ -29,6 +38,6 @@
 }}
 
 {{time-series
-  metadata=model.metadata
+  model=this.model
   updateTime=(action 'userDidChangeTime')
 }}

@@ -1,12 +1,13 @@
 export default function DangerZone(opts) {
   this.mesh = this.createMesh(opts.geometry)
+  this.mesh.name = 'dangerZone'
 }
 
 DangerZone.prototype.createMesh = function(geometry) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xFF2143,
-    side: THREE.SingleSide,
+    side: THREE.BackSide,
     transparent: true,
     opacity: 0.5,
   });
