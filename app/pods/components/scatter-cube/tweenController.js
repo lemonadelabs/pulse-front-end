@@ -86,14 +86,14 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function linearAndCurve() {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      if (pointCloud.sHPointClickTargets[i].id === environment.focussedPoint.id) {
-        createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-        createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
-      } else {
 
-        var sHPoint = pointCloud.sHPoints[i]
-        var clickTarget = pointCloud.sHPointClickTargets[i]
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+
+      if (clickTarget.id === environment.focussedPoint.id) {
+        createPointTweensFromCurve(sHPoint, clickTarget.curve)
+        createPointTweensFromCurve(clickTarget, clickTarget.curve)
+      } else {
         var snap = clickTarget.snapshots.objectAt( opts.time - 1 )
         var newCoords = coordsFromSnapshot(snap)
 
@@ -103,16 +103,14 @@ TweenController.prototype.updateSHPoints = function(opts) {
           duration : opts.duration,
           easing : opts.easing
         })
-
         createPointTweens({
           newCoords : newCoords,
           point : clickTarget,
           duration : opts.duration,
           easing : opts.easing
         })
-
       }
-    }
+    })
   }
 
   function allPointsFromCurve () {
