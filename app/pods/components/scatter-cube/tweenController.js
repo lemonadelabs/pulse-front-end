@@ -114,10 +114,11 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function allPointsFromCurve () {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
-      createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-    }
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+      createPointTweensFromCurve(clickTarget, clickTarget.curve)
+      createPointTweensFromCurve(sHPoint, clickTarget.curve)
+    })
   }
 
   function allPointsLinear () {
