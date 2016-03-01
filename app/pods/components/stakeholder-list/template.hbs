@@ -21,7 +21,7 @@
   <button>New</button>
   {{#if this.selection}}
     {{#unless this.multiSelection}}
-      <button>Edit</button>
+      <button {{action "editStakeholder"}}>Edit</button>
     {{/unless}}
     <button {{action "pollStakeholders"}}>Poll</button>
     <button {{action "startRemoveStakeholders"}}>Delete</button>

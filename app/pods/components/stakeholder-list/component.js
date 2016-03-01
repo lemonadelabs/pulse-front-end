@@ -15,7 +15,7 @@ export default Ember.Component.extend({
 
   deselectStakeholders:function(){
     this.set('selectedStakeholders',{})
-    this.set('selectedStakeholderCount',0);
+    this.set('selectedStakeholderCount', 0);
   },
   actions:{
     closeStakeholderList:function(){
@@ -41,12 +41,14 @@ export default Ember.Component.extend({
       var selectedStakeholders = this.get("selectedStakeholders");
       var firstStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
 
-      for (var stakeholderID in selectedStakeholders) {
-        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
-          selectedStakeholders[stakeholderID].deleteRecord();
-          console.log(selectedStakeholders[stakeholderID].get('isDeleted'))
-        }
-      }
+      _.forIn(selectedStakeholders,function( value, key) {
+        selectedStakeholders[key].set('isDeleting', true);
+        Ember.run.later(function(){
+          console.log('stakeholderIdToDelete',key);
+          selectedStakeholders[key].deleteRecord();
+        }, 350)
+      })
+
       if (stakeholderCount>1) {
         this.set('alertMessage',"Removed <b>"+this.selectedStakeholderCount+"</b> stakeholders from project")
       }
@@ -62,6 +64,7 @@ export default Ember.Component.extend({
       var selectedStakeholders = this.get("selectedStakeholders");
       for (var stakeholderID in selectedStakeholders) {
         if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
+          selectedStakeholders[stakeholderID].set('isDeleting', false);
           selectedStakeholders[stakeholderID].rollbackAttributes();
         }
       }
@@ -71,9 +74,15 @@ export default Ember.Component.extend({
       var selectedStakeholders = this.get("selectedStakeholders");
       for (var stakeholderID in selectedStakeholders) {
         if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
-          selectedStakeholders[stakeholderID].save();
+         selectedStakeholders[stakeholderID].save();
         }
       }
+      this.deselectStakeholders();
+    },
+    editStakeholder:function(){
+      var selectedStakeholders = this.get("selectedStakeholders");
+      var selectedStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
+      selectedStakeholder.set('editMode',true)
       this.deselectStakeholders();
     },
     pollStakeholders:function(){
@@ -104,6 +113,10 @@ export default Ember.Component.extend({
   },
   observeSelectedStakeholderCount:function(){
     var selectedStakeholderCount = this.get('selectedStakeholderCount');
+    if(selectedStakeholderCount < 0){
+      console.warn('selectedStakeholderCount went into negative, setting back to 0');
+      this.set('selectedStakeholderCount',0)
+    }
     if(selectedStakeholderCount === 1){
       this.set('selection',true)
       this.set('multiSelection',false)
