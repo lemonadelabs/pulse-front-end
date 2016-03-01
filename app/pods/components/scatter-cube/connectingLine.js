@@ -20,14 +20,25 @@ ConnectingLine.prototype.createMaterial = function(strength) {
     strength = strength * -1
   }
   color = chroma.interpolate('rgba(255,255,255,0.3)', color, strength)
-  // color = color.replace('#', '0x')
 
   return new THREE.MeshBasicMaterial({
-    color: color.css(),
+    color: createRGBString(color),
     transparent: true,
     opacity: color.alpha()
   });
 };
+
+function createRGBString(color) {
+  var rgb = ""
+  + 'rgb('
+  + Math.round( color.rgb()[0] )
+  + ','
+  + Math.round( color.rgb()[1] )
+  + ','
+  + Math.round( color.rgb()[2] )
+  + ')'
+  return rgb
+}
 
 ConnectingLine.prototype.createMesh = function(opts) {
   var geometry = new THREE.Geometry();
