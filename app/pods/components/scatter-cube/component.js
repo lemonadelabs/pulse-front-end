@@ -10,16 +10,12 @@ export default Ember.Component.extend({
     this.initScatterCube()
   },
   initScatterCube: function () {
-    var stakeholdersRecords
-
-
-
     var environment = new Environment(this)
     this.set('environment', environment)
 
     this.environment.init()
-    this.environment.setupScatterCube({project : this.project})
-    // this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
+    this.environment.setupScatterCube({ project : this.project })
+    this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
     this.environment.render()
   },
 
@@ -28,25 +24,20 @@ export default Ember.Component.extend({
   },
 
    onStakeholderData: function () {
-    var time = this.get('selectedTime')
 
     this.environment.initPointCloud({
       project : this.project,
       stakeholders : this.stakeholders,
-      selectedTime : this.selectedTime
+      selectedTime : this.get('selectedTime')
     })
   }.observes('stakeholders'),
 
   onConnectionsData: function () {
     var connections = this.get('connections')
-    // this.environment.initConnections({
-    //   connections : connections
-    // })
+    this.environment.initConnections({
+      connections : connections
+    })
   }.observes('connections'),
-
-  buildDistributionCloud: function () {
-
-  },
 
   getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
     var store = this.get('store')

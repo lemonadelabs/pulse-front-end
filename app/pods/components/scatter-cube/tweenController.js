@@ -86,22 +86,39 @@ TweenController.prototype.updateSHPoints = function(opts) {
   }
 
   function linearAndCurve() {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      if (pointCloud.sHPointClickTargets[i].id === environment.focussedPoint.id) {
-        createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-        createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
+
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+
+      if (clickTarget.id === environment.focussedPoint.id) {
+        createPointTweensFromCurve(sHPoint, clickTarget.curve)
+        createPointTweensFromCurve(clickTarget, clickTarget.curve)
       } else {
-        createPointTweens(pointCloud.sHPoints[i])
-        createPointTweens(pointCloud.sHPointClickTargets[i])
+        var snap = clickTarget.snapshots.objectAt( opts.time - 1 )
+        var newCoords = coordsFromSnapshot(snap)
+
+        createPointTweens({
+          newCoords : newCoords,
+          point : sHPoint,
+          duration : opts.duration,
+          easing : opts.easing
+        })
+        createPointTweens({
+          newCoords : newCoords,
+          point : clickTarget,
+          duration : opts.duration,
+          easing : opts.easing
+        })
       }
-    }
+    })
   }
 
   function allPointsFromCurve () {
-    for (var i = 0; i < pointCloud.sHPoints.length; i++) {
-      createPointTweensFromCurve(pointCloud.sHPointClickTargets[i], pointCloud.sHPointClickTargets[i].curve)
-      createPointTweensFromCurve(pointCloud.sHPoints[i], pointCloud.sHPointClickTargets[i].curve)
-    }
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+      createPointTweensFromCurve(clickTarget, clickTarget.curve)
+      createPointTweensFromCurve(sHPoint, clickTarget.curve)
+    })
   }
 
   function allPointsLinear () {
@@ -153,9 +170,6 @@ TweenController.prototype.updateSHPoints = function(opts) {
     return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
   }
 
-
-
-
   function createPointTweens (opts) {
     var point = opts.point
     var coords = opts.newCoords
@@ -166,7 +180,6 @@ TweenController.prototype.updateSHPoints = function(opts) {
         .start();
     tweens.push(tween)
   }
-
   return tweens
 };
 
@@ -233,8 +246,6 @@ TweenController.prototype.fadeOutHistory = function(opts) {
   })
   return tweens
 };
-
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// chained animations //////////////////////////////////////
@@ -532,7 +543,6 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
       duration : 150,
       easing : TWEEN.Easing.Quadratic.Out
     })
-
 
     // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
