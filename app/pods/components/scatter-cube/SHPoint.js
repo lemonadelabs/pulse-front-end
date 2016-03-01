@@ -1,6 +1,7 @@
 import coordsFromSnapshot from './services/coordsFromSnapshot';
 
 export default function SHPoint (opts) {
+  this.defocused = Math.random() >= 0.5 // assign random boolean
   this.mesh = this.createMesh(opts)
 }
 
@@ -33,19 +34,25 @@ SHPoint.prototype.createMesh = function(opts) {
 
 SHPoint.prototype.updateColor = function(opts) {
 
-  var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
+  if (this.defocused) {
+    this.mesh.material.opacity = 0.1
+  } else {
+    var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
 
-  var distanceCameraCenter = opts.cameraPosition.distanceTo(opts.controlsTarget) // between 1.7 and 5
+    var distanceCameraCenter = opts.cameraPosition.distanceTo(opts.controlsTarget) // between 1.7 and 5
 
-  var cameraZoom = distanceCameraCenter - 1.7 // between 0 and 3.3
+    var cameraZoom = distanceCameraCenter - 1.7 // between 0 and 3.3
 
-  var normalisedSHPointDistance = distanceCameraSHPoint - cameraZoom
+    var normalisedSHPointDistance = distanceCameraSHPoint - cameraZoom
 
-  var zeroOneFloat = (normalisedSHPointDistance - 0.14) / 3.1188
+    var zeroOneFloat = (normalisedSHPointDistance - 0.14) / 3.1188
 
-  zeroOneFloat = zeroOneFloat * -1 + 1 // reverse direction of float
-  zeroOneFloat = zeroOneFloat * 0.7 + 0.3 // limit the range
+    zeroOneFloat = zeroOneFloat * -1 + 1 // reverse direction of float
+    zeroOneFloat = zeroOneFloat * 0.7 + 0.3 // limit the range
 
-  this.mesh.material.opacity = zeroOneFloat
+    this.mesh.material.opacity = zeroOneFloat
+  }
+
+
 
 };
