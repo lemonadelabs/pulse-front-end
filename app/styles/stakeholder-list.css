@@ -12,7 +12,7 @@
   perspective: 100px;
   perspective-origin: 50% 50%;
   transform-style: preserve-3d;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: stretch;
   width: 80%;
   margin-left: auto;
