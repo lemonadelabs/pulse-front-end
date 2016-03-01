@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames:["stakeholder-card-container"],
+  classNames:["stakeholder-card"],
   classNameBindings:['isDeleting','selected','editMode'],
   selected:false,
   isDeleted:false,
@@ -15,7 +15,6 @@ export default Ember.Component.extend({
     }
      }),
   readOnly: Ember.computed('editMode', function(){
-    console.log('readOnly Editmode',this.get("editMode"));
     if (this.get("editMode")) {
       return false
     }
@@ -29,9 +28,7 @@ export default Ember.Component.extend({
     this.set('isDeleting',this.stakeholder.get('isDeleting'));
   }.on('init'),
   click(){
-    console.log('editMode ', this.get('editMode'));
-    console.log('readOnly ', this.get('readOnly'));
-
+    console.log(this.get('element').clientWidth);
     if(!this.get('editMode')){
       if(this.get('selected')){
         this.set('selected', false);

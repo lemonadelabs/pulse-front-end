@@ -1,30 +1,28 @@
-<div class="stakeholder-card">
-  <div class="stakeholder-image-container">
-    <img src="{{stakeholder.image}}">
-  </div>
-  <div class="stakeholder-card-info">
-    {{content-editable class="stakholder-list-name"
-                       value=stakeholder.name
-                       placeholder="Stakeholder Name"
-                       type="text"
-                       allowNewlines=false
-                       disabled=this.readOnly}}
-     {{content-editable class="stakeholder-info"
-                        value=stakeholder.organisation
-                        placeholder="Stakeholder Name"
-                        type="text"
-                         allowNewlines=false
-                       disabled=this.readOnly}}
-    {{content-editable class="stakeholder-info"
-                       value=stakeholder.role
-                       placeholder="Stakeholder Name"
-                       type="text"
-                       allowNewlines=false
-                       disabled=this.readOnly}}
-  </div>
-  {{#if stakeholder.editMode}}
-    <footer>
-      <button{{action "cancel"}}>Cancel</button> <button{{action "save"}}>Save</button>
-    </footer>
-  {{/if}}
+<div class="stakeholder-image-container">
+  <img src="{{stakeholder.image}}">
 </div>
+<div class="stakeholder-card-info">
+  {{content-editable class="stakholder-list-name"
+                     value=stakeholder.name
+                     placeholder="Stakeholder Name"
+                     type="text"
+                     allowNewlines=false
+                     disabled=this.readOnly}}
+   {{content-editable class="stakeholder-info"
+                      value=stakeholder.organisation
+                      placeholder="Stakeholder Name"
+                      type="text"
+                       allowNewlines=false
+                     disabled=this.readOnly}}
+  {{content-editable class="stakeholder-info"
+                     value=stakeholder.role
+                     placeholder="Stakeholder Name"
+                     type="text"
+                     allowNewlines=false
+                     disabled=this.readOnly}}
+</div>
+{{#if stakeholder.editMode}}
+  <footer>
+    <button{{action "cancel"}}>Cancel</button> <button{{action "save"}}>Save</button>
+  </footer>
+{{/if}}
