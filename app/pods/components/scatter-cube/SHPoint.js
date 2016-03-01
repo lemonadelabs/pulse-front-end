@@ -31,13 +31,11 @@ SHPoint.prototype.createMesh = function(opts) {
   return point
 }
 
-SHPoint.prototype.updateColor = function(cameraPosition) {
+SHPoint.prototype.updateColor = function(opts) {
 
-  var distanceCameraSHPoint = cameraPosition.distanceTo(this.mesh.position)
+  var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
 
-  var center = new THREE.Vector3(1,1,1)
-
-  var distanceCameraCenter = cameraPosition.distanceTo(center) // between 1.7 and 5
+  var distanceCameraCenter = opts.cameraPosition.distanceTo(opts.controlsTarget) // between 1.7 and 5
 
   var cameraZoom = distanceCameraCenter - 1.7 // between 0 and 3.3
 

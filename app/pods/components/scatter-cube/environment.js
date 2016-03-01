@@ -136,7 +136,10 @@ Environment.prototype.initPointCloud = function (opts) {
 
   this.onRenderFcts.push( function () { // depth
     _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-      sHPoint.updateColor(self.camera.position)
+      sHPoint.updateColor({
+        cameraPosition : self.camera.position,
+        controlsTarget : self.controls.target
+      })
     })
   })
 
