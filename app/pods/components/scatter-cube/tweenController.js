@@ -516,7 +516,6 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
 }
 
 TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) {
-  console.log(sHPoint)
   var self = this
   var environment = this.environment
   var time = this.environment.currentWeek
