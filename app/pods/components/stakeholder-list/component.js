@@ -5,6 +5,7 @@ export default Ember.Component.extend({
   classNameBindings:["fade-in-animation","fade-out-animation"],
   alertMessage:"Removed <b>10</b> stakeholders from project",
   selectedStakeholders:{},
+  selectedStakeholderIds:[],
   selectedStakeholderCount: 0,
   selection:false,
   multiSelection:false,
