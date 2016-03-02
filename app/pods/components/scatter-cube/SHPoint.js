@@ -35,9 +35,7 @@ SHPoint.prototype.createMesh = function(opts) {
 
 SHPoint.prototype.updateColor = function(opts) {
 
-  if (this.defocused) {
-    this.mesh.material.opacity = 0.08
-  } else {
+  if (this.focused) {
     var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
 
     var distanceCameraCenter = opts.cameraPosition.distanceTo(opts.controlsTarget) // between 1.7 and 5
@@ -52,6 +50,8 @@ SHPoint.prototype.updateColor = function(opts) {
     zeroOneFloat = zeroOneFloat * 0.7 + 0.3 // limit the range
 
     this.mesh.material.opacity = zeroOneFloat
+  } else {
+    this.mesh.material.opacity = 0.08
   }
 
 
