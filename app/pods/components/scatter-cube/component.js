@@ -78,14 +78,8 @@ export default Ember.Component.extend({
   }.observes('historyView'),
 
   focusOnSelectedStakeholders: function () {
-    if (this.get('focusOnStakeholders')) {
-      var focussedStakeholders = this.get('focussedStakeholders')
-      console.log(focussedStakeholders)
-      this.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
-      console.log('focus the stakeholders')
-    } else {
-      console.log('defocus the stakeholders')
-    }
+    var focussedStakeholders = this.get('focussedStakeholders')
+    this.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
   }.observes('focusOnStakeholders'),
 
   pauseRender: function () {
