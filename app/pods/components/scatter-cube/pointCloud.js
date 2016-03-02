@@ -46,7 +46,8 @@ PointCloud.prototype.createSHPoints = function() {
     var snapshots = stakeholder.get('stakeholderSnapshots')
     var point = new SHPoint({
       snapshots : snapshots,
-      selectedTime : self.selectedTime
+      selectedTime : self.selectedTime,
+      id : stakeholder.get('id'),
     })
     shPoints.push(point)
   })
