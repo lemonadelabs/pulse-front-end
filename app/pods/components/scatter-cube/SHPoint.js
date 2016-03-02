@@ -35,7 +35,7 @@ SHPoint.prototype.createMesh = function(opts) {
 SHPoint.prototype.updateColor = function(opts) {
 
   if (this.defocused) {
-    this.mesh.material.opacity = 0.1
+    this.mesh.material.opacity = 0.08
   } else {
     var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
 
