@@ -1,7 +1,7 @@
 import coordsFromSnapshot from './services/coordsFromSnapshot';
 
 export default function SHPoint (opts) {
-  this.focused = true
+  this.focussed = true
   this.id = opts.id
   this.mesh = this.createMesh(opts)
 }
@@ -35,7 +35,7 @@ SHPoint.prototype.createMesh = function(opts) {
 
 SHPoint.prototype.updateColor = function(opts) {
 
-  if (this.focused) {
+  if (this.focussed) {
     var distanceCameraSHPoint = opts.cameraPosition.distanceTo(this.mesh.position)
 
     var distanceCameraCenter = opts.cameraPosition.distanceTo(opts.controlsTarget) // between 1.7 and 5

@@ -24,14 +24,17 @@ export default Ember.Component.extend({
   }),
   onInit:function(){
     //We need to get isDeleted so that the observer will fire correctly :(
-    this.set('isDeleted',this.stakeholder.get('isDeleted'));
-    this.set('isDeleting',this.stakeholder.get('isDeleting'));
+    this.set('isDeleted', this.stakeholder.get('isDeleted'));
+    this.set('isDeleting', this.stakeholder.get('isDeleting'));
+
+    this.set('selected', this.stakeholder.get('isFocussed'))
   }.on('init'),
   click(){
     console.log(this.get('element').clientWidth);
     if(!this.get('editMode')){
       if(this.get('selected')){
         this.set('selected', false);
+        this.stakeholder.set('isFocussed', false);
         if(typeof this.get("onDeselectAction") === "function"){
           this.get('onDeselectAction')(this.stakeholder);
         }
@@ -41,6 +44,8 @@ export default Ember.Component.extend({
       }
       else {
         this.set('selected', true);
+        this.stakeholder.set('isFocussed', true);
+
         if(typeof this.get("onSelectAction") === "function"){
           this.get('onSelectAction')(this.stakeholder);
         }

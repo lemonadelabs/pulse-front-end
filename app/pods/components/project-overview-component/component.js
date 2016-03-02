@@ -4,9 +4,9 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
   selectedStakeholder: undefined,
-  focusedStakeholderIds: undefined,
-  selectedTime: undefined,
-  connectionView:false,
+  focussedStakeholders:{},
+  // selectedTime: undefined,
+  // connectionView:false,
   distributionView:false,
   historyView:false,
   showStakeholderList:false,
@@ -94,8 +94,8 @@ export default Ember.Component.extend({
         this.set("showStakeholderList", true)
       }
     },
-    setFocusedStakeholderIds(focusedStakeholderIds){
-      this.set('focusedStakeholderIds', focusedStakeholderIds)
+    focusOnSelectedStakeholders(){
+      this.set('focusOnStakeholders', true)
     }
   }
 

@@ -2,7 +2,8 @@
   {{stakeholder-list
     stakeholders=this.model.stakeholders
     toggleStakeholderList=(action 'toggleStakeholderList')
-    setFocusedStakeholderIds=(action 'setFocusedStakeholderIds')
+    focusOnSelectedStakeholders=(action 'focusOnSelectedStakeholders')
+    focussedStakeholders=this.focussedStakeholders
   }}
 {{/if}}
 
@@ -30,7 +31,8 @@
   connections=this.connections
   selectedStakeholder=this.selectedStakeholder
   selectedTime=this.selectedTime
-  focusedStakeholderIds=this.focusedStakeholderIds
+  focusOnStakeholders=this.focusOnStakeholders
+  focussedStakeholders
 
   connectionView=this.connectionView
   distributionView=this.distributionView

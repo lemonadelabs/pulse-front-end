@@ -284,6 +284,7 @@ Environment.prototype.historyViewUpdated = function () {
 
 Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
   this.triggerRender()
+
   this.pointCloud.focusPoints(opts)
 }
 
