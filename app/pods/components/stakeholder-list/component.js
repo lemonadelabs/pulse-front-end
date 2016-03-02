@@ -64,7 +64,6 @@ export default Ember.Component.extend({
       _.forIn(focussedStakeholders,function( value, key) {
         focussedStakeholders[key].set('isDeleting', true);
         Ember.run.later(function(){
-          console.log('stakeholderIdToDelete',key);
           focussedStakeholders[key].deleteRecord();
         }, 350)
       })
@@ -129,11 +128,12 @@ export default Ember.Component.extend({
     },
     undoAction:function(){
       console.log("undoAction");
-
+    },
+    defocusStakeholders:function(){
+      this.deselectStakeholders()
     }
   },
   observeFocussedStakeholderCount:function(){
-    console.log('focus')
     var focussedStakeholderCount = this.get('focussedStakeholderCount');
     if(focussedStakeholderCount < 0){
       console.warn('focussedStakeholderCount went into negative, setting back to 0');

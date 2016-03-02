@@ -79,6 +79,15 @@ export default Ember.Component.extend({
       this.set('selected', false)
     }
   }.observes('stakeholder.isDeleting'),
+
+  observeFocussedStatus:function(){
+    if (this.stakeholder.get('isFocussed')) {
+      this.set('selected', true)
+    } else {
+      this.set('selected', false)
+    }
+  }.observes('stakeholder.isFocussed'),
+
   observeEdit:function(){
     this.set('selected', false)
   }.observes('editMode')
