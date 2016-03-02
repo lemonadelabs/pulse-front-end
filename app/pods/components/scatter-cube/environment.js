@@ -282,9 +282,10 @@ Environment.prototype.historyViewUpdated = function () {
   }
 }
 
-
-
-
+Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
+  this.triggerRender()
+  this.pointCloud.focusPoints(opts)
+}
 
 Environment.prototype.animateViewWithTime = function (time, oldTime) {
   this.triggerRender()
