@@ -37,6 +37,18 @@ export default Ember.Component.extend({
       var stakeholderCount = this.get("selectedStakeholderCount");
       this.set('selectedStakeholderCount',stakeholderCount-1);
     },
+    addStakeholderIdToSelection:function(stakeholder){
+      var selectedStakeholderIds = this.get('selectedStakeholderIds')
+      selectedStakeholderIds.push(stakeholder.id)
+      this.set('selectedStakeholderIds', selectedStakeholderIds)
+    },
+    removeStakeholderIdFromSelection:function(stakeholder){
+      var selectedStakeholderIds = this.get('selectedStakeholderIds')
+      _.remove(selectedStakeholderIds, function (id) {
+        return id == stakeholder.id
+      })
+      this.set('selectedStakeholderIds', selectedStakeholderIds)
+    },
     startRemoveStakeholders:function(){
       var stakeholderCount = this.selectedStakeholderCount;
       var selectedStakeholders = this.get("selectedStakeholders");
