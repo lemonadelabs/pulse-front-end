@@ -4,6 +4,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
   selectedStakeholder: undefined,
+  focusedStakeholderIds: undefined,
   selectedTime: undefined,
   connectionView:false,
   distributionView:false,
