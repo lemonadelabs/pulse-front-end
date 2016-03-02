@@ -1,7 +1,8 @@
 import coordsFromSnapshot from './services/coordsFromSnapshot';
 
 export default function SHPoint (opts) {
-  this.defocused = Math.random() >= 0.5 // assign random boolean
+  this.focused = true
+  this.id = opts.id
   this.mesh = this.createMesh(opts)
 }
 
