@@ -93,6 +93,9 @@ export default Ember.Component.extend({
       else{
         this.set("showStakeholderList", true)
       }
+    },
+    setFocusedStakeholderIds(focusedStakeholderIds){
+      this.set('focusedStakeholderIds', focusedStakeholderIds)
     }
   }
 
