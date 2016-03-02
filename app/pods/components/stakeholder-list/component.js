@@ -4,9 +4,9 @@ export default Ember.Component.extend({
   classNames:["stakeholder-list"],
   classNameBindings:["fade-in-animation","fade-out-animation"],
   alertMessage:"Removed <b>10</b> stakeholders from project",
-  selectedStakeholders:{},
-  selectedStakeholderIds:[],
-  selectedStakeholderCount: 0,
+  focusedStakeholders:{},
+  focusedStakeholderIds:[],
+  focusedStakeholderCount: 0,
   selection:false,
   multiSelection:false,
   'fade-in-animation':true,
@@ -15,8 +15,8 @@ export default Ember.Component.extend({
   undoAction:"undoAction",
 
   deselectStakeholders:function(){
-    this.set('selectedStakeholders',{})
-    this.set('selectedStakeholderCount', 0);
+    this.set('focusedStakeholders',{})
+    this.set('focusedStakeholderCount', 0);
   },
   actions:{
     closeStakeholderList:function(){
@@ -27,43 +27,45 @@ export default Ember.Component.extend({
         self.get("toggleStakeholderList")();
      }, 250);
     },
+    showStakeholdersOnCube:function(){
+      this.send('closeStakeholderList')
+      this.get("setFocusedStakeholderIds")(this.get('focusedStakeholderIds'))
+    },
     addStakeholderToSelection:function(stakeholder){
-      this.set('selectedStakeholders.'+stakeholder.id, stakeholder);
-      var stakeholderCount = this.get("selectedStakeholderCount");
-      this.set('selectedStakeholderCount',stakeholderCount+1);
+      this.set('focusedStakeholders.'+stakeholder.id, stakeholder);
+      var stakeholderCount = this.get("focusedStakeholderCount");
+      this.set('focusedStakeholderCount',stakeholderCount+1);
+
+      var focusedStakeholderIds = this.get('focusedStakeholderIds')
+      focusedStakeholderIds.push(stakeholder.id)
+      this.set('focusedStakeholderIds', focusedStakeholderIds)
     },
     removeStakeholderFromSelection:function(stakeholder){
-      delete this.selectedStakeholders[stakeholder.id];
-      var stakeholderCount = this.get("selectedStakeholderCount");
-      this.set('selectedStakeholderCount',stakeholderCount-1);
-    },
-    addStakeholderIdToSelection:function(stakeholder){
-      var selectedStakeholderIds = this.get('selectedStakeholderIds')
-      selectedStakeholderIds.push(stakeholder.id)
-      this.set('selectedStakeholderIds', selectedStakeholderIds)
-    },
-    removeStakeholderIdFromSelection:function(stakeholder){
-      var selectedStakeholderIds = this.get('selectedStakeholderIds')
-      _.remove(selectedStakeholderIds, function (id) {
+      delete this.focusedStakeholders[stakeholder.id];
+      var stakeholderCount = this.get("focusedStakeholderCount");
+      this.set('focusedStakeholderCount',stakeholderCount-1);
+
+      var focusedStakeholderIds = this.get('focusedStakeholderIds')
+      _.remove(focusedStakeholderIds, function (id) {
         return id == stakeholder.id
       })
-      this.set('selectedStakeholderIds', selectedStakeholderIds)
+      this.set('focusedStakeholderIds', focusedStakeholderIds)
     },
     startRemoveStakeholders:function(){
-      var stakeholderCount = this.selectedStakeholderCount;
-      var selectedStakeholders = this.get("selectedStakeholders");
-      var firstStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
+      var stakeholderCount = this.focusedStakeholderCount;
+      var focusedStakeholders = this.get("focusedStakeholders");
+      var firstStakeholder = focusedStakeholders[Object.keys(focusedStakeholders)[0]];
 
-      _.forIn(selectedStakeholders,function( value, key) {
-        selectedStakeholders[key].set('isDeleting', true);
+      _.forIn(focusedStakeholders,function( value, key) {
+        focusedStakeholders[key].set('isDeleting', true);
         Ember.run.later(function(){
           console.log('stakeholderIdToDelete',key);
-          selectedStakeholders[key].deleteRecord();
+          focusedStakeholders[key].deleteRecord();
         }, 350)
       })
 
       if (stakeholderCount>1) {
-        this.set('alertMessage',"Removed <b>"+this.selectedStakeholderCount+"</b> stakeholders from project")
+        this.set('alertMessage',"Removed <b>"+this.focusedStakeholderCount+"</b> stakeholders from project")
       }
       else if (stakeholderCount === 1) {
         this.set('alertMessage',"Removed <b>"+firstStakeholder.get('name')+"</b> from project")
@@ -74,42 +76,42 @@ export default Ember.Component.extend({
       this.set("showNotification", true);
     },
     undoRemoveStakeholders:function(){
-      var selectedStakeholders = this.get("selectedStakeholders");
-      for (var stakeholderID in selectedStakeholders) {
-        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
-          selectedStakeholders[stakeholderID].set('isDeleting', false);
-          selectedStakeholders[stakeholderID].rollbackAttributes();
+      var focusedStakeholders = this.get("focusedStakeholders");
+      for (var stakeholderID in focusedStakeholders) {
+        if (focusedStakeholders.hasOwnProperty(stakeholderID)) {
+          focusedStakeholders[stakeholderID].set('isDeleting', false);
+          focusedStakeholders[stakeholderID].rollbackAttributes();
         }
       }
       this.deselectStakeholders();
     },
     finishRemoveStakeholders:function(){
-      var selectedStakeholders = this.get("selectedStakeholders");
-      for (var stakeholderID in selectedStakeholders) {
-        if (selectedStakeholders.hasOwnProperty(stakeholderID)) {
-         selectedStakeholders[stakeholderID].save();
+      var focusedStakeholders = this.get("focusedStakeholders");
+      for (var stakeholderID in focusedStakeholders) {
+        if (focusedStakeholders.hasOwnProperty(stakeholderID)) {
+         focusedStakeholders[stakeholderID].save();
         }
       }
       this.deselectStakeholders();
     },
     editStakeholder:function(){
-      var selectedStakeholders = this.get("selectedStakeholders");
-      var selectedStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
+      var focusedStakeholders = this.get("focusedStakeholders");
+      var selectedStakeholder = focusedStakeholders[Object.keys(focusedStakeholders)[0]];
       selectedStakeholder.set('editMode',true)
       this.deselectStakeholders();
     },
     pollStakeholders:function(){
-      var stakeholderCount = this.selectedStakeholderCount;
-      var selectedStakeholders = this.get("selectedStakeholders");
-      var firstStakeholder = selectedStakeholders[Object.keys(selectedStakeholders)[0]];
+      var stakeholderCount = this.focusedStakeholderCount;
+      var focusedStakeholders = this.get("focusedStakeholders");
+      var firstStakeholder = focusedStakeholders[Object.keys(focusedStakeholders)[0]];
 
-      for (var stakeholder in selectedStakeholders) {
-        if (selectedStakeholders.hasOwnProperty(stakeholder)) {
+      for (var stakeholder in focusedStakeholders) {
+        if (focusedStakeholders.hasOwnProperty(stakeholder)) {
           //TODO: Do some kind of API call to actually poll stakeholders
         }
       }
       if (stakeholderCount>1) {
-        this.set('alertMessage',"Polled <b>"+this.selectedStakeholderCount+"</b> stakeholders")
+        this.set('alertMessage',"Polled <b>"+this.focusedStakeholderCount+"</b> stakeholders")
       }
       else if (stakeholderCount === 1) {
         this.set('alertMessage',"Polled <b>"+firstStakeholder.name+"</b>")
@@ -124,22 +126,22 @@ export default Ember.Component.extend({
 
     }
   },
-  observeSelectedStakeholderCount:function(){
-    var selectedStakeholderCount = this.get('selectedStakeholderCount');
-    if(selectedStakeholderCount < 0){
-      console.warn('selectedStakeholderCount went into negative, setting back to 0');
-      this.set('selectedStakeholderCount',0)
+  observeFocusedStakeholderCount:function(){
+    var focusedStakeholderCount = this.get('focusedStakeholderCount');
+    if(focusedStakeholderCount < 0){
+      console.warn('focusedStakeholderCount went into negative, setting back to 0');
+      this.set('focusedStakeholderCount',0)
     }
-    if(selectedStakeholderCount === 1){
+    if(focusedStakeholderCount === 1){
       this.set('selection',true)
       this.set('multiSelection',false)
     }
-    else if (selectedStakeholderCount > 1) {
+    else if (focusedStakeholderCount > 1) {
       this.set('multiSelection',true)
     }
     else {
       this.set('selection',false)
       this.set('multiSelection',false)
     }
-  }.observes('selectedStakeholderCount')
+  }.observes('focusedStakeholderCount')
 });
