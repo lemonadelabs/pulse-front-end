@@ -33,7 +33,6 @@ LabelGroup.prototype.createLabels = function(opts) {
 };
 
 LabelGroup.prototype.animateLabels = function(quadrant) {
-  var self = this
   _.forEach(this.labels, function (label) {
     label.updateLocation(quadrant)
   })
