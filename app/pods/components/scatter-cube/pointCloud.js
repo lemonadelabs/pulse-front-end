@@ -62,8 +62,7 @@ PointCloud.prototype.focusPoints = function(opts) {
   _.forEach(this.sHPoints, function (point) {
     if (focusAll) {
       point.focussed = true
-    }
-    else{
+    } else {
       point.focussed = (opts.focussedStakeholders[point.id]) ? true : false
     }
   })

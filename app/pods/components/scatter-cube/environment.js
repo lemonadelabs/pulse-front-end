@@ -1,5 +1,6 @@
 import Ember from 'ember';
 
+import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -21,6 +22,7 @@ export default function Environment (component) {
   this.onUpdateTimeFcts = []
   this.onMouseoverFcts = []
   this.onMouseoutFcts = []
+  this.onQuadrantUpdateFxns = []
   this.nameBadgeVisible = false
   this.scene = new THREE.Scene();
   this.jSONloader = new THREE.JSONLoader()
@@ -45,6 +47,8 @@ Environment.prototype.init = function (opts) {
   ///////////////////////////////////// Stats /////////////////////////////////////
   this.initStats()
   this.initRendererStats()
+
+  this.initQuadrantCalculator({ camera : this.camera })
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -449,6 +453,28 @@ Environment.prototype.initRendererStats = function  () {
   })
 }
 
+Environment.prototype.initQuadrantCalculator = function(opts) {
+  var self = this
+
+
+
+  this.onQuadrantUpdateFxns.push(function (quadrant) {
+    console.log(quadrant)
+  })
+
+  this.onQuadrantUpdate = function (quadrant) {
+    self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
+      onQuadrantUpdateFxn(quadrant)
+    })
+  }
+
+  this.quadrantCalculator = new QuadrantCalculator({
+    camera : opts.camera,
+    onQuadrantUpdate : self.onQuadrantUpdate
+  })
+  this.onRenderFcts.push(this.quadrantCalculator.update.bind(this.quadrantCalculator))
+};
+
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// scatercube init fxns //////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -479,8 +505,14 @@ Environment.prototype.initLabelGroup = function () {
     camera: this.camera
   })
   this.labelGroup.createLabels()
+
+  setTimeout(function () {
+    self.labelGroup.initLocation(self.quadrantCalculator.quadrant)
+  },1)
+
+  this.onQuadrantUpdateFxns.push(this.labelGroup.animateLabels.bind(this.labelGroup))
+
   this.onRenderFcts.push(function () {
-    self.labelGroup.updateLocation(self.camera.position)
     self.billboardObjects(self.labelGroup.labels)
   })
 }
