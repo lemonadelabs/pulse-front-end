@@ -13,10 +13,30 @@ export default Ember.Component.extend({
   finishAction:"finishAction",
   undoAction:"undoAction",
 
-  deselectStakeholders:function(){
+  deselectStakeholders: function(){
     this.set('selectedStakeholders',{})
     this.set('selectedStakeholderCount', 0);
   },
+  scrollHandler: function(e){
+    this.calculatePerpectiveOrigin(e.target.scrollTop)
+  },
+  calculatePerpectiveOrigin: function(scrollTop){
+
+    var windowHeight = window.innerHeight;
+    var element = this.get('element')
+    var scrollHeight = element.scrollHeight;
+    var perspectiveOrigin = (windowHeight / 2) + scrollTop;
+    // var elementRect = this.get('element').getBoundingClientRect()
+
+    console.log(perspectiveOrigin);
+
+  },
+  onInit: function() {
+    var self = this;
+    this.get('element').addEventListener('scroll', function(e) {
+      self.scrollHandler(e)
+    })
+  }.on('didInsertElement'),
   actions:{
     closeStakeholderList:function(){
       var self = this;

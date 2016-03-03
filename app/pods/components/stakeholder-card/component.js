@@ -2,10 +2,32 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames:["stakeholder-card"],
+  attributeBindings: ['style'],
   classNameBindings:['isDeleting','selected','editMode'],
   selected:false,
   isDeleted:false,
   isDeleting:false,
+  style: Ember.computed('stakeholder.editMode',function(){
+    var style = '';
+    if(this.get('element')!==null){
+      var windowWidth = window.innerWidth;
+      var windowHeight = window.innerHeight;
+      var scrollTop = Ember.$('.stakeholder-list').scrollTop();
+
+      var elementRect = this.get('element').getBoundingClientRect()
+      var distanceToTranslateX = windowWidth / 2 - (elementRect.left + elementRect.width/2);
+      var distanceToTranslateY = (windowHeight / 2) - (elementRect.top + elementRect.height/2) -25;
+      console.log('windowHeight',windowHeight,'scrollTop',scrollTop,'elementRect',elementRect,'distanceToTranslateY',distanceToTranslateY);
+      if(this.stakeholder.editMode){
+        style = "transform :translate3d("+distanceToTranslateX+"px,"+distanceToTranslateY+"px,30px);"
+      }
+      else{
+        style = ""
+      }
+    }
+    return style.htmlSafe();
+
+  }),
   editMode: Ember.computed('stakeholder.editMode', function(){
     if(this.stakeholder.editMode){
       return this.stakeholder.editMode
@@ -28,7 +50,7 @@ export default Ember.Component.extend({
     this.set('isDeleting',this.stakeholder.get('isDeleting'));
   }.on('init'),
   click(){
-    console.log(this.get('element').clientWidth);
+
     if(!this.get('editMode')){
       if(this.get('selected')){
         this.set('selected', false);
