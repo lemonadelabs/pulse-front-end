@@ -502,11 +502,7 @@ Environment.prototype.initLabelGroup = function () {
     scene: this.scene,
     camera: this.camera
   })
-  this.labelGroup.createLabels()
-
-  setTimeout(function () {
-    self.labelGroup.initLocation(self.quadrantCalculator.quadrant)
-  },1)
+  this.labelGroup.createLabels({ initialQuadrant : this.quadrantCalculator.quadrant })
 
   this.onQuadrantUpdateFxns.push(this.labelGroup.animateLabels.bind(this.labelGroup))
 

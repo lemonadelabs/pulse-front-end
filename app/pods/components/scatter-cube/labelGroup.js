@@ -3,16 +3,12 @@ import Label from './label'
 export default function LabelGroup (opts) {
   this.objLoader = new THREE.ObjectLoader()
   this.scene = opts.scene
-  this.camera = opts.camera
 
   this.labels = []
-  this.quadrant = null
-
-  this.prevQuadrant = undefined
 
 }
 
-LabelGroup.prototype.createLabels = function() {
+LabelGroup.prototype.createLabels = function(opts) {
   var self = this
   this.objLoader.load("./assets/geometries/labels.json", function (labelScene) {
     for (var i = 0; i < 9; i++) {
@@ -32,12 +28,7 @@ LabelGroup.prototype.createLabels = function() {
       self.labels.push(label)
       self.scene.add(label.mesh)
     }
-  })
-};
-
-LabelGroup.prototype.initLocation = function(quadrant) {
-  _.forEach(this.labels, function (label) {
-    label.initLocation(quadrant)
+    self.animateLabels(opts.initialQuadrant)
   })
 };
 
