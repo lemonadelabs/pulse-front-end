@@ -456,8 +456,6 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function(opts) {
   var self = this
 
-
-
   this.onQuadrantUpdateFxns.push(function (quadrant) {
     console.log(quadrant)
   })
