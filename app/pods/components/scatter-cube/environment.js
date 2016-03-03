@@ -48,7 +48,7 @@ Environment.prototype.init = function (opts) {
   this.initStats()
   this.initRendererStats()
 
-  this.initQuadrantCalculator({ camera : this.camera })
+  this.initQuadrantCalculator()
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -453,12 +453,8 @@ Environment.prototype.initRendererStats = function  () {
   })
 }
 
-Environment.prototype.initQuadrantCalculator = function(opts) {
+Environment.prototype.initQuadrantCalculator = function() {
   var self = this
-
-  this.onQuadrantUpdateFxns.push(function (quadrant) {
-    console.log(quadrant)
-  })
 
   this.onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
@@ -467,7 +463,7 @@ Environment.prototype.initQuadrantCalculator = function(opts) {
   }
 
   this.quadrantCalculator = new QuadrantCalculator({
-    camera : opts.camera,
+    cameraPosition : self.camera.position,
     onQuadrantUpdate : self.onQuadrantUpdate
   })
   this.onRenderFcts.push(this.quadrantCalculator.update.bind(this.quadrantCalculator))

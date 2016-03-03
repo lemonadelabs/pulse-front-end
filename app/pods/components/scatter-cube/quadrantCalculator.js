@@ -1,13 +1,13 @@
 export default function QuadrantCalculator (opts) {
-  this.camera = opts.camera
+  this.cameraPosition = opts.cameraPosition
   this.onQuadrantUpdate = opts.onQuadrantUpdate
-  this.quadrant = undefined
+  this.quadrant = 1 // initial quadrant
   this.prevQuadrant = undefined
 }
 
 QuadrantCalculator.prototype.update = function() {
-  var x = this.camera.position.x
-  var z = this.camera.position.z
+  var x = this.cameraPosition.x
+  var z = this.cameraPosition.z
   var quadrant
   if (x <= 1 && z <= 1) {
     quadrant = 0
