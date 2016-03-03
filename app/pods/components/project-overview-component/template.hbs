@@ -25,6 +25,12 @@
 
 }}
 
+{{#if this.focusOnStakeholders}}
+  <p>Stakeholders are filtered</p>
+  <p {{action 'removeStakeholdersFilter'}}>Cancel</p>
+{{/if}}
+
+
 {{scatter-cube
   project=this.model
   stakeholders=this.data.stakeholders

@@ -96,6 +96,9 @@ export default Ember.Component.extend({
     },
     focusOnSelectedStakeholders(){
       this.set('focusOnStakeholders', true)
+    },
+    removeStakeholdersFilter(){
+      this.set('focusOnStakeholders', false)
     }
   }
 
