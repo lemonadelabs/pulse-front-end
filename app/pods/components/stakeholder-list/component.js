@@ -136,11 +136,6 @@ export default Ember.Component.extend({
       this.get('focusOnSelectedStakeholders')()
       this.get('stakeholderFilter').trigger('showFocussedStakeholders', this.get('focussedStakeholders'))
     },
-    // showStakeholdersOnCube:function(){
-    //   this.send('closeStakeholderList')
-    //   this.get('focusOnSelectedStakeholders')()
-    //   // this.get("setFocussedStakeholders")(this.get('focussedStakeholders'))
-    // },
   },
   observeFocussedStakeholderCount:function(){
     var focussedStakeholderCount = this.get('focussedStakeholderCount');
