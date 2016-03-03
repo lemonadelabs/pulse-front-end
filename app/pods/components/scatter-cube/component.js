@@ -17,6 +17,13 @@ export default Ember.Component.extend({
       self.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
     })
   },
+
+  removeStakeholderFilter: function () {
+    if (!this.get('focusOnStakeholders')) {
+      this.environment.foccussedStakeholdersUpdated( { focussedStakeholders : undefined } )
+    }
+  }.observes('focusOnStakeholders'),
+
   initScatterCube: function () {
     var environment = new Environment(this)
     this.set('environment', environment)
@@ -84,14 +91,6 @@ export default Ember.Component.extend({
   onUpdateHistoryView: function () {
     this.environment.historyViewUpdated()
   }.observes('historyView'),
-
-  focusOnSelectedStakeholders: function () {
-    var focussedStakeholders = {}
-    if (this.get('focusOnStakeholders')) {
-      focussedStakeholders = this.get('focussedStakeholders')
-    }
-    this.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
-  }.observes('focusOnStakeholders'),
 
   pauseRender: function () {
     this.environment.pauseRender()
