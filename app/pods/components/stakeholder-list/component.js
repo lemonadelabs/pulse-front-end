@@ -1,6 +1,10 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+
+  stakeholderFilter: Ember.inject.service(),
+
+
   classNames:["stakeholder-list"],
   classNameBindings:["fade-in-animation","fade-out-animation"],
   alertMessage:"Removed <b>10</b> stakeholders from project",
@@ -39,11 +43,11 @@ export default Ember.Component.extend({
         self.get("toggleStakeholderList")();
       }, 250);
     },
-    showStakeholdersOnCube:function(){
-      this.send('closeStakeholderList')
-      this.get('focusOnSelectedStakeholders')()
-      // this.get("setFocussedStakeholders")(this.get('focussedStakeholders'))
-    },
+    // showStakeholdersOnCube:function(){
+    //   this.send('closeStakeholderList')
+    //   this.get('focusOnSelectedStakeholders')()
+    //   // this.get("setFocussedStakeholders")(this.get('focussedStakeholders'))
+    // },
     addStakeholderToSelection:function(stakeholder){
       // var focussedStakeholders = this.get('focussedStakeholders')
       this.set('focussedStakeholders.'+stakeholder.id, stakeholder);
@@ -131,6 +135,10 @@ export default Ember.Component.extend({
     },
     defocusStakeholders:function(){
       this.deselectStakeholders()
+    },
+    sendMessageToScattercube:function(){
+      this.send('closeStakeholderList')
+      this.get('stakeholderFilter').trigger('showFocussedStakeholders', this.get('focussedStakeholders'))
     }
   },
   observeFocussedStakeholderCount:function(){
