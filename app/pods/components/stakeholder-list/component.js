@@ -2,8 +2,15 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNames:["stakeholder-list"],
+  attributeBindings: ['style'],
   classNameBindings:["fade-in-animation","fade-out-animation"],
   alertMessage:"Removed <b>10</b> stakeholders from project",
+  style: Ember.computed('perspectiveOriginY', function(){
+    var perspectiveOriginY = this.get('perspectiveOriginY');
+    console.log(perspectiveOriginY);
+    return `perspective-origin: 50% ${perspectiveOriginY}px`.htmlSafe()
+  }),
+  perspectiveOriginY:0,
   selectedStakeholders:{},
   selectedStakeholderCount: 0,
   selection:false,
@@ -17,26 +24,33 @@ export default Ember.Component.extend({
     this.set('selectedStakeholders',{})
     this.set('selectedStakeholderCount', 0);
   },
-  scrollHandler: function(e){
-    this.calculatePerpectiveOrigin(e.target.scrollTop)
+  scrollHandler: function(){
+    var scrollTop = this.get('element').scrollTop;
+
+    var perspectiveOriginY = this.calculatePerpectiveOriginY(scrollTop)
+    this.set('perspectiveOriginY', perspectiveOriginY);
   },
-  calculatePerpectiveOrigin: function(scrollTop){
-
+  calculatePerpectiveOriginY: function(scrollTop){
     var windowHeight = window.innerHeight;
-    var element = this.get('element')
-    var scrollHeight = element.scrollHeight;
     var perspectiveOrigin = (windowHeight / 2) + scrollTop;
-    // var elementRect = this.get('element').getBoundingClientRect()
-
-    console.log(perspectiveOrigin);
-
+    return perspectiveOrigin
   },
   onInit: function() {
-    var self = this;
-    this.get('element').addEventListener('scroll', function(e) {
-      self.scrollHandler(e)
-    })
+    //TODO: Work out how to do this without Jquery proxy
+    this.get('element').addEventListener('scroll', Ember.$.proxy(function() {
+      Ember.run.debounce(this, this.scrollHandler, 300, false);
+    }, this))
+
+    var perspectiveOriginY = this.calculatePerpectiveOriginY(0)
+    this.set('perpectiveOriginY', perspectiveOriginY);
+
   }.on('didInsertElement'),
+  onRemove: function() {
+    this.get('element').removeEventListener('scroll', Ember.$.proxy(function() {
+      Ember.run.debounce(this, this.scrollHandler, 300, false);
+    }, this))
+
+  }.on('willDestroyElement'),
   actions:{
     closeStakeholderList:function(){
       var self = this;
