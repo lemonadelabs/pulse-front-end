@@ -16,9 +16,6 @@ export default Ember.Component.extend({
       console.log(focussedStakeholders)
       self.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
     })
-
-    // stakeholderFilter.trigger('showFocussedStakeholders', theStakeholders)
-
   },
   initScatterCube: function () {
     var environment = new Environment(this)

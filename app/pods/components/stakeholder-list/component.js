@@ -43,11 +43,6 @@ export default Ember.Component.extend({
         self.get("toggleStakeholderList")();
       }, 250);
     },
-    // showStakeholdersOnCube:function(){
-    //   this.send('closeStakeholderList')
-    //   this.get('focusOnSelectedStakeholders')()
-    //   // this.get("setFocussedStakeholders")(this.get('focussedStakeholders'))
-    // },
     addStakeholderToSelection:function(stakeholder){
       // var focussedStakeholders = this.get('focussedStakeholders')
       this.set('focussedStakeholders.'+stakeholder.id, stakeholder);
@@ -138,8 +133,14 @@ export default Ember.Component.extend({
     },
     sendMessageToScattercube:function(){
       this.send('closeStakeholderList')
+      this.get('focusOnSelectedStakeholders')()
       this.get('stakeholderFilter').trigger('showFocussedStakeholders', this.get('focussedStakeholders'))
-    }
+    },
+    // showStakeholdersOnCube:function(){
+    //   this.send('closeStakeholderList')
+    //   this.get('focusOnSelectedStakeholders')()
+    //   // this.get("setFocussedStakeholders")(this.get('focussedStakeholders'))
+    // },
   },
   observeFocussedStakeholderCount:function(){
     var focussedStakeholderCount = this.get('focussedStakeholderCount');
