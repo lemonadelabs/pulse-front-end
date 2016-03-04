@@ -46,10 +46,24 @@ PointCloud.prototype.createSHPoints = function() {
     var snapshots = stakeholder.get('stakeholderSnapshots')
     var point = new SHPoint({
       snapshots : snapshots,
-      selectedTime : self.selectedTime
+      selectedTime : self.selectedTime,
+      id : stakeholder.get('id'),
     })
     shPoints.push(point)
   })
   return shPoints
 };
 
+PointCloud.prototype.focusPoints = function(opts) {
+  var focusAll
+  if (_.isEmpty(opts.focussedStakeholders)) {
+    focusAll = true
+  }
+  _.forEach(this.sHPoints, function (point) {
+    if (focusAll) {
+      point.focussed = true
+    } else {
+      point.focussed = (opts.focussedStakeholders[point.id]) ? true : false
+    }
+  })
+};

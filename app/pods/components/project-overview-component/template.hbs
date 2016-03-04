@@ -2,6 +2,8 @@
   {{stakeholder-list
     stakeholders=this.model.stakeholders
     toggleStakeholderList=(action 'toggleStakeholderList')
+    focusOnSelectedStakeholders=(action 'focusOnSelectedStakeholders')
+    focussedStakeholders=this.focussedStakeholders
   }}
 {{/if}}
 
@@ -23,12 +25,19 @@
 
 }}
 
+{{#if this.focusOnStakeholders}}
+  <p>Stakeholders are filtered</p>
+  <p {{action 'removeStakeholdersFilter'}}>Cancel</p>
+{{/if}}
+
+
 {{scatter-cube
   project=this.model
   stakeholders=this.data.stakeholders
   connections=this.connections
   selectedStakeholder=this.selectedStakeholder
   selectedTime=this.selectedTime
+  focusOnStakeholders=this.focusOnStakeholders
 
   connectionView=this.connectionView
   distributionView=this.distributionView

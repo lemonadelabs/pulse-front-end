@@ -7,7 +7,7 @@ DangerZone.prototype.createMesh = function(geometry) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xFF2143,
-    side: THREE.BackSide,
+    side: THREE.FrontSide,
     transparent: true,
     opacity: 0.5,
   });

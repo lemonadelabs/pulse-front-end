@@ -3,12 +3,27 @@ import Environment from './environment';
 
 export default Ember.Component.extend({
   store: Ember.inject.service(),
+  stakeholderFilter: Ember.inject.service(),
 
   classNames: ['scatter-cube'],
 
   didInsertElement() {
+    var self = this
     this.initScatterCube()
+
+    var stakeholderFilter = this.get('stakeholderFilter')
+    stakeholderFilter.on('showFocussedStakeholders', function (focussedStakeholders) {
+      console.log(focussedStakeholders)
+      self.environment.foccussedStakeholdersUpdated({ focussedStakeholders : focussedStakeholders })
+    })
   },
+
+  removeStakeholderFilter: function () {
+    if (!this.get('focusOnStakeholders')) {
+      this.environment.foccussedStakeholdersUpdated( { focussedStakeholders : undefined } )
+    }
+  }.observes('focusOnStakeholders'),
+
   initScatterCube: function () {
     var environment = new Environment(this)
     this.set('environment', environment)

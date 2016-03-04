@@ -1,5 +1,6 @@
 import Ember from 'ember';
 
+import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
 import LabelGroup from './labelGroup';
@@ -21,6 +22,7 @@ export default function Environment (component) {
   this.onUpdateTimeFcts = []
   this.onMouseoverFcts = []
   this.onMouseoutFcts = []
+  this.onQuadrantUpdateFxns = []
   this.nameBadgeVisible = false
   this.scene = new THREE.Scene();
   this.jSONloader = new THREE.JSONLoader()
@@ -45,6 +47,8 @@ Environment.prototype.init = function (opts) {
   ///////////////////////////////////// Stats /////////////////////////////////////
   this.initStats()
   this.initRendererStats()
+
+  this.initQuadrantCalculator()
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -136,7 +140,10 @@ Environment.prototype.initPointCloud = function (opts) {
 
   this.onRenderFcts.push( function () { // depth
     _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
-      sHPoint.updateColor(self.camera.position)
+      sHPoint.updateColor({
+        cameraPosition : self.camera.position,
+        controlsTarget : self.controls.target
+      })
     })
   })
 
@@ -279,9 +286,11 @@ Environment.prototype.historyViewUpdated = function () {
   }
 }
 
+Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
+  this.triggerRender()
 
-
-
+  this.pointCloud.focusPoints(opts)
+}
 
 Environment.prototype.animateViewWithTime = function (time, oldTime) {
   this.triggerRender()
@@ -444,6 +453,22 @@ Environment.prototype.initRendererStats = function  () {
   })
 }
 
+Environment.prototype.initQuadrantCalculator = function() {
+  var self = this
+
+  this.onQuadrantUpdate = function (quadrant) {
+    self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
+      onQuadrantUpdateFxn(quadrant)
+    })
+  }
+
+  this.quadrantCalculator = new QuadrantCalculator({
+    cameraPosition : self.camera.position,
+    onQuadrantUpdate : self.onQuadrantUpdate
+  })
+  this.onRenderFcts.push(this.quadrantCalculator.update.bind(this.quadrantCalculator))
+};
+
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// scatercube init fxns //////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -473,9 +498,11 @@ Environment.prototype.initLabelGroup = function () {
     scene: this.scene,
     camera: this.camera
   })
-  this.labelGroup.createLabels()
+  this.labelGroup.createLabels({ initialQuadrant : this.quadrantCalculator.quadrant })
+
+  this.onQuadrantUpdateFxns.push(this.labelGroup.animateLabels.bind(this.labelGroup))
+
   this.onRenderFcts.push(function () {
-    self.labelGroup.updateLocation(self.camera.position)
     self.billboardObjects(self.labelGroup.labels)
   })
 }
