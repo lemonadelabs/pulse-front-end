@@ -47,13 +47,15 @@ export default Ember.Component.extend({
     var windowHeight = window.innerHeight;
     var perspectiveOriginY = (windowHeight / 2) + scrollTop;
     this.set('perspectiveOriginY', perspectiveOriginY);
+    console.log('calc');
   },
-  onInit: function() {
+  didInsertElement: function() {
     this.get('element').addEventListener('scroll', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
     window.addEventListener('resize', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
-    this.calculatePerspectiveOriginY();
-
-  }.on('didInsertElement'),
+    Ember.run.next(
+      () => { this.calculatePerspectiveOriginY() }
+    );
+  },
   onRemove: function() {
     this.get('element').removeEventListener('scroll', Ember.$.proxy(function() {
       Ember.run.debounce(this, this.scrollHandler, 300, false);

@@ -24,6 +24,17 @@ export default Ember.Component.extend({
   transformationDistance:undefined,
   editMode: false,
   readOnly: true,
+  onInit:function(){
+    //We need to get isDeleted so that the observer will fire correctly :(
+    this.set('isDeleted',this.stakeholder.get('isDeleted'));
+    this.set('isDeleting',this.stakeholder.get('isDeleting'));
+    window.addEventListener('resize',
+      () => {
+        if(this.editMode){
+          Ember.run.debounce(this, this.updateTransformationDistance, 400, false)
+        }
+      })
+  }.on('init'),
   calculateTransformationDistance: function(){
     var windowWidth = window.innerWidth;
     var windowHeight = window.innerHeight;
@@ -46,18 +57,6 @@ export default Ember.Component.extend({
     this.set('transformationDistance',distanceToTranslate);
 
   },
-  onInit:function(){
-    //We need to get isDeleted so that the observer will fire correctly :(
-    this.set('isDeleted',this.stakeholder.get('isDeleted'));
-    this.set('isDeleting',this.stakeholder.get('isDeleting'));
-    window.addEventListener('resize',
-    () => {
-      if(this.editMode){
-        Ember.run.debounce(this, this.updateTransformationDistance, 400, false)
-      }
-    })
-
-  }.on('init'),
   click(){
     if(!this.get('editMode')){
       if(this.get('selected')){

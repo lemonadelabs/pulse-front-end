@@ -9,8 +9,6 @@
   min-width: 300px;
   align-items: flex-start;
   display: inline-flex;
-  width: 200%;
-  height: 200%;
   border: solid 1px white;
   background-color: color(var(--pulseBlack) alpha(-10%));
   padding: 1em;
