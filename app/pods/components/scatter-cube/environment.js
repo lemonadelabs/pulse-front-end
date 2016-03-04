@@ -456,6 +456,8 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
+  this.onQuadrantUpdateFxns.push(function (quadrant) { console.log( quadrant ) })
+
   this.onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
       onQuadrantUpdateFxn(quadrant)
@@ -590,12 +592,18 @@ Environment.prototype.initHistoryTailGroup = function () {
 }
 
 Environment.prototype.initNav = function () {
+  var self = this
+
   this.navController = new NavController( { environment : this } )
   this.navArrows = new NavArrows({
     scene : this.scene,
     jSONloader : this.jSONloader,
     navController : this.navController,
-    domEvents : this.domEvents
+    domEvents : this.domEvents,
+    initialQuadrant: self.quadrantCalculator.quadrant
+  })
+  this.onQuadrantUpdateFxns.push(function (quadrant) {
+    self.navArrows.navArrowAnimator.update({ quadrant : quadrant })
   })
 }
 

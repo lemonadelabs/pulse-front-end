@@ -1,5 +1,9 @@
+import NavArrowAnimator from './navArrowAnimator';
+
 export default function NavArrows (opts) {
 
+  this.arrowsLoaded = 0
+  this.initialQuadrant = opts.initialQuadrant
   this.sideArrows = []
   this.cornerArrows = []
 
@@ -108,17 +112,17 @@ export default function NavArrows (opts) {
   ///////////////////////////////////////////////////////////////////////////
   ///////////////////////////////// corners /////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////
-  this.vitalHiLoPowerLeft = this.createArrow({ name : 'vitalHiLoPowerLeft' })
-  this.vitalHiLoPowerRight = this.createArrow({ name : 'vitalHiLoPowerRight' })
+  this.powerLoLovitalLeft = this.createArrow({ name : 'powerLoLovitalLeft', quadrant : 0 })
+  this.powerLoLovitalRight = this.createArrow({ name : 'powerLoLovitalRight', quadrant : 0 })
 
-  this.powerHiHiVitalLeft = this.createArrow({ name : 'powerHiHiVitalLeft' })
-  this.powerHiHiVitalRight = this.createArrow({ name : 'powerHiHiVitalRight' })
+  this.vitalLoHiPowerLeft = this.createArrow({ name : 'vitalLoHiPowerLeft', quadrant : 1 })
+  this.vitalLoHiPowerRight = this.createArrow({ name : 'vitalLoHiPowerRight', quadrant : 1 })
 
-  this.vitalLoHiPowerLeft = this.createArrow({ name : 'vitalLoHiPowerLeft' })
-  this.vitalLoHiPowerRight = this.createArrow({ name : 'vitalLoHiPowerRight' })
+  this.powerHiHiVitalLeft = this.createArrow({ name : 'powerHiHiVitalLeft', quadrant : 2 })
+  this.powerHiHiVitalRight = this.createArrow({ name : 'powerHiHiVitalRight', quadrant : 2 })
 
-  this.powerLoLovitalLeft = this.createArrow({ name : 'powerLoLovitalLeft' })
-  this.powerLoLovitalRight = this.createArrow({ name : 'powerLoLovitalRight' })
+  this.vitalHiLoPowerLeft = this.createArrow({ name : 'vitalHiLoPowerLeft', quadrant : 3 })
+  this.vitalHiLoPowerRight = this.createArrow({ name : 'vitalHiLoPowerRight', quadrant : 3 })
   // ///////////////////////////////////////////////////////////////////////////
   // ////////////////////////////////// sides //////////////////////////////////
   // ///////////////////////////////////////////////////////////////////////////
@@ -134,8 +138,8 @@ export default function NavArrows (opts) {
   this.sideVitalHiLoSupportLeft = this.createArrow({ name : 'sideVitalHiLoSupportLeft' })
   this.sideVitalHiLoSupportRight = this.createArrow({ name : 'sideVitalHiLoSupportRight' })
 
+  this.navArrowAnimator = new NavArrowAnimator({cornerArrows : this.cornerArrows})
 }
-
 
 NavArrows.prototype.createArrow = function(opts) {
   var self = this
@@ -144,7 +148,8 @@ NavArrows.prototype.createArrow = function(opts) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xffffff,
-    transparent: true,
+    // transparent: false,
+    visible: false,
     side: THREE.DoubleSide
     // opacity: 0,
     // depthTest: false // makes the labels render in front of the danger zone
@@ -169,6 +174,8 @@ NavArrows.prototype.createArrow = function(opts) {
   self.jSONloader.load(path, function (geometry) {
 
     var arrow = {}
+    arrow.tweenCounter = {}
+    arrow.quadrant = opts.quadrant
     arrow.mesh = new THREE.Mesh(geometry, material)
     arrow.mesh.name = name
 
@@ -204,7 +211,8 @@ NavArrows.prototype.createArrow = function(opts) {
       $('.scatter-cube').removeClass('threejs-hover')
     }, false)
 
-
+    self.arrowsLoaded += 1
+    if (self.arrowsLoaded === 16) { self.navArrowAnimator.update({ quadrant : self.initialQuadrant }) }
   })
 
 
