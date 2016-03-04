@@ -163,7 +163,6 @@ Environment.prototype.initConnections = function (opts) {
   var connections = opts.connections
 
   /////////////////// Create Connecting Lines ////////////////////////
-  // console.log(this.currentWeek)
   this.lineGroup = new LineGroup({
     connections : connections
   })
@@ -456,7 +455,7 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
-  this.onQuadrantUpdateFxns.push(function (quadrant) { console.log( quadrant ) })
+  // this.onQuadrantUpdateFxns.push(function (quadrant) { console.log('quadrant: ', quadrant ) })
 
   this.onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
@@ -603,7 +602,10 @@ Environment.prototype.initNav = function () {
     initialQuadrant: self.quadrantCalculator.quadrant
   })
   this.onQuadrantUpdateFxns.push(function (quadrant) {
-    self.navArrows.navArrowAnimator.update({ quadrant : quadrant })
+
+    if (self.camera.position.distanceTo(self.controls.target) < 50) {
+      self.navArrows.navArrowAnimator.update({ quadrant : quadrant })
+    }
   })
 }
 

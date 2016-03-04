@@ -20,8 +20,6 @@ NavArrowAnimator.prototype.update = function(opts) {
     }
   })
 
-  console.log('in', toFadeIn)
-  console.log('out', toFadeIn)
   _.forEach(toFadeIn, function (arrow) {
     self.fadeInArrow({ arrow : arrow })
   })
@@ -56,9 +54,7 @@ NavArrowAnimator.prototype.fadeInArrow = function(opts) {
   })
   .onComplete(function () {
     material.transparent = false
-    console.log(self.tweens)
     delete self.tweens[name]
-    console.log(self.tweens)
   })
   this.tweens[name] = fadeInTween
   fadeInTween.start()

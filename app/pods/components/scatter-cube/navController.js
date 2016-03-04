@@ -22,7 +22,7 @@ NavController.prototype.fadeOutArrows = function(opts) {
         arrow.mesh.material.transparent = true
       })
       .onComplete(function () {
-        arrow.mesh.visible = false
+        arrow.mesh.material.visible = false
         arrow.mesh.material.transparent = false
       })
       .start();
@@ -42,7 +42,7 @@ NavController.prototype.fadeInArrows = function(opts) {
       .easing(opts.easing)
       .onStart(function () {
         arrow.mesh.material.transparent = true
-        arrow.mesh.visible = true
+        arrow.mesh.material.visible = true
       })
       .onComplete(function () {
         arrow.mesh.material.transparent = false
@@ -62,7 +62,7 @@ NavController.prototype.fadeInMeshes = function(opts) {
 
     mesh.material.opacity = 0
     mesh.material.transparent = true
-    mesh.visible = true
+    mesh.material.visible = true
 
     var tween = new TWEEN.Tween(mesh.material)
       .to( { opacity : opts.opacity }, opts.duration )
@@ -90,7 +90,7 @@ NavController.prototype.fadeOutMeshes = function(opts) {
       .to( { opacity : 0 }, opts.duration )
       .easing(opts.easing)
       .onComplete(function () {
-        mesh.visible = false
+        mesh.material.visible = false
         mesh.material.transparent = false
       })
       .start();
@@ -182,6 +182,9 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
     destination : self.returnLocation,
     duration : 800,
   })
+  .onStart(function () {
+    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+  })
   dollyInTween.onComplete(function () {
 
     var labelFadeIn = self.fadeInMeshes({
@@ -227,7 +230,7 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   fadeOutTween.onComplete(function () {
     var cornerArrows = self.environment.navArrows['cornerArrows']
     _.forEach(cornerArrows, function (arrow) {
-      arrow.mesh.visible = false
+      arrow.mesh.material.visible = false
       arrow.mesh.transparent = false
     })
   })
@@ -302,6 +305,9 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
     destination : self.returnLocation,
     duration : 800,
   })
+  .onStart(function () {
+    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+  })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
       opacity : 1,
@@ -342,7 +348,7 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   fadeOutTween.onComplete(function () {
     var cornerArrows = self.environment.navArrows['cornerArrows']
     _.forEach(cornerArrows, function (arrow) {
-      arrow.mesh.visible = false
+      arrow.mesh.material.visible = false
       arrow.mesh.transparent = false
     })
   })
@@ -418,6 +424,9 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     destination : self.returnLocation,
     duration : 800,
   })
+  .onStart(function () {
+    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+  })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
       opacity : 1,
@@ -458,7 +467,7 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   fadeOutTween.onComplete(function () {
     var cornerArrows = self.environment.navArrows['cornerArrows']
     _.forEach(cornerArrows, function (arrow) {
-      arrow.mesh.visible = false
+      arrow.mesh.material.visible = false
       arrow.mesh.transparent = false
     })
   })
@@ -532,6 +541,9 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
   var dollyInTween = self.dollyZoom({
     destination : self.returnLocation,
     duration : 800,
+  })
+  .onStart(function () {
+    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
     var labelFadeIn = self.fadeInMeshes({
