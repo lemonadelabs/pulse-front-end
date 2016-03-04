@@ -24,25 +24,16 @@ export default Ember.Component.extend({
     this.set('selectedStakeholders',{})
     this.set('selectedStakeholderCount', 0);
   },
-  scrollHandler: function(){
+  calculatePerspectiveOriginY: function(){
     var scrollTop = this.get('element').scrollTop;
-
-    var perspectiveOriginY = this.calculatePerpectiveOriginY(scrollTop)
+    var windowHeight = window.innerHeight;
+    var perspectiveOriginY = (windowHeight / 2) + scrollTop;
     this.set('perspectiveOriginY', perspectiveOriginY);
   },
-  calculatePerpectiveOriginY: function(scrollTop){
-    var windowHeight = window.innerHeight;
-    var perspectiveOrigin = (windowHeight / 2) + scrollTop;
-    return perspectiveOrigin
-  },
   onInit: function() {
-    //TODO: Work out how to do this without Jquery proxy
-    this.get('element').addEventListener('scroll', Ember.$.proxy(function() {
-      Ember.run.debounce(this, this.scrollHandler, 300, false);
-    }, this))
-
-    var perspectiveOriginY = this.calculatePerpectiveOriginY(0)
-    this.set('perpectiveOriginY', perspectiveOriginY);
+    this.get('element').addEventListener('scroll', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
+    window.addEventListener('resize', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
+    this.calculatePerspectiveOriginY();
 
   }.on('didInsertElement'),
   onRemove: function() {

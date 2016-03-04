@@ -7,16 +7,12 @@ export default Ember.Component.extend({
   selected:false,
   isDeleted:false,
   isDeleting:false,
-  style: Ember.computed('stakeholder.editMode',function(){
+  style: Ember.computed('transformationDistance',function(){
     var style = '';
     if(this.get('element')!==null){
-      var windowWidth = window.innerWidth;
-      var windowHeight = window.innerHeight;
-      var elementRect = this.get('element').getBoundingClientRect()
-      var distanceToTranslateX = windowWidth / 2 - (elementRect.left + elementRect.width/2);
-      var distanceToTranslateY = (windowHeight / 2) - (elementRect.top + elementRect.height/2) -25;
+       var transformationDistance = this.get('transformationDistance');
       if(this.stakeholder.editMode){
-        style = "transform :translate3d("+distanceToTranslateX+"px,"+distanceToTranslateY+"px,30px);"
+        style = `transform: translate3d(${transformationDistance.x}px,${transformationDistance.y}px,30px);`
       }
       else{
         style = ""
@@ -25,29 +21,44 @@ export default Ember.Component.extend({
     return style.htmlSafe();
 
   }),
-  editMode: Ember.computed('stakeholder.editMode', function(){
-    if(this.stakeholder.editMode){
-      return this.stakeholder.editMode
-    }
-    else{
-      return false
-    }
-     }),
-  readOnly: Ember.computed('editMode', function(){
-    if (this.get("editMode")) {
-      return false
-    }
-    else{
-      return true
-    }
-  }),
+  transformationDistance:undefined,
+  editMode: false,
+  readOnly: true,
+  calculateTransformationDistance: function(){
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var elementRect = this.get('element').getBoundingClientRect()
+    this.set('elementRect',elementRect)
+    console.log(elementRect);
+    var distanceToTranslate = {}
+    distanceToTranslate.x = windowWidth / 2 - (elementRect.left + elementRect.width/2);
+    distanceToTranslate.y = (windowHeight / 2) - (elementRect.top + elementRect.height/2);
+    this.set('transformationDistance',distanceToTranslate);
+  },
+  updateTransformationDistance: function(){
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var elementRect = this.get('elementRect')
+    var elWidth = this.get('element').getBoundingClientRect().width;
+    var distanceToTranslate = {}
+    distanceToTranslate.x = windowWidth / 2 - (elementRect.left + elWidth/2);
+    distanceToTranslate.y = windowHeight / 2 - (elementRect.top + elementRect.height/2);
+    this.set('transformationDistance',distanceToTranslate);
+
+  },
   onInit:function(){
     //We need to get isDeleted so that the observer will fire correctly :(
     this.set('isDeleted',this.stakeholder.get('isDeleted'));
     this.set('isDeleting',this.stakeholder.get('isDeleting'));
+    window.addEventListener('resize',
+    () => {
+      if(this.editMode){
+        Ember.run.debounce(this, this.updateTransformationDistance, 400, false)
+      }
+    })
+
   }.on('init'),
   click(){
-
     if(!this.get('editMode')){
       if(this.get('selected')){
         this.set('selected', false);
@@ -78,6 +89,12 @@ export default Ember.Component.extend({
       this.set('stakeholder.editMode',false)
     }
   },
+  observeEditMode:function(){
+    var stakeholderEditMode = this.get('stakeholder.editMode');
+    this.set('editMode',stakeholderEditMode)
+    this.set('readOnly',!stakeholderEditMode)
+    this.calculateTransformationDistance();
+  }.observes('stakeholder.editMode'),
   observeDeletedStatus:function(){
     if (this.stakeholder.get('isDeleted')) {
       this.set('isDeleted', true)
