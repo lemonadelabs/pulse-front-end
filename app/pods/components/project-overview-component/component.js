@@ -11,7 +11,6 @@ export default Ember.Component.extend({
   historyView:false,
   showStakeholderList:false,
   project:undefined,//maybe delete later
-  connections:undefined,
   data:undefined,
   // relationshipsLoaded = false
 
@@ -32,11 +31,6 @@ export default Ember.Component.extend({
         var snapshots = stakeholders.getEach('stakeholderSnapshots');
 
         return Ember.RSVP.all(snapshots).then(function(){
-          var projectId = project.get('id')
-          Ember.$.getJSON('projects/'+projectId+'/connections', function (response) {
-            self.set('connections' , response);
-          })
-
           return stakeholders;
         })
       })

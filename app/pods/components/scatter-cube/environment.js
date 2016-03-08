@@ -49,6 +49,10 @@ Environment.prototype.init = function (opts) {
   this.initRendererStats()
 
   this.initQuadrantCalculator()
+  /////////////////////// Create Tween Controller ///////////////////////
+  this.tweenController = new TweenController({
+    environment : this
+  })
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -147,24 +151,32 @@ Environment.prototype.initPointCloud = function (opts) {
     })
   })
 
-  /////////////////////// Create Tween Controller ///////////////////////
-  this.tweenController = new TweenController({
-    environment : this
-  })
 
   this.onUpdateTimeFcts.push(this.animateViewWithTime.bind(this))
   this.onPointClickFcts.push(this.animateViewWithSelectedStakeholder.bind(this))
+
+  if (!this.lineGroup) {
+    console.error("linegroup isn't defined yet")
+  }
+  this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+  // this is a potential `race condition` if this gets run before linegroup is intantiated
 
 }
 
 Environment.prototype.initConnections = function (opts) {
   var self = this
 
-  var connections = opts.connections
-
   /////////////////// Create Connecting Lines ////////////////////////
+  this.removeConnectingLines = function() {
+    this.removeObjectsFromScene(this.lineGroup.primaryConnections)
+    this.lineGroup.primaryConnections = []
+  }
+
   this.lineGroup = new LineGroup({
-    connections : connections
+    getConnections : opts.getConnections,
+    addObjectsToScene : self.addObjectsToScene.bind(self),
+    fadeInConnections : self.tweenController.fadeInConnections.bind(self.tweenController),
+    removeConnectingLines : self.removeConnectingLines.bind(self)
   })
 
   this.noSelectedStakeholderFcts.push( function () {
@@ -179,16 +191,12 @@ Environment.prototype.initConnections = function (opts) {
     }
   })
 
-  this.removeConnectingLines = function() {
-    self.removeObjectsFromScene(self.lineGroup.primaryConnections)
-    self.lineGroup.primaryConnections = []
-  }
 
   this.onRenderFcts.push(function () {
     self.lineGroup.update()
   })
 
-  this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+  // this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 }
 
 
@@ -242,13 +250,14 @@ Environment.prototype.connectionViewUpdated = function () {
   if (this.component.connectionView) { // for turning ON the connectionView
     this.lineGroup.drawConnections({
       sHPoint : this.focussedPoint,
-      currentWeek : this.currentWeek
+      currentWeek : this.currentWeek,
+      projectId : this.project.get('id')
     })
-    this.addObjectsToScene(this.lineGroup.primaryConnections)
-    this.tweenController.fadeInConnections({
-      duration : 300,
-      easing : TWEEN.Easing.Quadratic.Out
-    })
+    // this.addObjectsToScene(this.lineGroup.primaryConnections)
+    // this.tweenController.fadeInConnections({
+    //   duration : 300,
+    //   easing : TWEEN.Easing.Quadratic.Out
+    // })
   } else { // for turning OFF the connectionView
     var tweens = this.tweenController.fadeOutConnections({
       duration : 300,

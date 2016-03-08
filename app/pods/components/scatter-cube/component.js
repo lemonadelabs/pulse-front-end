@@ -30,12 +30,17 @@ export default Ember.Component.extend({
 
     this.environment.init()
     this.environment.setupScatterCube({ project : this.project })
-    this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
+    this.environment.initConnections({ getConnections : this.getConnections })
+    this.environment.initDistributionCloud({ getVotes : this.getVotes })
     this.environment.render()
   },
 
   getVotes: function (opts) {
-    return Ember.$.getJSON('projects/' +  opts.project_id + '/stakeholders/' + opts.stakeholder_id + '/snapshots/votes?week=' + opts.week)
+    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/votes?week=' + opts.week)
+  },
+
+  getConnections: function (opts) {
+    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/connections?week=' + opts.week)
   },
 
    onStakeholderData: function () {
@@ -46,20 +51,6 @@ export default Ember.Component.extend({
       selectedTime : this.get('selectedTime')
     })
   }.observes('stakeholders'),
-
-  onConnectionsData: function () {
-    var connections = this.get('connections')
-    this.environment.initConnections({
-      connections : connections
-    })
-  }.observes('connections'),
-
-  getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
-    var store = this.get('store')
-    var stakeholder = store.peekRecord('stakeholder', id)
-    return stakeholder.get
-    // store.
-  },
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
