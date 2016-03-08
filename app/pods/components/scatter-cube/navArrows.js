@@ -197,9 +197,9 @@ NavArrows.prototype.createArrow = function(opts) {
       self.navControlls[name]()
     }, false)
 
-    if (arrowType === 'sideArrows') {
-      arrow.mesh.visible = false
-    }
+    // if (arrowType === 'sideArrows') {
+    //   arrow.mesh.material.visible = false
+    // }
 
     self[arrowType].push(arrow)
 
