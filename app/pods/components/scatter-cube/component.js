@@ -52,12 +52,12 @@ export default Ember.Component.extend({
     })
   }.observes('stakeholders'),
 
-  onConnectionsData: function () {
-    var connections = this.get('connections')
-    this.environment.initConnections({
-      connections : connections
-    })
-  }.observes('connections'),
+  // onConnectionsData: function () {
+  //   var connections = this.get('connections')
+  //   this.environment.initConnections({
+  //     connections : connections
+  //   })
+  // }.observes('connections'),
 
   getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
     var store = this.get('store')
