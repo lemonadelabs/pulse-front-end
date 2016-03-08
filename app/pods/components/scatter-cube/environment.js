@@ -59,7 +59,6 @@ Environment.prototype.init = function () {
 }
 
 Environment.prototype.setupScatterCube = function (opts) {
-  var self = this
   this.project = opts.project
   ////////////////////// create the cube //////////////////////////////
   this.initCube()
