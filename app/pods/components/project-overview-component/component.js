@@ -5,24 +5,16 @@ export default Ember.Component.extend({
   store: Ember.inject.service(),
   selectedStakeholder: undefined,
   focussedStakeholders:{},
-  // selectedTime: undefined,
-  // connectionView:false,
   distributionView:false,
   historyView:false,
   showStakeholderList:false,
   project:undefined,//maybe delete later
   data:undefined,
-  // relationshipsLoaded = false
 
   init : function () {
     this._super()
     var self = this
-    var store = this.get('store')
     var project = this.model
-
-    var stakeholderObject = {}
-    var stakeholderLength
-    var snapsReturned = 0
 
     var promises = {
       stakeholders: project.get('stakeholders').then(function (stakeholders) {
@@ -38,7 +30,6 @@ export default Ember.Component.extend({
     Ember.RSVP.hash(promises).then(function(results){
       self.set('data', results)
     })
-
   },
 
   actions : {
@@ -80,6 +71,7 @@ export default Ember.Component.extend({
         this.set("historyView", true)
       }
     },
+
     toggleStakeholderList(){
       if(this.get("showStakeholderList")){
         this.set("showStakeholderList", false)
@@ -88,9 +80,11 @@ export default Ember.Component.extend({
         this.set("showStakeholderList", true)
       }
     },
+
     focusOnSelectedStakeholders(){
       this.set('focusOnStakeholders', true)
     },
+
     removeStakeholdersFilter(){
       this.set('focusOnStakeholders', false)
     }
