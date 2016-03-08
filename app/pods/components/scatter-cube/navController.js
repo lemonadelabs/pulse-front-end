@@ -105,11 +105,11 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
-  var fadeOutTween = this.fadeOutArrows({
+  this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
-  })
+}):1
 
   // bring in the arrows
   var toFadeIn = []
