@@ -52,13 +52,6 @@ export default Ember.Component.extend({
     })
   }.observes('stakeholders'),
 
-  getSnapshotFromStakeholderId: function (id) { // get the snapshot somehow
-    var store = this.get('store')
-    var stakeholder = store.peekRecord('stakeholder', id)
-    return stakeholder.get
-    // store.
-  },
-
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
   },
