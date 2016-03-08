@@ -355,13 +355,11 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
 TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
   var environment = this.environment
 
-  environment.removeConnectingLines()
   environment.lineGroup.drawConnections({
     projectId : environment.project.get('id'),
     sHPoint : environment.focussedPoint,
     currentWeek: time
   })
-  environment.addObjectsToScene(environment.lineGroup.primaryConnections)
 
   var sHPointTweens = this.updateSHPoints({
     time : time,
@@ -470,16 +468,10 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
 
     var lastFadeOutTween = _.last(fadeOutTweens)
     lastFadeOutTween.onComplete(function () {
-      environment.removeConnectingLines()
       environment.lineGroup.drawConnections({
         projectId : environment.project.get('id'),
         sHPoint : sHPoint,
         currentWeek: environment.currentWeek
-      })
-      environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-      self.fadeInConnections({
-        duration : 500,
-        easing : TWEEN.Easing.Quadratic.Out
       })
     })
   } else { // clicking a point after having the modal closed
@@ -487,11 +479,6 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       projectId : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
-    })
-    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-    self.fadeInConnections({
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
     })
   }
 };
@@ -535,16 +522,10 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
 
     environment.target.updatePosition(sHPoint)
     self.buildDistroCloud()
-    environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
       projectId : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
-    })
-    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-    self.fadeInConnections({
-      duration : 150,
-      easing : TWEEN.Easing.Quadratic.Out
     })
 
     // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
