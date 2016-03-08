@@ -622,10 +622,8 @@ NavController.prototype.dollyZoom = function (opts) {
   var newDistance = destination.distanceTo(focalPoint)
   var easing
   if (newDistance > currentDistance) {
-    // self.dollyZoomed = true
     easing = TWEEN.Easing.Quartic.In
   } else {
-    // self.dollyZoomed = false
     easing = TWEEN.Easing.Quartic.Out
   }
 
