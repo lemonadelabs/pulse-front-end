@@ -97,10 +97,10 @@ Environment.prototype.initPointCloud = function (opts) {
   this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
   // turn cursor into hand when hovering the sHPoints
-  this.onMouseoverFcts.push(function (sHPoint) {
+  this.onMouseoverFcts.push( function () {
     $('.scatter-cube').addClass('threejs-hover')
   })
-  this.onMouseoutFcts.push(function (sHPoint) {
+  this.onMouseoutFcts.push( function () {
     $('.scatter-cube').removeClass('threejs-hover')
   })
 
