@@ -428,14 +428,14 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in dangerzone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
