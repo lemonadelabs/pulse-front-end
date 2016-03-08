@@ -70,7 +70,6 @@ TweenController.prototype.distroCloudDeath = function(opts) {
 };
 
 TweenController.prototype.updateSHPoints = function(opts) {
-  var self = this
   var tweens = []
   var environment = this.environment
   var pointCloud = environment.pointCloud
