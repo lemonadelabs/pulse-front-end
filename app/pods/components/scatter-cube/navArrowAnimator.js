@@ -7,7 +7,6 @@ export default function NavArrowAnimator (opts) {
 
 NavArrowAnimator.prototype.update = function(opts) {
   var self = this
-  var quadrant = opts.quadrant
   var cornerArrows = this.cornerArrows
   var toFadeOut = []
   var toFadeIn = []
