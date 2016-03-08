@@ -1,5 +1,5 @@
-import coordsFromSnapshot from './services/coordsFromSnapshot';
 /*jshint -W083 */
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 
 export default function TweenController (opts) {
   this.environment = opts.environment
