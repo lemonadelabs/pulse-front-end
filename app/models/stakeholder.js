@@ -5,7 +5,7 @@ export default DS.Model.extend({
   image: DS.attr('string'),
   organisation: DS.attr('string'),
   role: DS.attr('string'),
-  tags: DS.attr('string'),
+  tags: DS.attr(),
   notes: DS.attr('string'),
   stakeholderSnapshots: DS.hasMany('stakeholder-snapshot', { async: true } ),
   projects: DS.hasMany('project' , { async: true } ), // through stakeholder-snapshots
