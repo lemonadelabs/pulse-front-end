@@ -160,11 +160,9 @@ Environment.prototype.initPointCloud = function (opts) {
 Environment.prototype.initConnections = function (opts) {
   var self = this
 
-  var connections = opts.connections
-
   /////////////////// Create Connecting Lines ////////////////////////
   this.lineGroup = new LineGroup({
-    connections : connections
+    getConnections : opts.getConnections
   })
 
   this.noSelectedStakeholderFcts.push( function () {
@@ -188,7 +186,7 @@ Environment.prototype.initConnections = function (opts) {
     self.lineGroup.update()
   })
 
-  this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
+  // this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 }
 
 
@@ -242,7 +240,8 @@ Environment.prototype.connectionViewUpdated = function () {
   if (this.component.connectionView) { // for turning ON the connectionView
     this.lineGroup.drawConnections({
       sHPoint : this.focussedPoint,
-      currentWeek : this.currentWeek
+      currentWeek : this.currentWeek,
+      project : this.project.get('id')
     })
     this.addObjectsToScene(this.lineGroup.primaryConnections)
     this.tweenController.fadeInConnections({

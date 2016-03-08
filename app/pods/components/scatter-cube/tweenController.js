@@ -357,6 +357,7 @@ TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
 
   environment.removeConnectingLines()
   environment.lineGroup.drawConnections({
+    project : environment.project.get('id'),
     sHPoint : environment.focussedPoint,
     currentWeek: time
   })
@@ -471,6 +472,7 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     lastFadeOutTween.onComplete(function () {
       environment.removeConnectingLines()
       environment.lineGroup.drawConnections({
+        project : environment.project.get('id'),
         sHPoint : sHPoint,
         currentWeek: environment.currentWeek
       })
@@ -482,7 +484,8 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     })
   } else { // clicking a point after having the modal closed
     environment.lineGroup.drawConnections({
-      sHPoint : sHpoint,
+      project : environment.project.get('id'),
+      sHPoint : sHPoint,
       currentWeek: environment.currentWeek
     })
     environment.addObjectsToScene(environment.lineGroup.primaryConnections)
@@ -534,6 +537,7 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
     self.buildDistroCloud()
     environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
+      project : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
     })
