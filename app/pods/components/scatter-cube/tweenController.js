@@ -301,12 +301,12 @@ TweenController.prototype.buildDistroCloud = function() {
   var distributionCloud = environment.distributionCloud
   var week = environment.currentWeek
   var sh_id = environment.focussedPoint.id
-  var project_id = environment.project.get('id')
+  var projectId = environment.project.get('id')
 
   distributionCloud.getVotes({
     week : week,
-    stakeholder_id : sh_id,
-    project_id : project_id
+    stakeholderId : sh_id,
+    projectId : projectId
   }).then(function (votes) {
 
     distributionCloud.createDistributionPoints({
@@ -357,7 +357,7 @@ TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
 
   environment.removeConnectingLines()
   environment.lineGroup.drawConnections({
-    project : environment.project.get('id'),
+    projectId : environment.project.get('id'),
     sHPoint : environment.focussedPoint,
     currentWeek: time
   })
@@ -472,7 +472,7 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     lastFadeOutTween.onComplete(function () {
       environment.removeConnectingLines()
       environment.lineGroup.drawConnections({
-        project : environment.project.get('id'),
+        projectId : environment.project.get('id'),
         sHPoint : sHPoint,
         currentWeek: environment.currentWeek
       })
@@ -484,7 +484,7 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
     })
   } else { // clicking a point after having the modal closed
     environment.lineGroup.drawConnections({
-      project : environment.project.get('id'),
+      projectId : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
     })
@@ -537,7 +537,7 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
     self.buildDistroCloud()
     environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
-      project : environment.project.get('id'),
+      projectId : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
     })

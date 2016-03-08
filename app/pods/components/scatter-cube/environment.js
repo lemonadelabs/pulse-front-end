@@ -241,7 +241,7 @@ Environment.prototype.connectionViewUpdated = function () {
     this.lineGroup.drawConnections({
       sHPoint : this.focussedPoint,
       currentWeek : this.currentWeek,
-      project : this.project.get('id')
+      projectId : this.project.get('id')
     })
     this.addObjectsToScene(this.lineGroup.primaryConnections)
     this.tweenController.fadeInConnections({
