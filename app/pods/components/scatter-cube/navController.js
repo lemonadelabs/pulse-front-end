@@ -187,14 +187,14 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   })
   dollyInTween.onComplete(function () {
 
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in danger zone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
