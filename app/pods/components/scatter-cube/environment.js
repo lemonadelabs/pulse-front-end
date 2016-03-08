@@ -1,5 +1,3 @@
-import Ember from 'ember';
-
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
