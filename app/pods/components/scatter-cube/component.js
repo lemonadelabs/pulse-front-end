@@ -36,7 +36,7 @@ export default Ember.Component.extend({
   },
 
   getVotes: function (opts) {
-    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/snapshots/votes?week=' + opts.week)
+    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/votes?week=' + opts.week)
   },
 
   getConnections: function (opts) {
