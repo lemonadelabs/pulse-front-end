@@ -486,7 +486,6 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
 
   var self = this
   var environment = this.environment
-  var time = this.environment.currentWeek
 
   if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
 
