@@ -391,11 +391,11 @@ Environment.prototype.initializeRenderer = function () {
     this.renderer.resetTimeout()
   }
 
-  $('.scatter-cube').on('mousemove', function (e) {
+  $('.scatter-cube').on('mousemove', function () {
     self.triggerRender()
   })
 
-  $('.scatter-cube').on('mouseup', function (e) {
+  $('.scatter-cube').on('mouseup', function () {
     self.triggerRender()
   })
 
