@@ -109,7 +109,7 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
-}):1
+  })
 
   // bring in the arrows
   var toFadeIn = []
