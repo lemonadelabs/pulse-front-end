@@ -30,12 +30,17 @@ export default Ember.Component.extend({
 
     this.environment.init()
     this.environment.setupScatterCube({ project : this.project })
-    this.environment.initDistributionCloud({ getVotes : this.getVotes.bind(this) })
+    this.environment.initConnections({ getConnections : this.getConnections })
+    this.environment.initDistributionCloud({ getVotes : this.getVotes })
     this.environment.render()
   },
 
   getVotes: function (opts) {
     return Ember.$.getJSON('projects/' +  opts.project_id + '/stakeholders/' + opts.stakeholder_id + '/snapshots/votes?week=' + opts.week)
+  },
+
+  getConnections: function (opts) {
+    return Ember.$.getJSON('projects/' +  opts.project_id + '/stakeholders/' + opts.stakeholder_id + '/connections?week=' + opts.week)
   },
 
    onStakeholderData: function () {
