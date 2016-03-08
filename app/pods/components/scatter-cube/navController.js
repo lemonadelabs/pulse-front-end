@@ -608,11 +608,6 @@ NavController.prototype.moveCamera = function (opts) {
 
 
 NavController.prototype.dollyZoom = function (opts) {
-
-  var self = this
-
-  var tween
-
   var camera = this.environment.camera
   var focalPoint = this.focalPoint
 
