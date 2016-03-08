@@ -31,7 +31,7 @@ export default Ember.Component.extend({
     window.addEventListener('resize',
       () => {
         if(this.editMode){
-          Ember.run.debounce(this, this.updateTransformationDistance, 400, false)
+          Ember.run.debounce(this, this.recalculateTransformationDistance, 400, false)
         }
       })
   }.on('init'),
@@ -40,22 +40,32 @@ export default Ember.Component.extend({
     var windowHeight = window.innerHeight;
     var elementRect = this.get('element').getBoundingClientRect()
     this.set('elementRect',elementRect)
-    console.log(elementRect);
     var distanceToTranslate = {}
     distanceToTranslate.x = windowWidth / 2 - (elementRect.left + elementRect.width/2);
     distanceToTranslate.y = (windowHeight / 2) - (elementRect.top + elementRect.height/2);
     this.set('transformationDistance',distanceToTranslate);
   },
-  updateTransformationDistance: function(){
+  recalculateTransformationDistance: function(){
     var windowWidth = window.innerWidth;
     var windowHeight = window.innerHeight;
-    var elementRect = this.get('elementRect')
-    var elWidth = this.get('element').getBoundingClientRect().width;
-    var distanceToTranslate = {}
-    distanceToTranslate.x = windowWidth / 2 - (elementRect.left + elWidth/2);
-    distanceToTranslate.y = windowHeight / 2 - (elementRect.top + elementRect.height/2);
-    this.set('transformationDistance',distanceToTranslate);
+    var oldElementRect = this.get('elementRect')
+    var elementRect = this.get('element').getBoundingClientRect()
+    var attributes = this.get('element').attributes;
+    var outerHeight = this.$('#'+this.get('element').id).height();
+    console.log(this.get('element').id);
+    console.log('oldElementRect',oldElementRect,'elementRect',elementRect,'outerHeight',outerHeight);
+    var oldDistanceToTranslate =  this.get('transformationDistance')
 
+    var newDistanceTarget = {}
+    newDistanceTarget.x = windowWidth / 2 - (elementRect.left + elementRect.width/2);
+    newDistanceTarget.y = (windowHeight / 2) - (elementRect.top + elementRect.height/2);
+
+    var distanceToTranslate = {}
+    distanceToTranslate.x = oldDistanceToTranslate.x + newDistanceTarget.x;
+    distanceToTranslate.y = oldDistanceToTranslate.y + newDistanceTarget.y;
+    console.log('elementRect',elementRect,'oldElementRect',oldElementRect);
+    console.log('oldDistanceToTranslate',oldDistanceToTranslate, 'newDistanceTarget', newDistanceTarget);
+    this.set('transformationDistance',distanceToTranslate);
   },
   click(){
     if(!this.get('editMode')){
@@ -86,6 +96,7 @@ export default Ember.Component.extend({
     },
     cancel:function(){
       this.set('stakeholder.editMode',false)
+      this.stakeholder.rollbackAttributes();
     }
   },
   observeEditMode:function(){

@@ -11,12 +11,11 @@ export default Ember.Component.extend({
   alertMessage:"Removed <b>10</b> stakeholders from project",
   style: Ember.computed('perspectiveOriginY', function(){
     var perspectiveOriginY = this.get('perspectiveOriginY');
-    console.log(perspectiveOriginY);
     return `perspective-origin: 50% ${perspectiveOriginY}px`.htmlSafe()
   }),
   perspectiveOriginY:0,
-  selectedStakeholders:{},
-  selectedStakeholderCount: 0,
+  focussedStakeholders:{},
+  focussedStakeholderCount: 0,
   selection:false,
   multiSelection:false,
   'fade-in-animation':true,
@@ -50,17 +49,16 @@ export default Ember.Component.extend({
     console.log('calc');
   },
   didInsertElement: function() {
-    this.get('element').addEventListener('scroll', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
-    window.addEventListener('resize', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 300, false)})
+    this.get('element').addEventListener('scroll', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 50, false)})
+    window.addEventListener('resize', () => {Ember.run.debounce(this, this.calculatePerspectiveOriginY, 50, false)})
     Ember.run.next(
       () => { this.calculatePerspectiveOriginY() }
     );
   },
   onRemove: function() {
-    this.get('element').removeEventListener('scroll', Ember.$.proxy(function() {
-      Ember.run.debounce(this, this.scrollHandler, 300, false);
-    }, this))
-
+    this.get('element').removeEventListener('scroll', () => {
+      Ember.run.debounce(this, this.scrollHandler, 50, false);
+    })
   }.on('willDestroyElement'),
   actions:{
     closeStakeholderList:function(){
@@ -182,5 +180,5 @@ export default Ember.Component.extend({
       this.set('selection',false)
       this.set('multiSelection',false)
     }
-  }.observes('focussedStakeholderCount')
+    }.observes('focussedStakeholderCount')
 });
