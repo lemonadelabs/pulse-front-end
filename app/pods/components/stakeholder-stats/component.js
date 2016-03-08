@@ -44,12 +44,13 @@ export default Ember.Component.extend({
     var support = []
     var vital = []
 
-    _.forEach(data, function (value, key) {
-      weekNumbers.push("W"+key)
-      power.push(value.power*10)
-      support.push(value.support*10)
-      vital.push(value.vital*10)
-    })
+    data.forEach(function(snapshot, index){
+      weekNumbers.push("W"+index);
+      power.push(snapshot.get('power')*10);
+      support.push(snapshot.get('support')*10);
+      vital.push(snapshot.get('vital')*10);
+
+    });
 
     var processedData = {
       labels: weekNumbers,
