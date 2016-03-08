@@ -108,6 +108,11 @@ body {
   transform: scale(1, 1);
 }
 
+.close-button img{
+  width: 100%;
+  height: auto;
+}
+
 .close-button:hover{
   transform: scale(1.2, 1.2);
 }

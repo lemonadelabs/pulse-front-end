@@ -22,12 +22,13 @@
   toggleConnections=(action 'toggleConnections')
   toggleDistribution=(action 'toggleDistribution')
   toggleHistory=(action 'toggleHistory')
-
 }}
 
 {{#if this.focusOnStakeholders}}
-  <p>Stakeholders are filtered</p>
-  <p {{action 'removeStakeholdersFilter'}}>Cancel</p>
+  <div class='filter-modal'>
+    <p class='filter-modal-note'><strong>{{this.focussedStakeholdersCount}}</strong> Stakeholders are filtered</p>
+    {{close-button onCloseAction=(action 'removeStakeholdersFilter')}}
+  </div>
 {{/if}}
 
 
