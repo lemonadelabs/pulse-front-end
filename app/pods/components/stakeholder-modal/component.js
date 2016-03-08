@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
+  store: Ember.inject.service(),
   classNames: ['stakeholder-modal','fancy-corners'],
   classNameBindings: ['visible','ignore-pointer'],
   visible: false,
@@ -18,8 +19,11 @@ export default Ember.Component.extend({
   },
   showModalOnSelection:function(){
     if(this.get("selectedStakeholder")!== undefined && this.get("visible") === false){
+      var store = this.get('store');
       this.set("visible",true);
       this.set("ignore-pointer",false);
+      var stakeholderData = store.peekRecord('stakeholder', this.get('selectedStakeholder.id'));
+      this.set('stakeholderData', stakeholderData);
     }
   }.observes("selectedStakeholder")
 });

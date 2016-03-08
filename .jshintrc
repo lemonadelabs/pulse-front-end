@@ -9,7 +9,8 @@
     "THREE",
     "THREEx",
     "$",
-    "Stats"
+    "Stats",
+    "Chartist"
   ],
   "browser": true,
   "boss": true,
