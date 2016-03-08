@@ -45,7 +45,8 @@ export default Ember.Component.extend({
     var vital = []
 
     data.forEach(function(snapshot, index){
-      weekNumbers.push("W"+index);
+      var weekNumber = index+1;
+      weekNumbers.push(`W${weekNumber}`);
       power.push(snapshot.get('power')*10);
       support.push(snapshot.get('support')*10);
       vital.push(snapshot.get('vital')*10);
