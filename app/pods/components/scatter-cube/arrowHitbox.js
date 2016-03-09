@@ -22,13 +22,15 @@ export default function arrowHitbox (opts) {
 
 
 
-  // if (arrowType === 'cornerArrows')  {
+  if (arrowType === 'cornerArrows')  {
     var geometry = new THREE.PlaneGeometry(1/8, 1/4, 4, 4);
     var mesh = new THREE.Mesh(geometry, hitboxMaterial)
     mesh.applyMatrix(matrix)
     return mesh
-  // } else if (arrowType === 'sideArrows') {
-    // console.log('side')
-    // return undefined
-  // }
+  } else if (arrowType === 'sideArrows') {
+    var geometry = new THREE.PlaneGeometry(0.08, 0.29, 4, 4);
+    var mesh = new THREE.Mesh(geometry, hitboxMaterial)
+    mesh.applyMatrix(matrix)
+    return mesh
+  }
 }

@@ -65,17 +65,17 @@ export default function NavArrows (opts) {
     ////////////////////////////////// sides //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     // (power, support , vital)
-    sidePowerHiLoSupportLeft : new THREE.Vector3(1.74, -0.3, 0),
-    sidePowerHiLoSupportRight : new THREE.Vector3(0.26, -0.3, 0),
+    sidePowerHiLoSupportLeft : new THREE.Vector3(1.88, -0.3, 0),
+    sidePowerHiLoSupportRight : new THREE.Vector3(0.12, -0.3, 0),
 
-    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.74),
-    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.26),
+    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.88),
+    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.12),
 
-    sidePowerLoHiSupportLeft : new THREE.Vector3(0.26, -0.3, 2),
-    sidePowerLoHiSupportRight : new THREE.Vector3(1.74, -0.3, 2),
+    sidePowerLoHiSupportLeft : new THREE.Vector3(0.12, -0.3, 2),
+    sidePowerLoHiSupportRight : new THREE.Vector3(1.88, -0.3, 2),
 
-    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.74),
-    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
+    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.88),
+    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.12),
   }
 
   this.rotation = {
@@ -129,17 +129,17 @@ export default function NavArrows (opts) {
     ///////////////////////////////////////////////////////////////////////////
     ////////////////////////////////// sides //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-    sidePowerHiLoSupportLeft : new THREE.Euler( -Math.PI / 2, Math.PI, 0, 'XYZ' ),
-    sidePowerHiLoSupportRight : new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ),
+    sidePowerHiLoSupportLeft : new THREE.Euler( 0, 0, Math.PI / 2, 'XYZ' ),
+    sidePowerHiLoSupportRight : new THREE.Euler( 0, 0, Math.PI / 2, 'XYZ' ),
 
-    sideVitalLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI,  -Math.PI / 2, 'XYZ' ),
-    sideVitalLoHiSupportRight : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
+    sideVitalLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI / 2,  0, 'XYZ' ),
+    sideVitalLoHiSupportRight : new THREE.Euler( Math.PI / 2, Math.PI / 2, 0, 'XYZ' ),
 
-    sidePowerLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI, 'XYZ' ),
-    sidePowerLoHiSupportRight : new THREE.Euler( - Math.PI / 2, Math.PI, 0, 'XYZ' ),
+    sidePowerLoHiSupportLeft : new THREE.Euler( 0, 0, Math.PI / 2, 'XYZ' ),
+    sidePowerLoHiSupportRight : new THREE.Euler( 0, 0, Math.PI / 2, 'XYZ' ),
 
-    sideVitalHiLoSupportLeft : new THREE.Euler( Math.PI / 2, 0, -Math.PI / 2, 'XYZ' ),
-    sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI / 2, 'XYZ' ),
+    sideVitalHiLoSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI / 2, 0, 'XYZ' ),
+    sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI / 2, 0, 'XYZ' ),
   }
 
   this.navControlls = {
