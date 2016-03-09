@@ -105,7 +105,7 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
-  var fadeOutTween = this.fadeOutArrows({
+  this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
@@ -187,14 +187,14 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   })
   dollyInTween.onComplete(function () {
 
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in danger zone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
@@ -309,14 +309,14 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
     self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in dangerzone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
@@ -428,14 +428,14 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in dangerzone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
@@ -546,14 +546,14 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
     self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
-    var labelFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : self.hiddenLabels
     })
 
-    var dangerZoneFadeIn = self.fadeInMeshes({
+    self.fadeInMeshes({ // fade in dangerzone
       opacity : 0.5,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
@@ -608,11 +608,6 @@ NavController.prototype.moveCamera = function (opts) {
 
 
 NavController.prototype.dollyZoom = function (opts) {
-
-  var self = this
-
-  var tween
-
   var camera = this.environment.camera
   var focalPoint = this.focalPoint
 
@@ -627,10 +622,8 @@ NavController.prototype.dollyZoom = function (opts) {
   var newDistance = destination.distanceTo(focalPoint)
   var easing
   if (newDistance > currentDistance) {
-    // self.dollyZoomed = true
     easing = TWEEN.Easing.Quartic.In
   } else {
-    // self.dollyZoomed = false
     easing = TWEEN.Easing.Quartic.Out
   }
 
