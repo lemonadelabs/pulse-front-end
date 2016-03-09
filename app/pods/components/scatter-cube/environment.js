@@ -609,12 +609,15 @@ Environment.prototype.initNav = function () {
     jSONloader : this.jSONloader,
     navController : this.navController,
     domEvents : this.domEvents,
-    initialQuadrant: self.quadrantCalculator.quadrant
+    initialQuadrant: self.quadrantCalculator.quadrant,
+    navControllerUpdate : self.navController.update.bind(self.navController)
   })
+  this.navController.cornerArrows = this.navArrows.cornerArrows
+
   this.onQuadrantUpdateFxns.push(function (quadrant) {
 
     if (self.camera.position.distanceTo(self.controls.target) < 50) {
-      self.navArrows.navArrowAnimator.update({ quadrant : quadrant })
+      self.navController.update({ quadrant : quadrant })
     }
   })
 }

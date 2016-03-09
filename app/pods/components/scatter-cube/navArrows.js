@@ -1,8 +1,9 @@
 import arrowHitbox from './arrowHitbox'
-import NavArrowAnimator from './navArrowAnimator';
+// import NavArrowAnimator from './navArrowAnimator';
 
 export default function NavArrows (opts) {
 
+  this.navControllerUpdate = opts.navControllerUpdate
   this.arrowsLoaded = 0
   this.initialQuadrant = opts.initialQuadrant
   this.sideArrows = []
@@ -13,6 +14,12 @@ export default function NavArrows (opts) {
   this.jSONloader = opts.jSONloader
 
   this.domEvents = opts.domEvents
+
+  this.hitBoxMaterial = new THREE.MeshBasicMaterial({
+    shading: THREE.FlatShading,
+    visible: false,
+    side: THREE.DoubleSide,
+  });
 
   this.position = {
     ///////////////////////////////////////////////////////////////////////////
@@ -203,7 +210,7 @@ export default function NavArrows (opts) {
   this.sideVitalHiLoSupportLeft = this.createArrow({ name : 'sideVitalHiLoSupportLeft' })
   this.sideVitalHiLoSupportRight = this.createArrow({ name : 'sideVitalHiLoSupportRight' })
 
-  this.navArrowAnimator = new NavArrowAnimator({cornerArrows : this.cornerArrows})
+  // this.navArrowAnimator = new NavArrowAnimator({cornerArrows : this.cornerArrows})
 }
 
 NavArrows.prototype.createArrow = function(opts) {
@@ -260,15 +267,19 @@ NavArrows.prototype.createArrow = function(opts) {
     arrow.hitBox = arrowHitbox({
       arrowType : arrowType,
       rotation : self.hitboxRotation[name],
-      position : self.hitboxPosition[name]
+      position : self.hitboxPosition[name],
+      material : self.hitBoxMaterial
     })
+    arrow.hitBox.name = name
+    arrow.hitBox.onClickFxn = self.navControlls[name]
 
     self.scene.add(arrow.hitBox)
     self.scene.add(arrow.mesh)
     self[arrowType].push(arrow)
 
     self.arrowsLoaded += 1
-    if (self.arrowsLoaded === 16) { self.navArrowAnimator.update({ quadrant : self.initialQuadrant }) }
+    if (self.arrowsLoaded === 16) { self.navControllerUpdate({ quadrant : self.initialQuadrant }) }
+    self[name] = arrow
   })
 
 

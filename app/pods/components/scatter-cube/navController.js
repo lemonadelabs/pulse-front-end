@@ -5,12 +5,22 @@ export default function NavController (opts) {
   this.focalPoint = new THREE.Vector3(1,1,1)
   this.returnLocation = undefined
   this.hiddenLabels = []
+  this.tweens = {}
+  this.hasListners = []
+  this.cornerArrows = opts.cornerArrows
 }
 
 
 
 NavController.prototype.fadeOutArrows = function(opts) {
-  var arrows = this.environment.navArrows[opts.arrowType]
+  var self = this
+  var arrows
+  if (opts.arrows) {
+    arrows = opts.arrows
+  } else {
+    arrows = this.environment.navArrows[opts.arrowType]
+  }
+
   var tweens = []
 
   _.forEach(arrows, function (arrow) {
@@ -20,6 +30,7 @@ NavController.prototype.fadeOutArrows = function(opts) {
       .easing(opts.easing)
       .onStart(function () {
         arrow.mesh.material.transparent = true
+        self.removeListnersFromMesh({ arrow : arrow })
       })
       .onComplete(function () {
         arrow.mesh.material.visible = false
@@ -32,11 +43,18 @@ NavController.prototype.fadeOutArrows = function(opts) {
 };
 
 NavController.prototype.fadeInArrows = function(opts) {
-  var arrows = this.environment.navArrows[opts.arrowType]
+  var self = this
+  var arrows
+  if (opts.arrows) {
+    arrows = opts.arrows
+  } else {
+    arrows = this.environment.navArrows[opts.arrowType]
+  }
   var tweens = []
 
   _.forEach(arrows, function (arrow) {
 
+    arrow.mesh.material.opacity = 0
     var tween = new TWEEN.Tween(arrow.mesh.material)
       .to( { opacity : 1 }, opts.duration )
       .easing(opts.easing)
@@ -46,6 +64,8 @@ NavController.prototype.fadeInArrows = function(opts) {
       })
       .onComplete(function () {
         arrow.mesh.material.transparent = false
+        // console.log(arrow)
+        self.addListnersToMesh({ arrow : arrow })
       })
       .start();
     tweens.push(tween)
@@ -113,13 +133,13 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
 
   // bring in the arrows
   var toFadeIn = []
-  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerLoHiSupportLeft" ) )
-  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerLoHiSupportRight" ) )
+  toFadeIn.push( this.environment.navArrows[ "sidePowerLoHiSupportLeft" ] )
+  toFadeIn.push( this.environment.navArrows[ "sidePowerLoHiSupportRight" ] )
 
-  this.fadeInMeshes({
-    duration : 1000,
+  this.fadeInArrows({
+    duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
-    meshes : toFadeIn,
+    arrows : toFadeIn,
     opacity : 1
   })
 
@@ -173,7 +193,7 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   })
 
   this.fadeInArrows({
-    duration : 1000,
+    duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
@@ -183,7 +203,7 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
     duration : 800,
   })
   .onStart(function () {
-    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+    self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
 
@@ -236,14 +256,14 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   })
 
   var toFadeIn = []
-  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalHiLoSupportLeft" ) )
-  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalHiLoSupportRight" ) )
+  toFadeIn.push( this.environment.navArrows[ "sideVitalHiLoSupportLeft" ] )
+  toFadeIn.push( this.environment.navArrows[ "sideVitalHiLoSupportRight" ] )
 
-  this.fadeInMeshes({
+  this.fadeInArrows({
     opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
-    meshes : toFadeIn
+    arrows : toFadeIn
   })
 
   // hide the labels
@@ -295,7 +315,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
   })
 
   this.fadeInArrows({
-    duration : 1000,
+    duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
@@ -306,7 +326,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
     duration : 800,
   })
   .onStart(function () {
-    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+    self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
     self.fadeInMeshes({ // fade in label
@@ -354,14 +374,14 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   })
 
   var toFadeIn = []
-  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerHiLoSupportLeft" ) )
-  toFadeIn.push( this.environment.scene.getObjectByName( "sidePowerHiLoSupportRight" ) )
+  toFadeIn.push( this.environment.navArrows[ "sidePowerHiLoSupportLeft" ] )
+  toFadeIn.push( this.environment.navArrows[ "sidePowerHiLoSupportRight" ] )
 
-  this.fadeInMeshes({
+  this.fadeInArrows({
     opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
-    meshes : toFadeIn
+    arrows : toFadeIn
   })
 
   // hide the labels
@@ -414,7 +434,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
   })
 
   this.fadeInArrows({
-    duration : 1000,
+    duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
@@ -425,7 +445,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     duration : 800,
   })
   .onStart(function () {
-    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+    self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
     self.fadeInMeshes({ // fade in label
@@ -473,14 +493,14 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   })
 
   var toFadeIn = []
-  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalLoHiSupportLeft" ) )
-  toFadeIn.push( this.environment.scene.getObjectByName( "sideVitalLoHiSupportRight" ) )
+  toFadeIn.push( this.environment.navArrows[ "sideVitalLoHiSupportLeft" ] )
+  toFadeIn.push( this.environment.navArrows[ "sideVitalLoHiSupportRight" ] )
 
-  this.fadeInMeshes({
+  this.fadeInArrows({
     opacity : 1,
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.Out,
-    meshes : toFadeIn
+    arrows : toFadeIn
   })
 
   // hide the labels
@@ -532,7 +552,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
   })
 
   this.fadeInArrows({
-    duration : 1000,
+    duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
@@ -543,7 +563,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
     duration : 800,
   })
   .onStart(function () {
-    self.environment.navArrows.navArrowAnimator.update({ quadrant : self.environment.quadrantCalculator.quadrant })
+    self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
     self.fadeInMeshes({ // fade in label
@@ -679,3 +699,132 @@ function degreesToRadians(degrees) {
 function radiansToDegrees(radians) {
   return radians * 180 / Math.PI
 }
+
+
+NavController.prototype.update = function(opts) {
+  var self = this
+  var cornerArrows = this.cornerArrows
+  var toFadeOut = []
+  var toFadeIn = []
+  _.forEach(cornerArrows, function (arrow) {
+    if (arrow.quadrant !== opts.quadrant && arrow.mesh.material.visible) {
+      toFadeOut.push(arrow)
+    }
+    if (arrow.quadrant === opts.quadrant) {
+      toFadeIn.push(arrow)
+    }
+  })
+
+  _.forEach(toFadeIn, function (arrow) {
+    self.fadeInArrow({ arrow : arrow })
+  })
+
+  _.forEach(toFadeOut, function (arrow) {
+    self.fadeOutArrow({ arrow : arrow })
+  })
+};
+
+NavController.prototype.fadeInArrow = function(opts) {
+  var self = this
+  var arrow = opts.arrow
+  var name = arrow.mesh.name
+
+  var cachedTween
+  if (cachedTween = self.tweens[name]) {
+    cachedTween.stop()
+    delete self.tweens[name]
+  }
+
+  var material = arrow.mesh.material
+  // arrow.tweenCounter.opacity = material.opacity
+  var fadeInTween = new TWEEN.Tween(arrow.tweenCounter)
+  .to({opacity: 1.0}, 300)
+  .easing(TWEEN.Easing.Exponential.In)
+  .onStart(function () {
+    material.transparent = true
+    material.visible = true
+  })
+  .onUpdate(function () {
+    material.opacity = arrow.tweenCounter.opacity
+  })
+  .onComplete(function () {
+    material.transparent = false
+    self.addListnersToMesh({ arrow : arrow })
+    delete self.tweens[name]
+  })
+  this.tweens[name] = fadeInTween
+  fadeInTween.start()
+};
+
+///////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// moved in from navArrowAnimator ////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+NavController.prototype.fadeOutArrow = function(opts) {
+  var self = this
+  var arrow = opts.arrow
+  var name = arrow.mesh.name
+
+  var cachedTween
+  if (cachedTween = self.tweens[name]) {
+    cachedTween.stop()
+    delete self.tweens[name]
+  }
+
+  var material = arrow.mesh.material
+  arrow.tweenCounter.opacity = material.opacity
+  var fadeOutTween = new TWEEN.Tween(arrow.tweenCounter)
+      .to({opacity: 0.0}, 250)
+      .easing(TWEEN.Easing.Exponential.Out)
+      .onStart(function () {
+        material.transparent = true
+        self.removeListnersFromMesh({ arrow : arrow })
+      })
+      .onUpdate(function () {
+        material.opacity = arrow.tweenCounter.opacity
+      })
+      .onComplete(function () {
+        material.transparent = false
+        material.visible = false
+        delete self.tweens[name]
+      })
+  this.tweens[name] = fadeOutTween
+  fadeOutTween.start();
+};
+
+NavController.prototype.addListnersToMesh = function(opts) {
+  var name = opts.arrow.hitBox.name
+  if (!(_.includes(this.hasListners, name))) {
+    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'click', this.onCLick, false)
+    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'mouseover', this.onMouseover, false)
+    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'mouseout', this.onMouseout, false)
+
+    this.hasListners.push(name)
+  }
+};
+
+NavController.prototype.removeListnersFromMesh = function(opts) {
+  var self = this
+  var name = opts.arrow.hitBox.name
+  if (_.includes(this.hasListners, name)) {
+    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'click', this.onCLick, false)
+    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'mouseover', this.onMouseover, false)
+    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'mouseout', this.onMouseout, false)
+    $('.scatter-cube').removeClass('threejs-hover')
+    _.pull(this.hasListners, name)
+  }
+};
+
+
+NavController.prototype.onCLick = function(event) {
+  event.target.onClickFxn()
+};
+
+NavController.prototype.onMouseover = function() {
+  $('.scatter-cube').addClass('threejs-hover')
+};
+
+NavController.prototype.onMouseout = function() {
+  $('.scatter-cube').removeClass('threejs-hover')
+};
+

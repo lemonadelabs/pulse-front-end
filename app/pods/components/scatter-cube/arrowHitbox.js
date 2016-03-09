@@ -3,16 +3,6 @@ export default function arrowHitbox (opts) {
   var rotation = opts.rotation
   var position = opts.position
 
-  var hitboxMaterial = new THREE.MeshBasicMaterial({
-    shading: THREE.FlatShading,
-    color: 0x7FFF00,
-    transparent: true,
-    // visible: false,
-    side: THREE.DoubleSide,
-    opacity: 0.5,
-  });
-
-
   var matrix = new THREE.Matrix4()
   var quaternion = new THREE.Quaternion()
   quaternion.setFromEuler( rotation, false );
@@ -21,12 +11,12 @@ export default function arrowHitbox (opts) {
 
   if (arrowType === 'cornerArrows')  {
     var geometry = new THREE.PlaneGeometry(1/8, 1/4, 4, 4);
-    var mesh = new THREE.Mesh(geometry, hitboxMaterial)
+    var mesh = new THREE.Mesh(geometry, opts.material)
     mesh.applyMatrix(matrix)
     return mesh
   } else if (arrowType === 'sideArrows') {
     var geometry = new THREE.PlaneGeometry(0.08, 0.29, 4, 4);
-    var mesh = new THREE.Mesh(geometry, hitboxMaterial)
+    var mesh = new THREE.Mesh(geometry, opts.material)
     mesh.applyMatrix(matrix)
     return mesh
   }
