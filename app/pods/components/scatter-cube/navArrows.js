@@ -1,3 +1,4 @@
+import arrowHitbox from './arrowHitbox'
 import NavArrowAnimator from './navArrowAnimator';
 
 export default function NavArrows (opts) {
@@ -45,6 +46,38 @@ export default function NavArrows (opts) {
     sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
   }
 
+  this.hitboxPosition = {
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////// corners /////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    vitalHiLoPowerLeft : new THREE.Vector3(-0.22,-0.22,2.02),
+    vitalHiLoPowerRight : new THREE.Vector3(-0.02,-0.22,2.22),
+
+    powerHiHiVitalLeft : new THREE.Vector3(2.12,-0.22,2.32),
+    powerHiHiVitalRight : new THREE.Vector3(2.32, -0.22, 2.12),
+
+    vitalLoHiPowerLeft : new THREE.Vector3(2.32, -0.22, -0.12),
+    vitalLoHiPowerRight : new THREE.Vector3(2.12, -0.22, -0.32),
+
+    powerLoLovitalLeft : new THREE.Vector3(-0.12, -0.22, -0.32),
+    powerLoLovitalRight : new THREE.Vector3(-0.32, -0.22, -0.12),
+    ///////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////// sides //////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // (power, support , vital)
+    sidePowerHiLoSupportLeft : new THREE.Vector3(1.74, -0.3, 0),
+    sidePowerHiLoSupportRight : new THREE.Vector3(0.26, -0.3, 0),
+
+    sideVitalLoHiSupportLeft : new THREE.Vector3(0, -0.3, 1.74),
+    sideVitalLoHiSupportRight : new THREE.Vector3(0, -0.3, 0.26),
+
+    sidePowerLoHiSupportLeft : new THREE.Vector3(0.26, -0.3, 2),
+    sidePowerLoHiSupportRight : new THREE.Vector3(1.74, -0.3, 2),
+
+    sideVitalHiLoSupportLeft : new THREE.Vector3(2, -0.3, 1.74),
+    sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
+  }
+
   this.rotation = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -60,6 +93,38 @@ export default function NavArrows (opts) {
 
     powerLoLovitalLeft : new THREE.Euler( 0, Math.PI, 0, 'XYZ' ) ,
     powerLoLovitalRight : new THREE.Euler( 0, Math.PI, 0, 'XYZ' ) ,
+
+    ///////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////// sides //////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    sidePowerHiLoSupportLeft : new THREE.Euler( -Math.PI / 2, Math.PI, 0, 'XYZ' ),
+    sidePowerHiLoSupportRight : new THREE.Euler( -Math.PI / 2, 0, 0, 'XYZ' ),
+
+    sideVitalLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI,  -Math.PI / 2, 'XYZ' ),
+    sideVitalLoHiSupportRight : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
+
+    sidePowerLoHiSupportLeft : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI, 'XYZ' ),
+    sidePowerLoHiSupportRight : new THREE.Euler( - Math.PI / 2, Math.PI, 0, 'XYZ' ),
+
+    sideVitalHiLoSupportLeft : new THREE.Euler( Math.PI / 2, 0, -Math.PI / 2, 'XYZ' ),
+    sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI / 2, 'XYZ' ),
+  }
+
+  this.hitboxRotation = {
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////// corners /////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    vitalHiLoPowerLeft : new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' ),
+    vitalHiLoPowerRight : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
+
+    powerHiHiVitalLeft : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
+    powerHiHiVitalRight : new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' ),
+
+    vitalLoHiPowerLeft : new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' ),
+    vitalLoHiPowerRight : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ),
+
+    powerLoLovitalLeft : new THREE.Euler( Math.PI / 2, 0, Math.PI / 2, 'XYZ' ) ,
+    powerLoLovitalRight : new THREE.Euler( Math.PI / 2, 0, 0, 'XYZ' ) ,
 
     ///////////////////////////////////////////////////////////////////////////
     ////////////////////////////////// sides //////////////////////////////////
@@ -148,21 +213,21 @@ NavArrows.prototype.createArrow = function(opts) {
   var material = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     color: 0xffffff,
-    // transparent: false,
     visible: false,
     side: THREE.DoubleSide
-    // opacity: 0,
-    // depthTest: false // makes the labels render in front of the danger zone
   });
 
   var arrowType
+  var direction
   var path
   if (_.endsWith(name, 'Left')) {
     path = './assets/geometries/rotationArrowsLeft.json'
     arrowType = 'cornerArrows'
+    direction = 'left'
   } else if (_.endsWith(name, 'Right')) {
     path = './assets/geometries/rotationArrowsRight.json'
     arrowType = 'cornerArrows'
+    direction = 'right'
   }
 
   if (_.startsWith(name, 'side')) {
@@ -179,6 +244,7 @@ NavArrows.prototype.createArrow = function(opts) {
     arrow.mesh = new THREE.Mesh(geometry, material)
     arrow.mesh.name = name
 
+
     var matrix = new THREE.Matrix4()
 
     var rotation = self.rotation[name] // new THREE.Euler( 0, 0, 0, 'XYZ' );
@@ -191,15 +257,18 @@ NavArrows.prototype.createArrow = function(opts) {
 
     arrow.mesh.applyMatrix(matrix)
 
+    arrow.hitBox = arrowHitbox({
+      arrowType : arrowType,
+      rotation : self.hitboxRotation[name],
+      position : self.hitboxPosition[name]
+    })
+
+    self.scene.add(arrow.hitBox)
     self.scene.add(arrow.mesh)
 
-    self.domEvents.addEventListener(arrow.mesh, 'click', function(){
+    self.domEvents.addEventListener(arrow.mesh, 'click', function(){ // change this to the click target
       self.navControlls[name]()
     }, false)
-
-    // if (arrowType === 'sideArrows') {
-    //   arrow.mesh.material.visible = false
-    // }
 
     self[arrowType].push(arrow)
 

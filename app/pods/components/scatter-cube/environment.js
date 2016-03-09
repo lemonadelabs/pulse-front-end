@@ -51,6 +51,10 @@ Environment.prototype.init = function () {
   this.tweenController = new TweenController({
     environment : this
   })
+
+  var axisHelper = new THREE.AxisHelper( 5 );
+  this.addObjectToScene( axisHelper );
+
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -340,7 +344,8 @@ Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) {
 
 Environment.prototype.initializeCamera = function () {
   this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.0001, 10000 );
-  this.camera.position.set(4.5,1.5,-1.6)
+  // this.camera.position.set(4.5,1.5,-1.6)
+  this.camera.position.set( -1.3836283671802345,  4.537255266777269,  -1.437731899552023)
 }
 
 Environment.prototype.initializeControls = function () {
