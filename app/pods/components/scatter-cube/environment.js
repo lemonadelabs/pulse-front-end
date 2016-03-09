@@ -53,7 +53,7 @@ Environment.prototype.init = function () {
   })
 
   var axisHelper = new THREE.AxisHelper( 5 );
-  this.addObjectToScene( axisHelper );
+  // this.addObjectToScene( axisHelper );
 
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
