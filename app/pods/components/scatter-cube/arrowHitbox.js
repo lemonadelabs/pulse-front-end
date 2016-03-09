@@ -19,9 +19,6 @@ export default function arrowHitbox (opts) {
   matrix.makeRotationFromQuaternion(quaternion)
   matrix.setPosition(position)
 
-
-
-
   if (arrowType === 'cornerArrows')  {
     var geometry = new THREE.PlaneGeometry(1/8, 1/4, 4, 4);
     var mesh = new THREE.Mesh(geometry, hitboxMaterial)

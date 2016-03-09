@@ -89,3 +89,42 @@ NavArrowAnimator.prototype.fadeOutArrow = function(opts) {
   this.tweens[name] = fadeOutTween
   fadeOutTween.start();
 };
+
+// NavArrowAnimator.prototype.removeListnersFromMesh = function(first_argument) {
+
+// };
+
+// NavArrowAnimator.prototype.addListnersToMesh = function(first_argument) {
+
+// };
+
+// function onCLick () {
+
+// }
+
+// function onMouseover () {
+
+// }
+
+// function onMouseout () {
+
+// }
+// function removeListnersFromMesh(opts) {
+
+//   self.domEvents.addEventListener(arrow.hitBox, 'click', function(){
+//     self.navControlls[name]()
+//   }, false)
+
+
+//   self.domEvents.addEventListener(arrow.hitBox, 'mouseover', function(){
+//     $('.scatter-cube').addClass('threejs-hover')
+//   }, false)
+
+//   self.domEvents.addEventListener(arrow.hitBox, 'mouseout', function(){
+//     $('.scatter-cube').removeClass('threejs-hover')
+//   }, false)
+// }
+
+// function addListnersToMesh(opts) {
+
+// }

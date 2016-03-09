@@ -265,20 +265,7 @@ NavArrows.prototype.createArrow = function(opts) {
 
     self.scene.add(arrow.hitBox)
     self.scene.add(arrow.mesh)
-
-    self.domEvents.addEventListener(arrow.mesh, 'click', function(){ // change this to the click target
-      self.navControlls[name]()
-    }, false)
-
     self[arrowType].push(arrow)
-
-    self.domEvents.addEventListener(arrow.mesh, 'mouseover', function(){
-      $('.scatter-cube').addClass('threejs-hover')
-    }, false)
-
-    self.domEvents.addEventListener(arrow.mesh, 'mouseout', function(){
-      $('.scatter-cube').removeClass('threejs-hover')
-    }, false)
 
     self.arrowsLoaded += 1
     if (self.arrowsLoaded === 16) { self.navArrowAnimator.update({ quadrant : self.initialQuadrant }) }
