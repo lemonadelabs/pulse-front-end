@@ -72,6 +72,7 @@ export default Ember.Component.extend({
     if(!this.get('editMode')){
       if(this.get('selected')){
         this.set('selected', false);
+         this.stakeholder.set('isFocussed', false);
         if(typeof this.get("onDeselectAction") === "function"){
           this.get('onDeselectAction')(this.stakeholder);
         }
@@ -81,6 +82,7 @@ export default Ember.Component.extend({
       }
       else {
         this.set('selected', true);
+        this.stakeholder.set('isFocussed', true);
         if(typeof this.get("onSelectAction") === "function"){
           this.get('onSelectAction')(this.stakeholder);
         }
