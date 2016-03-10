@@ -11,6 +11,27 @@ export default function PointCloud (opts) {
   this.sHPoints = this.createSHPoints()
 }
 
+PointCloud.prototype.startupAnimation = function(opts) {
+  var tweens = []
+  _.forEach(this.sHPoints, function (point) {
+    var destinationOpacity = point.mesh.material.opacity
+
+    point.mesh.material.opacity = 0
+    var counter = {opacity: 0}
+    var tween = new TWEEN.Tween(counter)
+    .to( { opacity : destinationOpacity }, 300 )
+    .easing(TWEEN.Easing.Linear.None)
+    .onStart(function () {
+      opts.addObjectToScene(point)
+    })
+    .onUpdate(function () {
+      point.mesh.material.opacity = counter.opacity
+    })
+    tweens.push(tween)
+  })
+  _.forEach(tweens, function (tween) { tween.start() })
+};
+
 PointCloud.prototype.createSHPointClickTargets = function() {
 
   var self = this
