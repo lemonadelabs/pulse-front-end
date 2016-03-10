@@ -28,6 +28,7 @@ export default Ember.Component.extend({
     //We need to get isDeleted so that the observer will fire correctly :(
     this.set('isDeleted',this.stakeholder.get('isDeleted'));
     this.set('isDeleting',this.stakeholder.get('isDeleting'));
+    this.set('selected', this.stakeholder.get('isFocussed'))
     window.addEventListener('resize',
       () => {
         if(this.editMode){
@@ -122,5 +123,12 @@ export default Ember.Component.extend({
   }.observes('stakeholder.isDeleting'),
   observeEdit:function(){
     this.set('selected', false)
-  }.observes('editMode')
+  }.observes('editMode'),
+  observeFocussedStatus:function(){
+    if (this.stakeholder.get('isFocussed')) {
+      this.set('selected', true)
+    } else {
+      this.set('selected', false)
+    }
+  }.observes('stakeholder.isFocussed'),
 });

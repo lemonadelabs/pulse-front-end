@@ -1,7 +1,7 @@
-.stakeholder-view-mode-window{
+.stakeholder-view-mode-window {
   background: color(var(--darkBlue) alpha(-5%));
   border: solid 1px var(--borderBlue);
-  bottom: 80px;
+  bottom: 10vh;
   height: 130px;
   opacity: 0;
   padding: 15px;
@@ -10,7 +10,8 @@
   transition: opacity 300ms;
   width: 160px;
 }
-.stakeholder-view-mode-window .view-mode-controlls{
+
+.stakeholder-view-mode-window .view-mode-controlls {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -18,6 +19,7 @@
   width: 100%;
   padding-top: 0.9em;
 }
+
 .stakeholder-view-mode-window .window-title {
   background-color: white;
   color: color(var(--darkBlue));
@@ -34,20 +36,3 @@
   top: -2em;
   width: max-content;
 }
-
-/*
-.project-card-title{
-  background-color: var(--teal);
-  color: var(--pulseBlack);
-  font-size: 12pt;
-  font-weight: 900;
-  margin-bottom: -2em;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0px;
-  padding: 0.25em 0.5em;
-  position: relative;
-  text-transform: uppercase;
-  top:-2em;
-  width: max-content;
-}*/

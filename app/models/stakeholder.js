@@ -9,5 +9,4 @@ export default DS.Model.extend({
   notes: DS.attr('string'),
   stakeholderSnapshots: DS.hasMany('stakeholder-snapshot', { async: true } ),
   projects: DS.hasMany('project' , { async: true } ), // through stakeholder-snapshots
-  relationships: DS.hasMany('relationship', { async: true } ),
 });
