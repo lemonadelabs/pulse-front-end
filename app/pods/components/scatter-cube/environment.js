@@ -46,16 +46,12 @@ Environment.prototype.init = function () {
   ///////////////////////////////////// Dom Events ////////////////////////////////
   this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
   ///////////////////////////////////// Stats /////////////////////////////////////
-  this.initStats()
-  this.initRendererStats()
-  this.fps = new Fps()
-  this.onRenderFcts.push( this.fps.update.bind(this.fps) )
+  this.initStats() ; this.initRendererStats()
+  this.fps = new Fps() ; this.onRenderFcts.push( this.fps.update.bind(this.fps) )
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////
-  this.tweenController = new TweenController({
-    environment : this
-  })
+  this.tweenController = new TweenController({ environment : this })
 
   var axisHelper = new THREE.AxisHelper( 5 );
   // this.addObjectToScene( axisHelper );
