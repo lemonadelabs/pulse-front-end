@@ -1,5 +1,3 @@
-import AxisGuideLine from './axisGuideLine';
-
 export default function AxisGuides () {
   this.material = this.createMaterial()
   this.lines = this.createLines()
