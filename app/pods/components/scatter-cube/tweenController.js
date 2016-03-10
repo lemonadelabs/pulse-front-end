@@ -1,5 +1,5 @@
-import coordsFromSnapshot from './services/coordsFromSnapshot';
 /*jshint -W083 */
+import coordsFromSnapshot from './services/coordsFromSnapshot';
 
 export default function TweenController (opts) {
   this.environment = opts.environment
@@ -70,7 +70,6 @@ TweenController.prototype.distroCloudDeath = function(opts) {
 };
 
 TweenController.prototype.updateSHPoints = function(opts) {
-  var self = this
   var tweens = []
   var environment = this.environment
   var pointCloud = environment.pointCloud
@@ -301,12 +300,12 @@ TweenController.prototype.buildDistroCloud = function() {
   var distributionCloud = environment.distributionCloud
   var week = environment.currentWeek
   var sh_id = environment.focussedPoint.id
-  var project_id = environment.project.get('id')
+  var projectId = environment.project.get('id')
 
   distributionCloud.getVotes({
     week : week,
-    stakeholder_id : sh_id,
-    project_id : project_id
+    stakeholderId : sh_id,
+    projectId : projectId
   }).then(function (votes) {
 
     distributionCloud.createDistributionPoints({
@@ -355,12 +354,11 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
 TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
   var environment = this.environment
 
-  environment.removeConnectingLines()
   environment.lineGroup.drawConnections({
+    projectId : environment.project.get('id'),
     sHPoint : environment.focussedPoint,
     currentWeek: time
   })
-  environment.addObjectsToScene(environment.lineGroup.primaryConnections)
 
   var sHPointTweens = this.updateSHPoints({
     time : time,
@@ -469,26 +467,17 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
 
     var lastFadeOutTween = _.last(fadeOutTweens)
     lastFadeOutTween.onComplete(function () {
-      environment.removeConnectingLines()
       environment.lineGroup.drawConnections({
+        projectId : environment.project.get('id'),
         sHPoint : sHPoint,
         currentWeek: environment.currentWeek
-      })
-      environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-      self.fadeInConnections({
-        duration : 500,
-        easing : TWEEN.Easing.Quadratic.Out
       })
     })
   } else { // clicking a point after having the modal closed
     environment.lineGroup.drawConnections({
-      sHPoint : sHpoint,
+      projectId : environment.project.get('id'),
+      sHPoint : sHPoint,
       currentWeek: environment.currentWeek
-    })
-    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-    self.fadeInConnections({
-      duration : 500,
-      easing : TWEEN.Easing.Quadratic.Out
     })
   }
 };
@@ -497,7 +486,6 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
 
   var self = this
   var environment = this.environment
-  var time = this.environment.currentWeek
 
   if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
 
@@ -518,7 +506,6 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
 TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) {
   var self = this
   var environment = this.environment
-  var time = this.environment.currentWeek
 
   if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
 
@@ -532,15 +519,10 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
 
     environment.target.updatePosition(sHPoint)
     self.buildDistroCloud()
-    environment.removeConnectingLines()
     environment.lineGroup.drawConnections({
+      projectId : environment.project.get('id'),
       sHPoint : sHPoint,
       currentWeek: environment.currentWeek
-    })
-    environment.addObjectsToScene(environment.lineGroup.primaryConnections)
-    self.fadeInConnections({
-      duration : 150,
-      easing : TWEEN.Easing.Quadratic.Out
     })
 
     // environment.component.historyView ? self.buildHistorytails(sHPoint) :;

@@ -1,3 +1,26 @@
 .threejs-hover {
   cursor: pointer;
 }
+
+.filter-modal {
+  position: absolute;
+  font-size: 11pt;
+  width: 250px;
+  right: 30px;
+  top: 10vh;
+  border: solid 1px var(--borderBlue);
+  background: color(var(--darkBlue) alpha(-5%));
+  padding: 1em;
+}
+
+.filter-modal-note {
+  margin: 0;
+}
+
+.filter-modal .close-button {
+  position: absolute;
+  width: 1em;
+  right: 1em;
+  top: 1.05em;
+  left: inherit;
+}

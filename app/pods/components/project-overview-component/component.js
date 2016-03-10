@@ -4,26 +4,22 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
   selectedStakeholder: undefined,
+  stakeholderFilter: Ember.inject.service(),
   focussedStakeholders:{},
+  focussedStakeholdersCount:0,
   // selectedTime: undefined,
   // connectionView:false,
   distributionView:false,
   historyView:false,
   showStakeholderList:false,
   project:undefined,//maybe delete later
-  connections:undefined,
   data:undefined,
-  // relationshipsLoaded = false
 
   init : function () {
     this._super()
+    var stakeholderFilter = this.get('stakeholderFilter')
     var self = this
-    var store = this.get('store')
     var project = this.model
-
-    var stakeholderObject = {}
-    var stakeholderLength
-    var snapsReturned = 0
 
     var promises = {
       stakeholders: project.get('stakeholders').then(function (stakeholders) {
@@ -32,11 +28,6 @@ export default Ember.Component.extend({
         var snapshots = stakeholders.getEach('stakeholderSnapshots');
 
         return Ember.RSVP.all(snapshots).then(function(){
-          var projectId = project.get('id')
-          Ember.$.getJSON('projects/'+projectId+'/connections', function (response) {
-            self.set('connections' , response);
-          })
-
           return stakeholders;
         })
       })
@@ -45,6 +36,9 @@ export default Ember.Component.extend({
       self.set('data', results)
     })
 
+    stakeholderFilter.on('showFocussedStakeholders', function (focussedStakeholders) {
+      self.set('focussedStakeholdersCount', Object.keys(focussedStakeholders).length)
+    })
   },
 
   actions : {
@@ -86,6 +80,7 @@ export default Ember.Component.extend({
         this.set("historyView", true)
       }
     },
+
     toggleStakeholderList(){
       if(this.get("showStakeholderList")){
         this.set("showStakeholderList", false)
@@ -94,9 +89,11 @@ export default Ember.Component.extend({
         this.set("showStakeholderList", true)
       }
     },
+
     focusOnSelectedStakeholders(){
       this.set('focusOnStakeholders', true)
     },
+
     removeStakeholdersFilter(){
       this.set('focusOnStakeholders', false)
     }

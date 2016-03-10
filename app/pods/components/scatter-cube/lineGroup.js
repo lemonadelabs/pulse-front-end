@@ -1,8 +1,12 @@
 import ConnectingLine from './connectingLine';
 
 export default function LineGroup (opts) {
-  this.connections = opts.connections
+  this.addObjectsToScene = opts.addObjectsToScene
+  this.getConnections = opts.getConnections
+  this.fadeInConnections = opts.fadeInConnections
+  this.removeConnectingLines = opts.removeConnectingLines
   this.sHPoints = undefined
+  this.previousStakeholderId = undefined
 
   this.primaryConnections = []
   this.needsUpdate = false
@@ -18,15 +22,11 @@ LineGroup.prototype.archiveSHPoints = function(sHPoints) {
 }
 
 LineGroup.prototype.getConnectionsForStakeholder = function(opts) {
-  var self = this
-
-  var connectionsForStakeholder = []
-  _.forEach(this.connections, function (connection) {
-    if (connection.stakeholder_id == opts.sHPoint.id && connection.week == opts.currentWeek) {
-      connectionsForStakeholder.push(connection)
-    }
+  return this.getConnections({
+    projectId : opts.projectId,
+    stakeholderId : opts.sHPoint.id,
+    week: opts.currentWeek
   })
-  return connectionsForStakeholder
 }
 
 LineGroup.prototype.drawConnections = function(opts) {
@@ -34,22 +34,32 @@ LineGroup.prototype.drawConnections = function(opts) {
 }
 
 LineGroup.prototype.createPrimaryConnections = function(opts) {
-  var self = this
-  var connectingLines = []
-  var connections = this.getConnectionsForStakeholder(opts)
-  _.forEach(connections, function (connection) {
 
-    var acquaintance = self.sHPoints[connection.acquaintance_id]
-    var line = new ConnectingLine({
-      // pass in material depending on the connection strength
-      pointA: opts.sHPoint,
-      pointB: acquaintance,
-      strength: connection.strength
+  var self = this
+  this.getConnectionsForStakeholder(opts).then(function (connections) {
+    self.removeConnectingLines()
+    var connectingLines = []
+    _.forEach(connections, function (connection) {
+      var acquaintance = self.sHPoints[connection.acquaintance_id]
+      var line = new ConnectingLine({
+        pointA: opts.sHPoint,
+        pointB: acquaintance,
+        strength: connection.strength
+      })
+      connectingLines.push(line)
     })
-    connectingLines.push(line)
+    self.primaryConnections = connectingLines
+    if (opts.sHPoint.id !== self.previousStakeholderId) {
+      self.fadeInConnections({
+        duration : 300,
+        easing : TWEEN.Easing.Quadratic.Out
+      })
+    }
+    self.addObjectsToScene(connectingLines)
+    self.previousStakeholderId = opts.sHPoint.id
   })
-  this.primaryConnections = connectingLines
 }
+
 
 LineGroup.prototype.update = function () {
   var self = this
