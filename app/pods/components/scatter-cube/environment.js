@@ -48,6 +48,8 @@ Environment.prototype.init = function () {
   ///////////////////////////////////// Stats /////////////////////////////////////
   this.initStats()
   this.initRendererStats()
+  this.fps = new Fps()
+  this.onRenderFcts.push( this.fps.update.bind(this.fps) )
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////
