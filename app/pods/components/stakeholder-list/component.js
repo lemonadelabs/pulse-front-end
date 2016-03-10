@@ -1,10 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-
   stakeholderFilter: Ember.inject.service(),
-
-
   classNames:["stakeholder-list"],
   attributeBindings: ['style'],
   classNameBindings:["fade-in-animation","fade-out-animation"],
@@ -26,7 +23,6 @@ export default Ember.Component.extend({
     var self = this;
     var focussedStakeholders = this.get('focussedStakeholders')
     _.forEach(focussedStakeholders,function(stakeholder){
-      // stakeholder.set('isFocussed',false);
       if(stakeholder.get('isFocussed')){
         var focussedStakeholderCount = self.get('focussedStakeholderCount');
         self.set('focussedStakeholderCount', focussedStakeholderCount+1);
@@ -70,7 +66,6 @@ export default Ember.Component.extend({
       }, 250);
     },
     addStakeholderToSelection:function(stakeholder){
-      // var focussedStakeholders = this.get('focussedStakeholders')
       this.set('focussedStakeholders.'+stakeholder.id, stakeholder);
       var stakeholderCount = this.get("focussedStakeholderCount");
       this.set('focussedStakeholderCount',stakeholderCount+1);
