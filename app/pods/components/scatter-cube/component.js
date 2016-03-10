@@ -25,14 +25,15 @@ export default Ember.Component.extend({
   }.observes('focusOnStakeholders'),
 
   initScatterCube: function () {
+    var self = this
     var environment = new Environment(this)
     this.set('environment', environment)
 
     this.environment.init()
-    this.environment.setupScatterCube({ project : this.project })
+    this.environment.render()
+    self.environment.setupScatterCube({ project : this.project })
     this.environment.initConnections({ getConnections : this.getConnections })
     this.environment.initDistributionCloud({ getVotes : this.getVotes })
-    this.environment.render()
   },
 
   getVotes: function (opts) {
