@@ -114,7 +114,12 @@ Environment.prototype.initPointCloud = function (opts) {
     selectedTime: opts.selectedTime,
   })
 
-  this.addObjectsToScene(this.pointCloud.sHPoints)
+  this.fps.runFunctionAtFps({
+    toRun : self.pointCloud.startupAnimation.bind(self.pointCloud),
+    args : { addObjectToScene : self.addObjectToScene.bind(self) }
+  })
+
+  // this.addObjectsToScene(this.pointCloud.sHPoints)
   this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
   // turn cursor into hand when hovering the sHPoints
