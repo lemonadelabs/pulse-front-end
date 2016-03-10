@@ -26,6 +26,7 @@ export default function Environment (component) {
   this.nameBadgeVisible = false
   this.scene = new THREE.Scene()
   this.jSONloader = new THREE.JSONLoader()
+  this.environmentLoadAnimation = environmentLoadAnimation.bind(this)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
