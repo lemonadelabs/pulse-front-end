@@ -67,13 +67,23 @@ Environment.prototype.init = function () {
 
 }
 
+Environment.prototype.initAxisGuides = function() {
+  var self = this
+  this.axisGuides = new AxisGuides()
+  this.fadeInOnLoad.push(this.axisGuides)
+  _.pull(this.stillToLoad, 'axisGuides')
+  this.environmentLoadAnimation()
+};
+
 Environment.prototype.setupScatterCube = function (opts) {
   this.project = opts.project
+  this.fadeInOnLoad = []
+  this.stillToLoad = ['cube', 'dangerZone', 'axisGuides']
+
   ////////////////////// create the cube //////////////////////////////
   this.initCube()
   //////////////////// create axis guides ///////////////////////////////
-  this.axisGuides = new AxisGuides()
-  this.addObjectsToScene(this.axisGuides.lines)
+  this.initAxisGuides()
   ///////////////////////// create danger zone //////////////////////////
   this.initDangerZone()
   ///////////////////////// create labelGroup ///////////////////////////
