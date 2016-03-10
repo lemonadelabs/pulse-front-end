@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     }
   },
   showModalOnSelection:function(){
-    if(this.get("selectedStakeholder")!== undefined){
+    if(this.get("selectedStakeholder") !== undefined){
       var store = this.get('store');
       this.set("visible",true);
       this.set("ignore-pointer",false);
