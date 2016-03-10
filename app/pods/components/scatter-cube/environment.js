@@ -24,7 +24,7 @@ export default function Environment (component) {
   this.onMouseoutFcts = []
   this.onQuadrantUpdateFxns = []
   this.nameBadgeVisible = false
-  this.scene = new THREE.Scene();
+  this.scene = new THREE.Scene()
   this.jSONloader = new THREE.JSONLoader()
 }
 
