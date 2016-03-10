@@ -10,7 +10,7 @@
 
 .stakeholder-container {
   perspective: 100px;
-  perspective-origin: 50% 50%;
+  perspective-origin: inherit;
   transform-style: preserve-3d;
   justify-content: space-between;
   align-items: stretch;
