@@ -63,14 +63,6 @@ Environment.prototype.init = function () {
 
 }
 
-Environment.prototype.initAxisGuides = function() {
-  var self = this
-  this.axisGuides = new AxisGuides()
-  this.fadeInOnLoad.push(this.axisGuides)
-  _.pull(this.stillToLoad, 'axisGuides')
-  this.environmentLoadAnimation()
-};
-
 Environment.prototype.setupScatterCube = function (opts) {
   this.project = opts.project
   this.fadeInOnLoad = []
@@ -96,7 +88,6 @@ Environment.prototype.setupScatterCube = function (opts) {
   this.initHistoryTailGroup()
 
 }
-
 
 Environment.prototype.initPointCloud = function (opts) {
   var self = this
@@ -215,7 +206,6 @@ Environment.prototype.initConnections = function (opts) {
     self.lineGroup.update()
   })
 
-  // this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 }
 
 
@@ -226,6 +216,7 @@ Environment.prototype.render = function () {
 
     // keep looping
     self.renderer.rafId = requestAnimationFrame( animate );
+    self.stats.begin()
 
     // measure time
     lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
@@ -240,6 +231,7 @@ Environment.prototype.render = function () {
     // update TWEEN functions
     TWEEN.update(nowMsec);
 
+    self.stats.end()
   })
 }
 
@@ -272,11 +264,6 @@ Environment.prototype.connectionViewUpdated = function () {
       currentWeek : this.currentWeek,
       projectId : this.project.get('id')
     })
-    // this.addObjectsToScene(this.lineGroup.primaryConnections)
-    // this.tweenController.fadeInConnections({
-    //   duration : 300,
-    //   easing : TWEEN.Easing.Quadratic.Out
-    // })
   } else { // for turning OFF the connectionView
     var tweens = this.tweenController.fadeOutConnections({
       duration : 300,
@@ -434,6 +421,7 @@ Environment.prototype.initWindowResize = function () {
   this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
   window.addEventListener('resize', this.triggerRender.bind(this), false)
 }
+
 Environment.prototype.initStats = function () {
   var self = this
   this.stats = new Stats();
@@ -445,11 +433,6 @@ Environment.prototype.initStats = function () {
   document.body.appendChild( this.stats.domElement );
   var $stats = $(this.stats.domElement)
   $stats.hide()
-  this.onRenderFcts.push(function () {
-    self.stats.begin();
-    self.stats.end();
-  })
-
   $(document).on('keypress', function (e) {
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $stats.toggle()
@@ -483,8 +466,6 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
-  // this.onQuadrantUpdateFxns.push(function (quadrant) { console.log('quadrant: ', quadrant ) })
-
   this.onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
       onQuadrantUpdateFxn(quadrant)
@@ -510,6 +491,14 @@ Environment.prototype.initCube = function () {
     self.addObjectToScene(cube)
   })
 }
+
+Environment.prototype.initAxisGuides = function() {
+  var self = this
+  this.axisGuides = new AxisGuides()
+  this.fadeInOnLoad.push(this.axisGuides)
+  _.pull(this.stillToLoad, 'axisGuides')
+  this.environmentLoadAnimation()
+};
 
 Environment.prototype.initDangerZone = function () {
   var self = this
