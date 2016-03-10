@@ -1,7 +1,22 @@
 export default function AxisGuides () {
+  this.linesVertices = this.linesVertices()
   this.material = this.createMaterial()
-  this.lines = this.createLines()
+  this.mesh = this.createMesh()
 }
+
+AxisGuides.prototype.createMesh = function() {
+  var geometries = []
+  var geometry = new THREE.Geometry();
+  _.forEach(this.linesVertices, function (vertices) {
+    _.forEach(vertices, function (vert) {
+      geometry.vertices.push(vert);
+    })
+  })
+
+  var grid = new THREE.LineSegments( geometry, this.material )
+
+  return grid
+};
 
 AxisGuides.prototype.createMaterial = function() {
   return new THREE.MeshBasicMaterial({
