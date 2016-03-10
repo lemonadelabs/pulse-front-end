@@ -1,3 +1,4 @@
+import Fps from './services/fps';
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
@@ -10,6 +11,7 @@ import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
 import NavController from './navController';
 import NavArrows from './navArrows';
+import environmentLoadAnimation from './environmentLoadAnimation'
 
 export default function Environment (component) {
   this.component = component
