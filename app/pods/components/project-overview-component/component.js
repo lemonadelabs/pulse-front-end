@@ -4,7 +4,11 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
   selectedStakeholder: undefined,
+  stakeholderFilter: Ember.inject.service(),
   focussedStakeholders:{},
+  focussedStakeholdersCount:0,
+  // selectedTime: undefined,
+  // connectionView:false,
   distributionView:false,
   historyView:false,
   showStakeholderList:false,
@@ -13,6 +17,7 @@ export default Ember.Component.extend({
 
   init : function () {
     this._super()
+    var stakeholderFilter = this.get('stakeholderFilter')
     var self = this
     var project = this.model
 
@@ -29,6 +34,10 @@ export default Ember.Component.extend({
     }
     Ember.RSVP.hash(promises).then(function(results){
       self.set('data', results)
+    })
+
+    stakeholderFilter.on('showFocussedStakeholders', function (focussedStakeholders) {
+      self.set('focussedStakeholdersCount', Object.keys(focussedStakeholders).length)
     })
   },
 
