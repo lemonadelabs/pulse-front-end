@@ -1,9 +1,22 @@
-import AxisGuideLine from './axisGuideLine';
-
 export default function AxisGuides () {
+  this.linesVertices = this.linesVertices()
   this.material = this.createMaterial()
-  this.lines = this.createLines()
+  this.mesh = this.createMesh()
 }
+
+AxisGuides.prototype.createMesh = function() {
+  var geometries = []
+  var geometry = new THREE.Geometry();
+  _.forEach(this.linesVertices, function (vertices) {
+    _.forEach(vertices, function (vert) {
+      geometry.vertices.push(vert);
+    })
+  })
+
+  var grid = new THREE.LineSegments( geometry, this.material )
+
+  return grid
+};
 
 AxisGuides.prototype.createMaterial = function() {
   return new THREE.MeshBasicMaterial({
@@ -13,17 +26,13 @@ AxisGuides.prototype.createMaterial = function() {
   });
 };
 
-AxisGuides.prototype.createLines = function() {
-  var self = this
-  var lines = []
-  var linesVertices
-
-  linesVertices = [
+AxisGuides.prototype.linesVertices = function() {
     // x = power
     // y = support
     // z = vital
 
     // middel lines
+  return [
     [
       new THREE.Vector3(1,1,0),
       new THREE.Vector3(1,1,2)
@@ -89,19 +98,4 @@ AxisGuides.prototype.createLines = function() {
       new THREE.Vector3(1,2,2)
     ]
   ]
-
-
-
-
-  // todo: make the line segments all the same geometry. Also, maybe try and merge them with the cube geometry
-  // use THREE.LineSegment ???????
-
-  _.forEach(linesVertices, function (vertices) {
-    var line = new AxisGuideLine({
-      vertices : vertices,
-      material : self.material
-    })
-    lines.push(line)
-  })
-  return lines
-}
+};

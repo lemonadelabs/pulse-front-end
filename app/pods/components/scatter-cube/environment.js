@@ -1,3 +1,4 @@
+import Fps from './services/fps';
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
@@ -10,6 +11,7 @@ import HistoryTailGroup from './historyTailGroup';
 import TweenController from './tweenController';
 import NavController from './navController';
 import NavArrows from './navArrows';
+import environmentLoadAnimation from './environmentLoadAnimation'
 
 export default function Environment (component) {
   this.component = component
@@ -22,8 +24,9 @@ export default function Environment (component) {
   this.onMouseoutFcts = []
   this.onQuadrantUpdateFxns = []
   this.nameBadgeVisible = false
-  this.scene = new THREE.Scene();
+  this.scene = new THREE.Scene()
   this.jSONloader = new THREE.JSONLoader()
+  this.environmentLoadAnimation = environmentLoadAnimation.bind(this)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -43,14 +46,16 @@ Environment.prototype.init = function () {
   ///////////////////////////////////// Dom Events ////////////////////////////////
   this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
   ///////////////////////////////////// Stats /////////////////////////////////////
-  this.initStats()
-  this.initRendererStats()
+  this.initStats() ; this.initRendererStats()
+  this.fps = new Fps() ; this.onRenderFcts.push( this.fps.update.bind(this.fps) )
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////
-  this.tweenController = new TweenController({
-    environment : this
-  })
+  this.tweenController = new TweenController({ environment : this })
+
+  var axisHelper = new THREE.AxisHelper( 5 );
+  // this.addObjectToScene( axisHelper );
+
   /////////////////////// render the scene ////////////////////////////////////////
   this.onRenderFcts.push(function(){
     self.renderer.render( self.scene, self.camera );
@@ -60,11 +65,13 @@ Environment.prototype.init = function () {
 
 Environment.prototype.setupScatterCube = function (opts) {
   this.project = opts.project
+  this.fadeInOnLoad = []
+  this.stillToLoad = ['cube', 'dangerZone', 'axisGuides']
+
   ////////////////////// create the cube //////////////////////////////
   this.initCube()
   //////////////////// create axis guides ///////////////////////////////
-  this.axisGuides = new AxisGuides()
-  this.addObjectsToScene(this.axisGuides.lines)
+  this.initAxisGuides()
   ///////////////////////// create danger zone //////////////////////////
   this.initDangerZone()
   ///////////////////////// create labelGroup ///////////////////////////
@@ -72,14 +79,15 @@ Environment.prototype.setupScatterCube = function (opts) {
   ///////////////////// Create Target ///////////////////////////////////
   this.initTarget()
   /////////////////////////// nav ///////////////////////////////////////
-  this.initNav()
+  this.fps.runFunctionAtFps({
+    toRun : this.initNav.bind(this)
+  })
   ///////////////////// configure name-badge ////////////////////////////
   this.configureNameBadge()
   ///////////////////// Create history tail group ///////////////////////
   this.initHistoryTailGroup()
 
 }
-
 
 Environment.prototype.initPointCloud = function (opts) {
   var self = this
@@ -93,7 +101,12 @@ Environment.prototype.initPointCloud = function (opts) {
     selectedTime: opts.selectedTime,
   })
 
-  this.addObjectsToScene(this.pointCloud.sHPoints)
+  this.fps.runFunctionAtFps({
+    toRun : self.pointCloud.startupAnimation.bind(self.pointCloud),
+    args : { addObjectToScene : self.addObjectToScene.bind(self) }
+  })
+
+  // this.addObjectsToScene(this.pointCloud.sHPoints)
   this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
   // turn cursor into hand when hovering the sHPoints
@@ -193,7 +206,6 @@ Environment.prototype.initConnections = function (opts) {
     self.lineGroup.update()
   })
 
-  // this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
 }
 
 
@@ -204,6 +216,7 @@ Environment.prototype.render = function () {
 
     // keep looping
     self.renderer.rafId = requestAnimationFrame( animate );
+    self.stats.begin()
 
     // measure time
     lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
@@ -218,6 +231,7 @@ Environment.prototype.render = function () {
     // update TWEEN functions
     TWEEN.update(nowMsec);
 
+    self.stats.end()
   })
 }
 
@@ -250,11 +264,6 @@ Environment.prototype.connectionViewUpdated = function () {
       currentWeek : this.currentWeek,
       projectId : this.project.get('id')
     })
-    // this.addObjectsToScene(this.lineGroup.primaryConnections)
-    // this.tweenController.fadeInConnections({
-    //   duration : 300,
-    //   easing : TWEEN.Easing.Quadratic.Out
-    // })
   } else { // for turning OFF the connectionView
     var tweens = this.tweenController.fadeOutConnections({
       duration : 300,
@@ -412,6 +421,7 @@ Environment.prototype.initWindowResize = function () {
   this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
   window.addEventListener('resize', this.triggerRender.bind(this), false)
 }
+
 Environment.prototype.initStats = function () {
   var self = this
   this.stats = new Stats();
@@ -423,11 +433,6 @@ Environment.prototype.initStats = function () {
   document.body.appendChild( this.stats.domElement );
   var $stats = $(this.stats.domElement)
   $stats.hide()
-  this.onRenderFcts.push(function () {
-    self.stats.begin();
-    self.stats.end();
-  })
-
   $(document).on('keypress', function (e) {
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $stats.toggle()
@@ -461,8 +466,6 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
-  // this.onQuadrantUpdateFxns.push(function (quadrant) { console.log('quadrant: ', quadrant ) })
-
   this.onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
       onQuadrantUpdateFxn(quadrant)
@@ -485,9 +488,20 @@ Environment.prototype.initCube = function () {
   this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
     var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
     var cube = new THREE.Mesh(geometry, cubeMaterial)
-    self.addObjectToScene(cube)
+    cube.name = 'cube'
+    self.fadeInOnLoad.push(cube)
+    _.pull(self.stillToLoad, 'cube')
+    self.environmentLoadAnimation()
   })
 }
+
+Environment.prototype.initAxisGuides = function() {
+  var self = this
+  this.axisGuides = new AxisGuides()
+  this.fadeInOnLoad.push(this.axisGuides)
+  _.pull(this.stillToLoad, 'axisGuides')
+  this.environmentLoadAnimation()
+};
 
 Environment.prototype.initDangerZone = function () {
   var self = this
@@ -495,7 +509,9 @@ Environment.prototype.initDangerZone = function () {
     self.dangerZone = new DangerZone({
       geometry : geometry
     })
-    self.addObjectToScene(self.dangerZone)
+    self.fadeInOnLoad.push(self.dangerZone.mesh)
+    _.pull(self.stillToLoad, 'dangerZone')
+    self.environmentLoadAnimation()
   })
 }
 
@@ -505,7 +521,10 @@ Environment.prototype.initLabelGroup = function () {
     scene: this.scene,
     camera: this.camera
   })
-  this.labelGroup.createLabels({ initialQuadrant : this.quadrantCalculator.quadrant })
+  this.labelGroup.createLabels({
+    initialQuadrant : this.quadrantCalculator.quadrant,
+    runFunctionAtFps : this.fps.runFunctionAtFps.bind(this.fps)
+  })
 
   this.onQuadrantUpdateFxns.push(this.labelGroup.animateLabels.bind(this.labelGroup))
 
@@ -605,12 +624,15 @@ Environment.prototype.initNav = function () {
     jSONloader : this.jSONloader,
     navController : this.navController,
     domEvents : this.domEvents,
-    initialQuadrant: self.quadrantCalculator.quadrant
+    initialQuadrant: self.quadrantCalculator.quadrant,
+    navControllerUpdate : self.navController.update.bind(self.navController)
   })
+  this.navController.cornerArrows = this.navArrows.cornerArrows
+
   this.onQuadrantUpdateFxns.push(function (quadrant) {
 
     if (self.camera.position.distanceTo(self.controls.target) < 50) {
-      self.navArrows.navArrowAnimator.update({ quadrant : quadrant })
+      self.navController.update({ quadrant : quadrant })
     }
   })
 }

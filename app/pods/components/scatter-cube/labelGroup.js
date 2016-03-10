@@ -13,6 +13,7 @@ LabelGroup.prototype.createLabels = function(opts) {
   this.objLoader.load("./assets/geometries/labels.json", function (labelScene) {
     for (var i = 0; i < 9; i++) {
       var child = labelScene.children[0]
+
       child.material = new THREE.MeshBasicMaterial({
         shading: THREE.FlatShading,
         color: 0xffffff,
@@ -28,7 +29,10 @@ LabelGroup.prototype.createLabels = function(opts) {
       self.labels.push(label)
       self.scene.add(label.mesh)
     }
-    self.animateLabels(opts.initialQuadrant)
+    opts.runFunctionAtFps({
+      toRun : self.animateLabels.bind(self),
+      args : opts.initialQuadrant
+    })
   })
 };
 
