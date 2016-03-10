@@ -488,7 +488,10 @@ Environment.prototype.initCube = function () {
   this.jSONloader.load('./assets/geometries/axis-cube.json', function (geometry) {
     var cubeMaterial = new THREE.MeshBasicMaterial({shading: THREE.FlatShading, color: 0xffffff, side: THREE.DoubleSide});
     var cube = new THREE.Mesh(geometry, cubeMaterial)
-    self.addObjectToScene(cube)
+    cube.name = 'cube'
+    self.fadeInOnLoad.push(cube)
+    _.pull(self.stillToLoad, 'cube')
+    self.environmentLoadAnimation()
   })
 }
 
@@ -506,7 +509,9 @@ Environment.prototype.initDangerZone = function () {
     self.dangerZone = new DangerZone({
       geometry : geometry
     })
-    self.addObjectToScene(self.dangerZone)
+    self.fadeInOnLoad.push(self.dangerZone.mesh)
+    _.pull(self.stillToLoad, 'dangerZone')
+    self.environmentLoadAnimation()
   })
 }
 
