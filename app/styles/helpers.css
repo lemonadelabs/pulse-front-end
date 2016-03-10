@@ -1,11 +1,11 @@
-.inline-block{
+.inline-block {
   display: inline-block;
 }
 
-.visible{
+.visible {
   opacity: 1 !important;
 }
 
-.ignore-pointer{
+.ignore-pointer {
   pointer-events: none;
 }

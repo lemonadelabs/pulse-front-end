@@ -1,13 +1,13 @@
-.notification-container{
+.notification-container {
   position: fixed;
-  bottom:100px;
+  bottom: 100px;
   width: 100%;
   display: flex;
   z-index: 100;
   pointer-events: none;
 }
 
-.notifcation-alert{
+.notifcation-alert {
   pointer-events: auto;
   border: solid 1px color(white alpha(-50%));
   background: color(var(--darkBlue) alpha(-5%));
@@ -20,7 +20,7 @@
   align-items: center;
 }
 
-.alert-message{
+.alert-message {
   margin: 0;
   margin-left: 0.5em;
   margin-right: 5em;

@@ -1,4 +1,4 @@
-.project-card{
+.project-card {
   width: 300px;
   height: auto;
   border: solid 1px var(--borderBlue);
@@ -8,13 +8,13 @@
   display: inline-block;
 }
 
-.project-card footer{
+.project-card footer {
   display: flex;
   justify-content: center;
   margin-top: 1em;
 }
 
-.project-card-title{
+.project-card-title {
   position: relative;
   font-size: 12pt;
   font-weight: 900;
@@ -24,38 +24,41 @@
   width: max-content;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: -2em;
-  top:-2em;
+  top: -2em;
   text-transform: uppercase;
 }
 
-.project-card-client{
+.project-card-client {
   margin-top: 1em;
   margin-bottom: 0.5em;
   font-size: 12pt;
 }
 
-.project-card-discription{
+.project-card-discription {
   font-size: 10pt;
   line-height: 15pt;
   margin-top: 0;
   margin-bottom: 1em;
   font-weight: 200;
 }
-.project-card-overview{
+
+.project-card-overview {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.project-card-overview-info{
+
+.project-card-overview-info {
   width: 50%;
   font-weight: 600;
   font-size: 10pt;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
-.project-card-overview-info-title{
+
+.project-card-overview-info-title {
   text-transform: uppercase;
   margin-right: 0.5em;
   font-weight: 300;
