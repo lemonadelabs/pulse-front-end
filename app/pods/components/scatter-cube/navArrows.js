@@ -18,6 +18,8 @@ export default function NavArrows (opts) {
   this.hitBoxMaterial = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     visible: false,
+    // transparent : true ,
+    // opacity : 0.4,
     side: THREE.DoubleSide,
   });
 
