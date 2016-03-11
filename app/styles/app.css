@@ -14,13 +14,6 @@
 @import "stakeholder-view-mode-window.css";
 @import "time-series.css";
 
-.scatter-cube {
-  position: fixed;
-  top: -43px;
-  left: 0;
-  z-index: -1;
-}
-
 .project-container {
   display: flex;
   flex-direction: column;

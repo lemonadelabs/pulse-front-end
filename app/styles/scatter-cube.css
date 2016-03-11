@@ -1,3 +1,10 @@
+.scatter-cube {
+  position: fixed;
+  top: -43px;
+  left: 0;
+  z-index: -1;
+}
+
 .threejs-hover {
   cursor: pointer;
 }
@@ -23,4 +30,18 @@
   right: 1em;
   top: 1.05em;
   left: inherit;
+}
+
+.scatter-cube-loading {
+  color: white;
+  font-size: 17pt;
+  position: fixed;
+  top: 45vh;
+  height: 17pt;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
 }

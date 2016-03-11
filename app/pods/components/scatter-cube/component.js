@@ -4,7 +4,8 @@ import Environment from './environment';
 export default Ember.Component.extend({
   store: Ember.inject.service(),
   stakeholderFilter: Ember.inject.service(),
-
+  loaded:false,
+  
   classNames: ['scatter-cube'],
 
   didInsertElement() {

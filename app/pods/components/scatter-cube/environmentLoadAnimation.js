@@ -4,11 +4,11 @@ export default function environmentLoadAnimation() {
 
     self.fps.runFunctionAtFps({
       toRun : loadFxn.bind(this),
-      targetFramerate : 70
     })
 
     function loadFxn () {
       var tweens = []
+      this.component.set('loaded', true);
       _.forEach(this.fadeInOnLoad, function (mesh) {
         var destinationOpacity = mesh.material.opacity
         var destinationTransparency = mesh.material.transparent

@@ -1,2 +1,11 @@
+{{#unless this.loaded}}
+  <p class='scatter-cube-loading'>Loading</p>
+{{/unless}}
 <div id="container"></div>
+
+
+{{#if this.lowFPS}}
+  <p class='scatter-cube-fps-warning'>It appears that your computer is too slow run pulse smoothly</p>
+  <p>Continue Anyway</p>
+{{/if}}
 {{name-badge selectedStakeholder=this.hoveredStakeholder.name}}
