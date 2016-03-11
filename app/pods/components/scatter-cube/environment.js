@@ -53,7 +53,7 @@ Environment.prototype.init = function () {
   /////////////////////// Create Tween Controller ///////////////////////
   this.tweenController = new TweenController({ environment : this })
 
-  var axisHelper = new THREE.AxisHelper( 5 );
+  // var axisHelper = new THREE.AxisHelper( 5 );
   // this.addObjectToScene( axisHelper );
 
   /////////////////////// render the scene ////////////////////////////////////////
@@ -423,7 +423,6 @@ Environment.prototype.initWindowResize = function () {
 }
 
 Environment.prototype.initStats = function () {
-  var self = this
   this.stats = new Stats();
   this.stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
   // align top-left
@@ -496,7 +495,6 @@ Environment.prototype.initCube = function () {
 }
 
 Environment.prototype.initAxisGuides = function() {
-  var self = this
   this.axisGuides = new AxisGuides()
   this.fadeInOnLoad.push(this.axisGuides)
   _.pull(this.stillToLoad, 'axisGuides')
@@ -673,7 +671,3 @@ Environment.prototype.billboardObjects = function (objects) {
 Environment.prototype.billboardObject = function (object) {
   object.mesh.quaternion.copy( this.camera.quaternion )
 }
-
-
-
-
