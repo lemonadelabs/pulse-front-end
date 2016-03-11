@@ -45,19 +45,21 @@ body {
   padding-bottom: 20px;
   background-image: linear-gradient(to bottom, color(var(--pulseBlack) alpha(0)), var(--pulseBlack) 40%);
 }
-.action-footer.blue-footer{
+
+.action-footer.blue-footer {
   background-image: linear-gradient(to bottom, color(var(--darkBlue) alpha(0)), var(--darkBlue) 40%);
 }
 
-.action-footer button{
+.action-footer button {
   margin-left: 2em;
   margin-right: 2em;
 }
 
-.fancy-corners{
+.fancy-corners {
   position: relative;
 }
-.fancy-corners::before{
+
+.fancy-corners::before {
   content: "";
   display: block;
   width: 0.6rem;
@@ -69,7 +71,7 @@ body {
   border-left: solid 1px white;
 }
 
-.fancy-corners::after{
+.fancy-corners::after {
   content: "";
   display: block;
   width: 0.6rem;
@@ -87,40 +89,41 @@ body {
   align-items: center;
 }
 
-.title-text{
+.title-text {
   font-size: 10pt;
   letter-spacing: 0.19em;
   text-transform: uppercase;
   margin-left: 1em;
   margin-right: 1em;
 }
+
 .title-rule {
   flex-grow: 1;
   height: 1px;
   border: none;
-  background-color: color(white alpha(-40%))
+  background-color: color(white alpha(-40%));
 }
 
-.close-button{
+.close-button {
   position: fixed;
   top: 1.91em;
   left: 1.91em;
   transform: scale(1, 1);
 }
 
-.close-button img{
+.close-button img {
   width: 100%;
   height: auto;
 }
 
-.close-button:hover{
+.close-button:hover {
   transform: scale(1.2, 1.2);
 }
 
-.fade-out-animation{
+.fade-out-animation {
   animation: 250ms ease-in fade-out;
 }
 
-.fade-in-animation{
+.fade-in-animation {
   animation: 250ms ease-out fade-in;
 }

@@ -1,7 +1,7 @@
 import DS from 'ember-data';
 
 export default DS.Model.extend({
-  name: DS.attr('string'),
+  title: DS.attr('string'),
   client: DS.attr('string'),
   timeframe: DS.attr('number'),
   timeFormat: DS.attr('string'),

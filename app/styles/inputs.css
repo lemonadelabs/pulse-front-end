@@ -1,7 +1,9 @@
 [contenteditable=true],
 input:focus,
 button { outline: none; }
-/*----- Button styling-----*/
+
+/* ----- Button styling----- */
+
 button {
   cursor: pointer;
   perspective: 1000px;
@@ -19,20 +21,21 @@ button {
 }
 
 button:hover,
-button:focus{
+button:focus {
   color: var(--pulseBlack);
 }
 
 button:active::after,
 button:hover::after,
-button:focus::after{
+button:focus::after {
   opacity: 1;
 }
-button:active::after{
+
+button:active::after {
   transform: translateZ(-50px);
 }
 
-button::after{
+button::after {
   z-index: -1;
   content: "";
   position: absolute;
@@ -72,7 +75,7 @@ input[type="checkbox"] + label .checkbox-label {
   letter-spacing: 0.03em;
 }
 
-input[type="checkbox"] + label .checkbox-toggle{
+input[type="checkbox"] + label .checkbox-toggle {
   display: inline-block;
   width: 2.5em;
   height: 1.5em;
@@ -118,10 +121,6 @@ input[type="checkbox"] + label .checkbox-toggle::after {
   background-color: var(--teal);
   color: var(--darkBlue);
 }
-
-/*input[type="checkbox"]:checked + label .checkbox-toggle{
-
-}*/
 
 input[type="checkbox"]:checked + label .checkbox-toggle::after {
   opacity: 1;
