@@ -53,7 +53,7 @@ Environment.prototype.init = function () {
   /////////////////////// Create Tween Controller ///////////////////////
   this.tweenController = new TweenController({ environment : this })
 
-  var axisHelper = new THREE.AxisHelper( 5 );
+  // var axisHelper = new THREE.AxisHelper( 5 );
   // this.addObjectToScene( axisHelper );
 
   /////////////////////// render the scene ////////////////////////////////////////
