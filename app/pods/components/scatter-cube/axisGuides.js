@@ -5,7 +5,6 @@ export default function AxisGuides () {
 }
 
 AxisGuides.prototype.createMesh = function() {
-  var geometries = []
   var geometry = new THREE.Geometry();
   _.forEach(this.linesVertices, function (vertices) {
     _.forEach(vertices, function (vert) {
