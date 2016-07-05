@@ -47,6 +47,7 @@ module.exports = function(defaults) {
   app.import('bower_components/threex.rendererstats/threex.rendererstats.js')
   app.import('bower_components/threex.objcoord/threex.objcoord.js')
   app.import('bower_components/three.js/examples/js/renderers/Projector.js')
+  app.import('bower_components/run-at-fps/run-at-fps.js')
 
 
   // Use `app.import` to add additional libraries to the generated

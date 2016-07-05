@@ -1,4 +1,3 @@
-import Fps from './services/fps';
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
@@ -47,7 +46,8 @@ Environment.prototype.init = function () {
   this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
   ///////////////////////////////////// Stats /////////////////////////////////////
   this.initStats() ; this.initRendererStats()
-  this.fps = new Fps() ; this.onRenderFcts.push( this.fps.update.bind(this.fps) )
+  this.fps = RunAtFps()
+  this.onRenderFcts.push( this.fps.update.bind(this.fps) )
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////

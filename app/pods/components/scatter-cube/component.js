@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   store: Ember.inject.service(),
   stakeholderFilter: Ember.inject.service(),
   loaded:false,
-  
+
   classNames: ['scatter-cube'],
 
   didInsertElement() {
@@ -38,11 +38,11 @@ export default Ember.Component.extend({
   },
 
   getVotes: function (opts) {
-    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/votes?week=' + opts.week)
+    return Ember.$.getJSON('api/projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/votes?week=' + opts.week)
   },
 
   getConnections: function (opts) {
-    return Ember.$.getJSON('projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/connections?week=' + opts.week)
+    return Ember.$.getJSON('api/projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/connections?week=' + opts.week)
   },
 
    onStakeholderData: function () {
