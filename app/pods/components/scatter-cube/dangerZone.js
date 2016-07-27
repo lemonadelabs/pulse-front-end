@@ -13,7 +13,10 @@ DangerZone.prototype.createMesh = function(geometry) {
   });
   var dangerZone = new THREE.Mesh(geometry, material)
 
-  var mS = (new THREE.Matrix4()).identity(); // http://stackoverflow.com/a/19632221/5522700
+  // Blenders coordinate system is different to three.js, resulting in a geometry that is flipped.
+  // the following code is to turn the geom into a mirror image of itself
+  // http://stackoverflow.com/a/19632221/5522700
+  var mS = (new THREE.Matrix4()).identity();
   //set -1 to the corresponding axis
   // mS.elements[10] = -1;
   // mS.elements[0] = -1;

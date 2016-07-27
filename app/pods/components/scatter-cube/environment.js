@@ -529,8 +529,7 @@ Environment.prototype.initDangerZone = function () {
 Environment.prototype.initLabelGroup = function () {
   var self = this
   this.labelGroup = new LabelGroup({
-    scene: this.scene,
-    camera: this.camera
+    scene: this.scene // pass scene so that meshes can be added
   })
   this.labelGroup.createLabels({
     initialQuadrant : this.quadrantCalculator.quadrant,
