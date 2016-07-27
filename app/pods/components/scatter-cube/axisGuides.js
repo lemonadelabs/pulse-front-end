@@ -5,13 +5,14 @@ export default function AxisGuides () {
 }
 
 AxisGuides.prototype.createMesh = function() {
-  var geometry = new THREE.Geometry();
+  var geometry = new THREE.Geometry(); // initialize an empty geometry
   _.forEach(this.linesVertices, function (vertices) {
     _.forEach(vertices, function (vert) {
-      geometry.vertices.push(vert);
+      geometry.vertices.push(vert); // push the vertex to the geometr
     })
   })
 
+  // it is a convention of THREE.LineSegments that pairs of verticies be joined with a line
   var grid = new THREE.LineSegments( geometry, this.material )
 
   return grid

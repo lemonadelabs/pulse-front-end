@@ -15,6 +15,8 @@ import environmentLoadAnimation from './environmentLoadAnimation'
 export default function Environment (component) {
   this.component = component
   this.container = document.getElementById( "container" );
+
+  // sets up queues for event based functions
   this.onRenderFcts = []
   this.onPointClickFcts = []
   this.noSelectedStakeholderFcts = []
@@ -22,6 +24,7 @@ export default function Environment (component) {
   this.onMouseoverFcts = []
   this.onMouseoutFcts = []
   this.onQuadrantUpdateFxns = []
+
   this.nameBadgeVisible = false
   this.scene = new THREE.Scene()
   this.jSONloader = new THREE.JSONLoader()
@@ -40,14 +43,18 @@ Environment.prototype.init = function () {
   this.initializeControls()
   /////////////////////////// set up renderer /////////////////////////////////////
   this.initializeRenderer()
+  this.initRendererPause()
   ///////////////////// On Window Resize //////////////////////////////////////////
   this.initWindowResize()
   ///////////////////////////////////// Dom Events ////////////////////////////////
   this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
   ///////////////////////////////////// Stats /////////////////////////////////////
-  this.initStats() ; this.initRendererStats()
+  this.initStats()
+  this.initRendererStats()
+
+  // bower component
   this.fps = RunAtFps()
-  this.onRenderFcts.push( this.fps.update.bind(this.fps) )
+  this.onRenderFcts.push( this.fps.update.bind(this.fps) ) // add the update fxn to the render loop
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////
@@ -66,9 +73,10 @@ Environment.prototype.init = function () {
 Environment.prototype.setupScatterCube = function (opts) {
   this.project = opts.project
   this.fadeInOnLoad = []
-  this.stillToLoad = ['cube', 'dangerZone', 'axisGuides']
+  // these are the entities must load before fade in starts
+  this.stillToLoad = ['cube', 'dangerZone']
 
-  ////////////////////// create the cube //////////////////////////////
+  ////////////////////// create the cube ////////////////////////////////
   this.initCube()
   //////////////////// create axis guides ///////////////////////////////
   this.initAxisGuides()
@@ -95,7 +103,6 @@ Environment.prototype.initPointCloud = function (opts) {
   this.oldTime = opts.selectedTime
 
   ///////////////////// Create Point Cloud ////////////////////////
-
   this.pointCloud = new PointCloud({
     stakeholders: stakeholders,
     selectedTime: opts.selectedTime,
@@ -214,7 +221,7 @@ Environment.prototype.render = function () {
   var lastTimeMsec = null
   requestAnimationFrame(function animate(nowMsec){
 
-    // keep looping
+    // save rafId for pause function
     self.renderer.rafId = requestAnimationFrame( animate );
     self.stats.begin()
 
@@ -279,7 +286,6 @@ Environment.prototype.connectionViewUpdated = function () {
 
 Environment.prototype.distributionViewUpdated = function () {
   this.triggerRender()
-
   if (this.component.distributionView) {
     this.tweenController.buildDistroCloud()
   } else {
@@ -302,7 +308,6 @@ Environment.prototype.historyViewUpdated = function () {
 
 Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
   this.triggerRender()
-
   this.pointCloud.focusPoints(opts)
 }
 
@@ -366,7 +371,7 @@ Environment.prototype.initializeControls = function () {
 
 Environment.prototype.initializeRenderer = function () {
   var self = this
-
+  // create renderer, reference in Environment
   this.renderer = new THREE.WebGLRenderer( { antialias: true } );
   this.renderer.setClearColor( 0x222628 );
   this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -374,8 +379,12 @@ Environment.prototype.initializeRenderer = function () {
   this.renderer.sortObjects = false;
   this.renderer.rendering = true
   this.container.appendChild( this.renderer.domElement );
+}
 
+Environment.prototype.initRendererPause = function() {
+  var self = this
   ///////////////////////////  renderer start and stop /////////////////////////////
+  // raf id is the id of the current requestAnimationFrame. This is set in the raf loop. The raf loop is defined in Environment.render.
   this.renderer.pauseRender = function () {
     cancelAnimationFrame(this.rafId)
     this.rendering = false
@@ -383,7 +392,7 @@ Environment.prototype.initializeRenderer = function () {
   }
   this.renderer.resumeRender = function () {
     this.rendering = true
-    self.render()
+    self.render() // Environment.render()
     console.log('resume')
   }
 
@@ -395,19 +404,22 @@ Environment.prototype.initializeRenderer = function () {
     }, 3000)
   }
 
+  // this gets called on every interaction, and calls renderer.resetTimeout
+  // this is the only publicly accessed method
   this.triggerRender = function () {
     if (!this.renderer.rendering) { this.renderer.resumeRender()  } // resume the render
     this.renderer.resetTimeout()
   }
 
+  // bind triggerRender to interactions
   $('.scatter-cube').on('mousemove', function () {
     self.triggerRender()
   })
-
+  // bind triggerRender to interactions
   $('.scatter-cube').on('mouseup', function () {
     self.triggerRender()
   })
-
+  // bind triggerRender to interactions
   this.controls.domElement.addEventListener( 'mousewheel', function () {
     self.triggerRender()
   }, false );
@@ -415,7 +427,8 @@ Environment.prototype.initializeRenderer = function () {
   setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
     self.renderer.resetTimeout()
   }, 3000)
-}
+
+};
 
 Environment.prototype.initWindowResize = function () {
   this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
@@ -465,7 +478,8 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
-  this.onQuadrantUpdate = function (quadrant) {
+  // executes each onQuadrantUpdate fxn when the current quadrant changes
+  var onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
       onQuadrantUpdateFxn(quadrant)
     })
@@ -473,7 +487,7 @@ Environment.prototype.initQuadrantCalculator = function() {
 
   this.quadrantCalculator = new QuadrantCalculator({
     cameraPosition : self.camera.position,
-    onQuadrantUpdate : self.onQuadrantUpdate
+    onQuadrantUpdate : onQuadrantUpdate
   })
   this.onRenderFcts.push(this.quadrantCalculator.update.bind(this.quadrantCalculator))
 };
@@ -489,6 +503,7 @@ Environment.prototype.initCube = function () {
     var cube = new THREE.Mesh(geometry, cubeMaterial)
     cube.name = 'cube'
     self.fadeInOnLoad.push(cube)
+    // removes placeholder from `stillToLoad` array
     _.pull(self.stillToLoad, 'cube')
     self.environmentLoadAnimation()
   })
@@ -497,8 +512,6 @@ Environment.prototype.initCube = function () {
 Environment.prototype.initAxisGuides = function() {
   this.axisGuides = new AxisGuides()
   this.fadeInOnLoad.push(this.axisGuides)
-  _.pull(this.stillToLoad, 'axisGuides')
-  this.environmentLoadAnimation()
 };
 
 Environment.prototype.initDangerZone = function () {

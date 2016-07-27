@@ -19,12 +19,6 @@ export default Ember.Component.extend({
     })
   },
 
-  removeStakeholderFilter: function () {
-    if (!this.get('focusOnStakeholders')) {
-      this.environment.foccussedStakeholdersUpdated( { focussedStakeholders : undefined } )
-    }
-  }.observes('focusOnStakeholders'),
-
   initScatterCube: function () {
     var self = this
     var environment = new Environment(this)
@@ -37,6 +31,20 @@ export default Ember.Component.extend({
     this.environment.initDistributionCloud({ getVotes : this.getVotes })
   },
 
+  onStakeholderData: function () {
+    this.environment.initPointCloud({
+      project : this.project,
+      stakeholders : this.stakeholders,
+      selectedTime : this.get('selectedTime')
+    })
+  }.observes('stakeholders'),
+
+  removeStakeholderFilter: function () {
+    if (!this.get('focusOnStakeholders')) {
+      this.environment.foccussedStakeholdersUpdated( { focussedStakeholders : undefined } )
+    }
+  }.observes('focusOnStakeholders'),
+
   getVotes: function (opts) {
     return Ember.$.getJSON('api/projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/votes?week=' + opts.week)
   },
@@ -45,14 +53,6 @@ export default Ember.Component.extend({
     return Ember.$.getJSON('api/projects/' +  opts.projectId + '/stakeholders/' + opts.stakeholderId + '/connections?week=' + opts.week)
   },
 
-   onStakeholderData: function () {
-
-    this.environment.initPointCloud({
-      project : this.project,
-      stakeholders : this.stakeholders,
-      selectedTime : this.get('selectedTime')
-    })
-  }.observes('stakeholders'),
 
   updateSelectedStakeholder: function (shInfo) {
     this.get('updateStakeholder')(shInfo);
