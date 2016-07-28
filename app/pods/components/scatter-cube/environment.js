@@ -97,6 +97,15 @@ Environment.prototype.setupScatterCube = function (opts) {
 
 }
 
+/**
+* init stakeholder points and associated interactions
+*
+* @method initPointCloud
+* @param {Object} opts
+*   @param {Object} opts.project
+*   @param {Array} opts.stakeholders
+*   @param {Number} opts.selectedTime
+*/
 Environment.prototype.initPointCloud = function (opts) {
   var self = this
   var stakeholders = opts.stakeholders
@@ -110,21 +119,23 @@ Environment.prototype.initPointCloud = function (opts) {
 
   this.fps.runFunctionAtFps({
     toRun : self.pointCloud.startupAnimation.bind(self.pointCloud),
-    args : { addObjectToScene : self.addObjectToScene.bind(self) }
+    args : { addObjectToScene : self.addObjectToScene.bind(self) } // args for `toRun` fxn
   })
 
-  // this.addObjectsToScene(this.pointCloud.sHPoints)
+  // add click targets that are invisible and a little bit bigger than the dots, for ease of clicking.
   this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
   // turn cursor into hand when hovering the sHPoints
+  var $scatterCube = $('.scatter-cube')
   this.onMouseoverFcts.push( function () {
-    $('.scatter-cube').addClass('threejs-hover')
+    $scatterCube.addClass('threejs-hover')
   })
   this.onMouseoutFcts.push( function () {
-    $('.scatter-cube').removeClass('threejs-hover')
+    $scatterCube.removeClass('threejs-hover')
   })
 
-  this.addListnerSHPoint = function (sHPoint) {
+
+  var addListenerSHPoint = function (sHPoint) { // sets up event listners to execute fxn queues
     var mesh = sHPoint.mesh
     self.domEvents.addEventListener(mesh, 'click', function(){
       self.onPointClickFcts.forEach( function(onPointClickFct) {
@@ -144,13 +155,14 @@ Environment.prototype.initPointCloud = function (opts) {
       })
     }, false)
   }
+  _.forEach(this.pointCloud.sHPointClickTargets, addListenerSHPoint)
 
-  _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
+  // sets Environment.focussedPoint to be the point that the user clicks on
   this.onPointClickFcts.push( function (sHPoint) {
     self.focussedPoint = sHPoint
   })
 
+  // resets Environment.focussedPoint
   this.noSelectedStakeholderFcts.push( function () {
     self.focussedPoint = undefined
   })
@@ -159,7 +171,7 @@ Environment.prototype.initPointCloud = function (opts) {
     self.component.updateSelectedStakeholder(sHPoint)
   })
 
-  this.onRenderFcts.push( function () { // depth
+  this.onRenderFcts.push( function () { // updates the opacity of the points to imply depth
     _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
       sHPoint.updateColor({
         cameraPosition : self.camera.position,
@@ -184,7 +196,7 @@ Environment.prototype.initConnections = function (opts) {
   var self = this
 
   /////////////////// Create Connecting Lines ////////////////////////
-  this.removeConnectingLines = function() {
+  this.removeConnectingLines = function() { // reset fxn for linegroup
     this.removeObjectsFromScene(this.lineGroup.primaryConnections)
     this.lineGroup.primaryConnections = []
   }
@@ -197,6 +209,7 @@ Environment.prototype.initConnections = function (opts) {
   })
 
   this.noSelectedStakeholderFcts.push( function () {
+    // fade out connections and then remove them
     if (self.component.connectionView) {
       _.last(self.tweenController.fadeOutConnections({
         duration : 300,
@@ -208,11 +221,9 @@ Environment.prototype.initConnections = function (opts) {
     }
   })
 
-
   this.onRenderFcts.push(function () {
     self.lineGroup.update()
   })
-
 }
 
 
@@ -225,7 +236,8 @@ Environment.prototype.render = function () {
     self.renderer.rafId = requestAnimationFrame( animate );
     self.stats.begin()
 
-    // measure time
+    // measure time for update fxns
+    // we update with respect to time rather than framerate so that animations don't slow down when the framerate drops
     lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
     var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
     lastTimeMsec  = nowMsec
@@ -256,6 +268,7 @@ Environment.prototype.updateTime = function (time) {
 
   if ( this.pointCloud ) {
     this.onUpdateTimeFcts.forEach( function( onUpdateTimeFct ) {
+      // we pass old time because some of the animations need to know where they came from
       onUpdateTimeFct(time, oldTime)
     })
   }
@@ -263,7 +276,7 @@ Environment.prototype.updateTime = function (time) {
 
 Environment.prototype.connectionViewUpdated = function () {
   var self = this
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
 
   if (this.component.connectionView) { // for turning ON the connectionView
     this.lineGroup.drawConnections({
@@ -272,11 +285,14 @@ Environment.prototype.connectionViewUpdated = function () {
       projectId : this.project.get('id')
     })
   } else { // for turning OFF the connectionView
+    // fade out connections
     var tweens = this.tweenController.fadeOutConnections({
       duration : 300,
       easing : TWEEN.Easing.Quadratic.In
     })
     if (!_.isEmpty(tweens)) {
+    // TODO change to `( tweens.length > 0 )` and test
+      // once faded out, remove them
       _.last(tweens).onComplete(function () {
         self.removeConnectingLines()
       })
@@ -285,7 +301,7 @@ Environment.prototype.connectionViewUpdated = function () {
 }
 
 Environment.prototype.distributionViewUpdated = function () {
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
   if (this.component.distributionView) {
     this.tweenController.buildDistroCloud()
   } else {
@@ -295,7 +311,7 @@ Environment.prototype.distributionViewUpdated = function () {
 
 Environment.prototype.historyViewUpdated = function () {
   var self = this
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
 
   if (this.component.historyView) {
     this.tweenController.buildHistorytails(this.focussedPoint)
@@ -307,12 +323,12 @@ Environment.prototype.historyViewUpdated = function () {
 }
 
 Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
   this.pointCloud.focusPoints(opts)
 }
 
 Environment.prototype.animateViewWithTime = function (time, oldTime) {
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
   if (this.component.connectionView && this.component.distributionView && this.focussedPoint) {
     this.tweenController.updateTimeRelationDistroViews(time, oldTime)
   } else if (this.component.connectionView && this.focussedPoint) {
@@ -553,11 +569,12 @@ Environment.prototype.initTarget = function () {
 
     self.addObjectToScene(self.target)
 
+    // add to the queue of functions that are executed on render
     self.onRenderFcts.push(function () {
       self.billboardObject(self.target)
     })
 
-    // hide target
+    // add to the queue of functions that are executed when the stakeholder modal is closed
     self.noSelectedStakeholderFcts.push(hideTarget)
     function hideTarget () {
       self.target.mesh.visible = false
@@ -568,14 +585,16 @@ Environment.prototype.initTarget = function () {
 Environment.prototype.configureNameBadge = function () {
   var self = this
   this.onMouseoverFcts.push(function (sHPoint) {
+    // add to onMouseOver queue
     self.nameBadgeVisible = true
     self.component.updateHoveredStakeholder(sHPoint)
     $('.name-badge').show()
   })
 
   this.onMouseoutFcts.push(function () {
+    // executed when cursor leaves sHPoint
     var $nameBadge = $('.name-badge')
-    if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) {
+    if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) { // this if statement is serving an edge-case with zooming
       $nameBadge.hide()
       self.nameBadgeVisible = false
     }
@@ -583,6 +602,7 @@ Environment.prototype.configureNameBadge = function () {
 
   this.onRenderFcts.push( function () {
     if ( self.nameBadgeVisible ) {
+      // put namebadge in the right place
       var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
 
       var left = ( position.x + 10 ) + 'px'
@@ -616,10 +636,11 @@ Environment.prototype.initDistributionCloud = function (opts) {
 Environment.prototype.initHistoryTailGroup = function () {
   var self = this
   this.historyTailGroup = new HistoryTailGroup()
+  // gets executed when there is no selected stakeholder
   this.noSelectedStakeholderFcts.push( function () {
-    if (self.component.historyView) {
-      self.tweenController.removeHistoryTails().onComplete(function () {
-        self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+    if (self.component.historyView) { // checking to see if historyView is active
+      self.tweenController.removeHistoryTails().onComplete(function () { // fade out tails
+        self.removeObjectsFromScene(self.historyTailGroup.historyTails) // remove from scene
       })
     }
   })
@@ -681,5 +702,6 @@ Environment.prototype.billboardObjects = function (objects) {
 }
 
 Environment.prototype.billboardObject = function (object) {
+  // copies the rotation from the camera and applies it to the mesh
   object.mesh.quaternion.copy( this.camera.quaternion )
 }

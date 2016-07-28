@@ -232,7 +232,8 @@ TweenController.prototype.fadeInHistory = function(opts) {
 TweenController.prototype.fadeOutHistory = function(opts) {
   var tweens = []
   var lines = this.environment.historyTailGroup.historyTails
-
+  // Lines is an array, as defined in the HistoryTailGroup. This is to allow for the potential to have multiple tails
+  // Current implementation is for only one tail at a time
   _.forEach(lines, function (line) {
     var tween = new TWEEN.Tween(line.mesh.material)
         .to({opacity: 0}, opts.duration)
@@ -268,11 +269,13 @@ TweenController.prototype.buildHistorytails = function(sHPoint) {
 };
 
 TweenController.prototype.removeHistoryTails = function () {
+  // tweens are started in fadeOutHistory
   var fadeOutTweens = this.fadeOutHistory({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
   })
   var lastTween = _.last(fadeOutTweens)
+  // return last tween to access .onComplete
   return lastTween
 }
 
@@ -302,7 +305,7 @@ TweenController.prototype.buildDistroCloud = function() {
   var sh_id = environment.focussedPoint.id
   var projectId = environment.project.get('id')
 
-  distributionCloud.getVotes({
+  distributionCloud.getVotes({ // ajax call
     week : week,
     stakeholderId : sh_id,
     projectId : projectId

@@ -8,6 +8,13 @@ export default function DistributionCloud (opts) {
   this.distributionPoints = []
 }
 
+
+/**
+* @method createDistributionPoints
+* @param {Object} opts
+*   @param {Array} opts.votes data from the backend
+*   @param {Object} opts.sHPoint current focussed stakeholder point
+*/
 DistributionCloud.prototype.createDistributionPoints = function(opts) {
   var self = this
   this.selectedStakeholder = opts.sHPoint
@@ -22,33 +29,7 @@ DistributionCloud.prototype.createDistributionPoints = function(opts) {
   })
 };
 
-
 DistributionCloud.prototype.reset = function() {
   this.selectedStakeholder = undefined
   this.distributionPoints = undefined
 };
-
-// DistributionCloud.prototype.buildData = function() {
-//   var data = {}
-//   var weeks = this.selectedStakeholder.weeks
-//   for (var week in weeks) {
-//     data[week] = []
-//     var currentWeek = weeks[week]
-//     for (var i = 0; i < 20; i++) {
-//       data[week].push({
-//         power : randomise(currentWeek.power),
-//         support : randomise(currentWeek.support),
-//         vital : randomise(currentWeek.vital)
-//       })
-//     }
-//   }
-//   return data
-
-//   function randomise(number) {
-//     var randomised = parseFloat(number) + (Math.random()/4 - 0.5/4)
-//     if (randomised < 0) { randomised = 0 }
-//     if (randomised > 1) { randomised = 1 }
-//     return randomised
-
-//   }
-// }

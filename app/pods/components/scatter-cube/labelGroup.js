@@ -24,6 +24,7 @@ export default function LabelGroup (opts) {
 LabelGroup.prototype.createLabels = function(opts) {
   var self = this
   this.objLoader.load("./assets/geometries/labels.json", function (labelScene) {
+    // the label meshes are the first 9 children in the labelscene. Not sure what the other children are.
     var labelMeshes = labelScene.children.splice(0,9)
     _.forEach(labelMeshes, function (labelMesh) {
       labelMesh.material = new THREE.MeshBasicMaterial({

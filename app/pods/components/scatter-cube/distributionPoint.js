@@ -1,4 +1,13 @@
+/**
+* @constructor
+* @method DistributionPoint
+* @param {Object} opts
+*   @param {Object} opts.vote
+*   @param {Object} opts.sHPoint
+* @return {Array} array of ids
+*/
 export default function DistributionPoint (opts) {
+  // where the animation will end
   this.destination = new THREE.Vector3(opts.vote.power, opts.vote.support, opts.vote.vital)
   this.mesh = this.createMesh(opts)
 }
@@ -18,7 +27,7 @@ DistributionPoint.prototype.createMesh = function(opts) {
     color: 0xffffff
   });
   var point = new THREE.Mesh( geometry, material );
-  point.position.copy(opts.sHPoint.mesh.position)
+  point.position.copy(opts.sHPoint.mesh.position) // set initial position for birth animation
 
   return point
 };
