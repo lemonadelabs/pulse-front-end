@@ -4,7 +4,7 @@ export default function DistributionCloud (opts) {
   this.getVotes = opts.getVotes
 
   this.selectedStakeholder = undefined
-  this.transitioning = false
+  this.transitioning = false // this is used in environment to disable opacity update in raf loop
   this.distributionPoints = []
 }
 

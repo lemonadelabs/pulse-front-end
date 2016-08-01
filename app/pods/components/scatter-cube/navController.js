@@ -1,5 +1,10 @@
 // todo:: tidy up this code so that the fading of the arrows uses the same function as the fading of the danger zone and the lables. Currently the arrows are passed as objects that have a mesh, but the lables are passed as an array of meshes. This needs to be standardised
 
+/**
+* @method NavController
+* @param {Object} opts
+*   @param {Object} opts.environment
+*/
 export default function NavController (opts) {
   this.environment = opts.environment
   this.focalPoint = new THREE.Vector3(1,1,1)
@@ -7,7 +12,6 @@ export default function NavController (opts) {
   this.hiddenLabels = []
   this.tweens = {}
   this.hasListners = []
-  this.cornerArrows = opts.cornerArrows
 }
 
 
@@ -30,7 +34,7 @@ NavController.prototype.fadeOutArrows = function(opts) {
       .easing(opts.easing)
       .onStart(function () {
         arrow.mesh.material.transparent = true
-        self.removeListnersFromMesh({ arrow : arrow })
+        self.removeListnersFromMesh( arrow )
       })
       .onComplete(function () {
         arrow.mesh.material.visible = false
@@ -65,7 +69,7 @@ NavController.prototype.fadeInArrows = function(opts) {
       .onComplete(function () {
         arrow.mesh.material.transparent = false
         // console.log(arrow)
-        self.addListnersToMesh({ arrow : arrow })
+        self.addListnersToMesh(arrow)
       })
       .start();
     tweens.push(tween)
@@ -123,6 +127,7 @@ NavController.prototype.fadeOutMeshes = function(opts) {
 NavController.prototype.powerXsupportOrthographicLoHi = function() {
   var self = this
   var camera = this.environment.camera
+  // disable camera controls
   this.environment.controls.enabled = false
 
   this.fadeOutArrows({
@@ -701,32 +706,35 @@ function radiansToDegrees(radians) {
 }
 
 
+/**
+* gets run on quadrant change
+*
+* @method update
+* @param {Object} opts
+*   @param {Number} opts.quadrant
+* @return {Array} array of ids
+*/
 NavController.prototype.update = function(opts) {
   var self = this
   var cornerArrows = this.cornerArrows
-  var toFadeOut = []
-  var toFadeIn = []
+  // decides which arrows to fade in and out, depending on the current quadrant
   _.forEach(cornerArrows, function (arrow) {
     if (arrow.quadrant !== opts.quadrant && arrow.mesh.material.visible) {
-      toFadeOut.push(arrow)
+      self.fadeOutArrow( arrow )
     }
     if (arrow.quadrant === opts.quadrant) {
-      toFadeIn.push(arrow)
+      self.fadeInArrow( arrow )
     }
-  })
-
-  _.forEach(toFadeIn, function (arrow) {
-    self.fadeInArrow({ arrow : arrow })
-  })
-
-  _.forEach(toFadeOut, function (arrow) {
-    self.fadeOutArrow({ arrow : arrow })
   })
 };
 
-NavController.prototype.fadeInArrow = function(opts) {
+/**
+* used only when fading due to quadrant change. Not used for arrow click transitions
+* @method fadeInArrow
+* @param {Object} arrow (with mesh)
+*/
+NavController.prototype.fadeInArrow = function(arrow) {
   var self = this
-  var arrow = opts.arrow
   var name = arrow.mesh.name
 
   var cachedTween
@@ -736,7 +744,6 @@ NavController.prototype.fadeInArrow = function(opts) {
   }
 
   var material = arrow.mesh.material
-  // arrow.tweenCounter.opacity = material.opacity
   var fadeInTween = new TWEEN.Tween(arrow.tweenCounter)
   .to({opacity: 1.0}, 300)
   .easing(TWEEN.Easing.Exponential.In)
@@ -749,20 +756,20 @@ NavController.prototype.fadeInArrow = function(opts) {
   })
   .onComplete(function () {
     material.transparent = false
-    self.addListnersToMesh({ arrow : arrow })
+    self.addListnersToMesh(arrow)
     delete self.tweens[name]
   })
   this.tweens[name] = fadeInTween
   fadeInTween.start()
 };
 
-///////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////// moved in from navArrowAnimator ////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-
-NavController.prototype.fadeOutArrow = function(opts) {
+/**
+* used only when fading due to quadrant change. Not used for arrow click transitions
+* @method fadeOutArrow
+* @param {Object} arrow (with mesh)
+*/
+NavController.prototype.fadeOutArrow = function(arrow) {
   var self = this
-  var arrow = opts.arrow
   var name = arrow.mesh.name
 
   var cachedTween
@@ -778,7 +785,7 @@ NavController.prototype.fadeOutArrow = function(opts) {
       .easing(TWEEN.Easing.Exponential.Out)
       .onStart(function () {
         material.transparent = true
-        self.removeListnersFromMesh({ arrow : arrow })
+        self.removeListnersFromMesh( arrow )
       })
       .onUpdate(function () {
         material.opacity = arrow.tweenCounter.opacity
@@ -792,30 +799,32 @@ NavController.prototype.fadeOutArrow = function(opts) {
   fadeOutTween.start();
 };
 
-NavController.prototype.addListnersToMesh = function(opts) {
-  var name = opts.arrow.hitBox.name
+
+NavController.prototype.addListnersToMesh = function(arrow) {
+  var name = arrow.hitBox.name
   if (!(_.includes(this.hasListners, name))) {
-    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'click', this.onCLick, false)
-    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'mouseover', this.onMouseover, false)
-    this.environment.domEvents.addEventListener(opts.arrow.hitBox, 'mouseout', this.onMouseout, false)
+    this.environment.domEvents.addEventListener(arrow.hitBox, 'click', this.onCLick, false)
+    this.environment.domEvents.addEventListener(arrow.hitBox, 'mouseover', this.onMouseover, false)
+    this.environment.domEvents.addEventListener(arrow.hitBox, 'mouseout', this.onMouseout, false)
 
     this.hasListners.push(name)
   }
 };
 
-NavController.prototype.removeListnersFromMesh = function(opts) {
+NavController.prototype.removeListnersFromMesh = function(arrow) {
   var self = this
-  var name = opts.arrow.hitBox.name
+  var name = arrow.hitBox.name
   if (_.includes(this.hasListners, name)) {
-    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'click', this.onCLick, false)
-    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'mouseover', this.onMouseover, false)
-    this.environment.domEvents.removeEventListener(opts.arrow.hitBox, 'mouseout', this.onMouseout, false)
+    this.environment.domEvents.removeEventListener(arrow.hitBox, 'click', this.onCLick, false)
+    this.environment.domEvents.removeEventListener(arrow.hitBox, 'mouseover', this.onMouseover, false)
+    this.environment.domEvents.removeEventListener(arrow.hitBox, 'mouseout', this.onMouseout, false)
     $('.scatter-cube').removeClass('threejs-hover')
     _.pull(this.hasListners, name)
   }
 };
 
 
+// calls the onClickFxn as defined in navArrows.js
 NavController.prototype.onCLick = function(event) {
   event.target.onClickFxn()
 };

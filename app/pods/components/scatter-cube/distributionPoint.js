@@ -32,11 +32,13 @@ DistributionPoint.prototype.createMesh = function(opts) {
   return point
 };
 
-DistributionPoint.prototype.updateColor = function(cameraPosition) {
+DistributionPoint.prototype.updateColor = function(cameraPosition, targetPosition = this.mesh.position) {
+  // this function should really be called updateOpacity
+  // the opacity of a point is a function of its distance from the camera
 
-  var distanceCameraSHPoint = cameraPosition.distanceTo(this.mesh.position)
+  var distanceCameraSHPoint = cameraPosition.distanceTo(targetPosition)
 
-  var center = new THREE.Vector3(1,1,1)
+  var center = new THREE.Vector3(1,1,1) // center of the cube
 
   var distanceCameraCenter = cameraPosition.distanceTo(center) // between 1.7 and 5
 

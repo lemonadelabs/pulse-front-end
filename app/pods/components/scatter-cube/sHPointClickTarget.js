@@ -45,6 +45,7 @@ SHPointClickTarget.prototype.createCurve = function() {
   var snapshots = this.snapshots
   var points = []
 
+  // takes snapshots and builds curve from the coordinates of the snapshots
   snapshots.forEach(function (snapshot) {
     points.push( coordsFromSnapshot(snapshot) )
   })

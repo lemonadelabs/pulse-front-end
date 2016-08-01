@@ -1,5 +1,17 @@
 import arrowHitbox from './arrowHitbox'
-// import NavArrowAnimator from './navArrowAnimator';
+
+
+/**
+* instantiates the navigtional arrows with hitbox and subscribes to interaction event listners
+*
+* @method NavArrows
+* @param {Object} opts
+*   @param {Object} opts.scene
+*   @param {Object} opts.jSONloader
+*   @param {Object} opts.navController
+*   @param {Number} opts.initialQuadrant
+*   @param {Functon} opts.navControllerUpdate
+*/
 
 export default function NavArrows (opts) {
 
@@ -13,16 +25,17 @@ export default function NavArrows (opts) {
 
   this.jSONloader = opts.jSONloader
 
-  this.domEvents = opts.domEvents
-
   this.hitBoxMaterial = new THREE.MeshBasicMaterial({
     shading: THREE.FlatShading,
     visible: false,
+    side: THREE.DoubleSide,
+    // if you wish to see the hitboxes, uncomment these lines...
+    // visible: true,
     // transparent : true ,
     // opacity : 0.4,
-    side: THREE.DoubleSide,
   });
 
+  // locations of all the nav arrows
   this.position = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -55,6 +68,7 @@ export default function NavArrows (opts) {
     sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.26),
   }
 
+  // location of all the hitboxes
   this.hitboxPosition = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -87,6 +101,7 @@ export default function NavArrows (opts) {
     sideVitalHiLoSupportRight : new THREE.Vector3(2, -0.3, 0.12),
   }
 
+  // rotational information for the arrows
   this.rotation = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -119,6 +134,7 @@ export default function NavArrows (opts) {
     sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI, Math.PI / 2, 'XYZ' ),
   }
 
+  // rotational information for the hitboxes
   this.hitboxRotation = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -151,6 +167,7 @@ export default function NavArrows (opts) {
     sideVitalHiLoSupportRight : new THREE.Euler( Math.PI / 2, Math.PI / 2, 0, 'XYZ' ),
   }
 
+  // mapping to point to which function in nav controller to execute on click
   this.navControlls = {
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// corners /////////////////////////////////
@@ -186,35 +203,42 @@ export default function NavArrows (opts) {
   ///////////////////////////////////////////////////////////////////////////
   ///////////////////////////////// corners /////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////
-  this.powerLoLovitalLeft = this.createArrow({ name : 'powerLoLovitalLeft', quadrant : 0 })
-  this.powerLoLovitalRight = this.createArrow({ name : 'powerLoLovitalRight', quadrant : 0 })
+  this.createArrow({ name : 'powerLoLovitalLeft', quadrant : 0 })
+  this.createArrow({ name : 'powerLoLovitalRight', quadrant : 0 })
 
-  this.vitalLoHiPowerLeft = this.createArrow({ name : 'vitalLoHiPowerLeft', quadrant : 1 })
-  this.vitalLoHiPowerRight = this.createArrow({ name : 'vitalLoHiPowerRight', quadrant : 1 })
+  this.createArrow({ name : 'vitalLoHiPowerLeft', quadrant : 1 })
+  this.createArrow({ name : 'vitalLoHiPowerRight', quadrant : 1 })
 
-  this.powerHiHiVitalLeft = this.createArrow({ name : 'powerHiHiVitalLeft', quadrant : 2 })
-  this.powerHiHiVitalRight = this.createArrow({ name : 'powerHiHiVitalRight', quadrant : 2 })
+  this.createArrow({ name : 'powerHiHiVitalLeft', quadrant : 2 })
+  this.createArrow({ name : 'powerHiHiVitalRight', quadrant : 2 })
 
-  this.vitalHiLoPowerLeft = this.createArrow({ name : 'vitalHiLoPowerLeft', quadrant : 3 })
-  this.vitalHiLoPowerRight = this.createArrow({ name : 'vitalHiLoPowerRight', quadrant : 3 })
+  this.createArrow({ name : 'vitalHiLoPowerLeft', quadrant : 3 })
+  this.createArrow({ name : 'vitalHiLoPowerRight', quadrant : 3 })
   // ///////////////////////////////////////////////////////////////////////////
   // ////////////////////////////////// sides //////////////////////////////////
   // ///////////////////////////////////////////////////////////////////////////
-  this.sidePowerHiLoSupportLeft = this.createArrow({ name : 'sidePowerHiLoSupportLeft' })
-  this.sidePowerHiLoSupportRight = this.createArrow({ name : 'sidePowerHiLoSupportRight' })
+  this.createArrow({ name : 'sidePowerHiLoSupportLeft' })
+  this.createArrow({ name : 'sidePowerHiLoSupportRight' })
 
-  this.sideVitalLoHiSupportLeft = this.createArrow({ name : 'sideVitalLoHiSupportLeft' })
-  this.sideVitalLoHiSupportRight = this.createArrow({ name : 'sideVitalLoHiSupportRight' })
+  this.createArrow({ name : 'sideVitalLoHiSupportLeft' })
+  this.createArrow({ name : 'sideVitalLoHiSupportRight' })
 
-  this.sidePowerLoHiSupportLeft = this.createArrow({ name : 'sidePowerLoHiSupportLeft' })
-  this.sidePowerLoHiSupportRight = this.createArrow({ name : 'sidePowerLoHiSupportRight' })
+  this.createArrow({ name : 'sidePowerLoHiSupportLeft' })
+  this.createArrow({ name : 'sidePowerLoHiSupportRight' })
 
-  this.sideVitalHiLoSupportLeft = this.createArrow({ name : 'sideVitalHiLoSupportLeft' })
-  this.sideVitalHiLoSupportRight = this.createArrow({ name : 'sideVitalHiLoSupportRight' })
+  this.createArrow({ name : 'sideVitalHiLoSupportLeft' })
+  this.createArrow({ name : 'sideVitalHiLoSupportRight' })
 
-  // this.navArrowAnimator = new NavArrowAnimator({cornerArrows : this.cornerArrows})
 }
 
+/**
+*
+*
+* @method createArrow
+* @param {Object} opts
+*   @param {String} opts.name
+*   @param {Number} opts.quadrant
+*/
 NavArrows.prototype.createArrow = function(opts) {
   var self = this
   var name = opts.name
@@ -226,9 +250,7 @@ NavArrows.prototype.createArrow = function(opts) {
     side: THREE.DoubleSide
   });
 
-  var arrowType
-  var direction
-  var path
+  var arrowType, direction, path
   if (_.endsWith(name, 'Left')) {
     path = './assets/geometries/rotationArrowsLeft.json'
     arrowType = 'cornerArrows'
@@ -245,6 +267,8 @@ NavArrows.prototype.createArrow = function(opts) {
   }
 
 
+  // load geometry from json, make meshes for arrow and hitbox, position arrows appropriately, add to scene.
+  // Store reference to arrow in NavArrows, using the name as key.
   self.jSONloader.load(path, function (geometry) {
 
     var arrow = {}
@@ -256,11 +280,13 @@ NavArrows.prototype.createArrow = function(opts) {
 
     var matrix = new THREE.Matrix4()
 
+    // pull rotation from object defined in constructor
     var rotation = self.rotation[name] // new THREE.Euler( 0, 0, 0, 'XYZ' );
     var quaternion = new THREE.Quaternion()
     quaternion.setFromEuler( rotation, false );
     matrix.makeRotationFromQuaternion(quaternion)
 
+    // pull position from object defined in constructor
     var position = self.position[name] // new THREE.Vector3(1,1,1);
     matrix.setPosition(position)
 
@@ -283,8 +309,6 @@ NavArrows.prototype.createArrow = function(opts) {
     if (self.arrowsLoaded === 16) { self.navControllerUpdate({ quadrant : self.initialQuadrant }) }
     self[name] = arrow
   })
-
-
 };
 
 

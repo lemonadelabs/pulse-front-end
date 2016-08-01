@@ -1,5 +1,6 @@
 import coordsFromSnapshot from './services/coordsFromSnapshot';
 
+// TODO refactor SHPoint and SHPointClickTarget to be the same class
 export default function SHPoint (opts) {
   this.focussed = true
   this.id = opts.id

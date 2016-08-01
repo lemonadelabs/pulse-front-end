@@ -1,5 +1,16 @@
 /* global THREE, chroma */
 
+/**
+* draws a line between two sHPoints to represent realationship and strength of the relationship
+* @method ConnectingLine
+* @param {Object} opts
+*   @param {Object} opts.pointA sHPoint
+*   @param {Object} opts.pointB sHPoint
+*   @param {Number} opts.strength
+*/
+
+
+
 export default function ConnectingLine (opts) {
   this.pointA = opts.pointA
   this.pointB = opts.pointB
@@ -29,19 +40,16 @@ ConnectingLine.prototype.createMaterial = function(strength) {
 };
 
 function createRGBString(color) {
-  var rgb = ""
-  + 'rgb('
-  + Math.round( color.rgb()[0] )
-  + ','
-  + Math.round( color.rgb()[1] )
-  + ','
-  + Math.round( color.rgb()[2] )
-  + ')'
-  return rgb
+  return `rgb(${Math.round( color.rgb()[0] )},${Math.round( color.rgb()[1] )},${Math.round( color.rgb()[2] )})`
 }
+
+
 
 ConnectingLine.prototype.createMesh = function(opts) {
   var geometry = new THREE.Geometry();
+
+  // To enable us to update vertex coordinates of the geometry
+  // https://github.com/mrdoob/three.js/issues/1091#issuecomment-3468124
   geometry.dynamic = true
 
   geometry.vertices.push(this.pointA.mesh.position);

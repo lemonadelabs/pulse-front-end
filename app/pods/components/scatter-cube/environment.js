@@ -278,7 +278,7 @@ Environment.prototype.connectionViewUpdated = function () {
   var self = this
   this.triggerRender() // ensure renderer is rendering
 
-  if (this.component.connectionView) { // for turning ON the connectionView
+  if (this.component.connectionView) { // called from the scatterCube componenet. Property is set in the viewMode component.
     this.lineGroup.drawConnections({
       sHPoint : this.focussedPoint,
       currentWeek : this.currentWeek,
@@ -302,7 +302,7 @@ Environment.prototype.connectionViewUpdated = function () {
 
 Environment.prototype.distributionViewUpdated = function () {
   this.triggerRender() // ensure renderer is rendering
-  if (this.component.distributionView) {
+  if (this.component.distributionView) {  // called from the scatterCube componenet. Property is set in the viewMode component.
     this.tweenController.buildDistroCloud()
   } else {
     this.tweenController.removeDistroCloud()
@@ -313,7 +313,7 @@ Environment.prototype.historyViewUpdated = function () {
   var self = this
   this.triggerRender() // ensure renderer is rendering
 
-  if (this.component.historyView) {
+  if (this.component.historyView) {  // called from the scatterCube componenet. Property is set in the viewMode component.
     this.tweenController.buildHistorytails(this.focussedPoint)
   } else {
     this.tweenController.removeHistoryTails().onComplete(function () {
@@ -322,22 +322,33 @@ Environment.prototype.historyViewUpdated = function () {
   }
 }
 
+/**
+* calls pointCloud fxn which foccusses stakeholder as selected in the `stakeholders` modal
+* @method foccussedStakeholdersUpdated
+* @param {Object} opts
+*   @param {Object} opts.focussedStakeholders stakeholders with id as key
+*/
 Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
   this.triggerRender() // ensure renderer is rendering
   this.pointCloud.focusPoints(opts)
 }
 
+// this handles animation with time change for all of the different combinations of view options
 Environment.prototype.animateViewWithTime = function (time, oldTime) {
   this.triggerRender() // ensure renderer is rendering
+  // the UI is viewing connection view, distribution view, and the stakeholder modal is showing
   if (this.component.connectionView && this.component.distributionView && this.focussedPoint) {
     this.tweenController.updateTimeRelationDistroViews(time, oldTime)
+    // the UI is viewing connection view, and the stakeholder modal is showing
   } else if (this.component.connectionView && this.focussedPoint) {
     this.tweenController.updateTimeRelationView(time, oldTime)
+    // the UI is viewing distribution view, and the stakeholder modal is showing
   } else if (this.component.distributionView && this.focussedPoint) {
     this.tweenController.updateTimeDistroView(time, oldTime)
+    // the UI is viewing the stakeholder modal
   } else if (this.focussedPoint) { // no views but with selected stakeholder
     this.tweenController.updateTimeNoViewsWithFocus(time, oldTime)
-  } else { // no viewsm no selected stakeholder
+  } else { // no views, and no selected stakeholder
     this.tweenController.updateSHPoints({
       time : time,
       oldTime : oldTime,
@@ -347,7 +358,7 @@ Environment.prototype.animateViewWithTime = function (time, oldTime) {
   }
 }
 
-Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) {
+Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) { // executed when the user click a stakeholder point
    if (this.component.connectionView && this.component.distributionView) { // also takes care of history view
     this.tweenController.updateSelectedStakeholderAllViews(sHPoint)
   } else if (this.component.connectionView) { // also takes care of history view
@@ -360,8 +371,6 @@ Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) {
     this.target.updatePosition(sHPoint)
   }
 }
-
-
 
 /////////////////////////////////////////////////////////////////////
 ///////////////////////////// init fxns /////////////////////////////
@@ -654,14 +663,13 @@ Environment.prototype.initNav = function () {
     scene : this.scene,
     jSONloader : this.jSONloader,
     navController : this.navController,
-    domEvents : this.domEvents,
     initialQuadrant: self.quadrantCalculator.quadrant,
-    navControllerUpdate : self.navController.update.bind(self.navController)
+    navControllerUpdate : self.navController.update.bind(self.navController) // bind to its own context
   })
   this.navController.cornerArrows = this.navArrows.cornerArrows
 
   this.onQuadrantUpdateFxns.push(function (quadrant) {
-
+    // don't bother updating when the view is in orthographic mode
     if (self.camera.position.distanceTo(self.controls.target) < 50) {
       self.navController.update({ quadrant : quadrant })
     }

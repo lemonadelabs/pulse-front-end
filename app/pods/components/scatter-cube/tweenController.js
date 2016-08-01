@@ -11,6 +11,7 @@ export default function TweenController (opts) {
 
 
 TweenController.prototype.distroCloudBirth = function(opts) {
+  // this animation causes points to explode out from the position of the selected stakeholder point
   var environment = this.environment
   var tweens = []
   var points = environment.distributionCloud.distributionPoints
@@ -18,30 +19,56 @@ TweenController.prototype.distroCloudBirth = function(opts) {
 
   environment.distributionCloud.transitioning = true
   _.forEach(points, function (point) {
-    var destination = point.destination
-    var x = (destination.x) * 1.8  + 0.1
-    var y = (destination.y) * 1.8  + 0.1
-    var z = (destination.z) * 1.8  + 0.1
 
 
-    var tween = new TWEEN.Tween(point.mesh.position)
+    var opacityProxy = {opacity: 0}
+
+    var positionProxy = {
+      x : point.mesh.position.x,
+      y : point.mesh.position.y,
+      z : point.mesh.position.z
+    }
+
+    var destinationPosition = coordsFromSnapshot(point.destination) // normalization to make the points sit within the cube and not collide with the edges
+    point.updateColor(environment.camera.position, destinationPosition) // work out destination opacity
+    var destinationOpacity = point.mesh.material.opacity
+    point.mesh.material.opacity = 0 // hide point for begining of animation
+
+    var positionTween = new TWEEN.Tween(positionProxy)
       .easing(opts.easing)
-      .to({x: x, y: y, z: z}, opts.duration)
-      .onComplete(function () {
-        environment.distributionCloud.transitioning = false
+      .to({
+        x : destinationPosition.x,
+        y : destinationPosition.y,
+        z : destinationPosition.z
+      }, opts.duration)
+      .onUpdate(function () {
+        point.mesh.position.set(positionProxy.x,positionProxy.y,positionProxy.z)
       })
       .start();
-    tweens.push(tween)
+    tweens.push(positionTween)
 
-    point.updateColor(environment.camera.position) // premeditates the change in color for the tween to fade to
-    var birthFadeTween = new TWEEN.Tween(point.mesh.material)
-      .to({opacity : point.mesh.material.opacity}, opts.duration)
-      .easing(TWEEN.Easing.Exponential.In)
-    birthFadeTween.start();
+    var opacityTween = new TWEEN.Tween(opacityProxy)
+      .easing(TWEEN.Easing.Quadratic.In)
+      .to({ opacity: destinationOpacity }, (opts.duration * 0.5))
+      .onUpdate(function () {
+        point.mesh.material.opacity = opacityProxy.opacity
+      })
+      .start();
+    tweens.push(opacityTween)
+  })
+  _.last(tweens).onComplete(function (){
+    environment.distributionCloud.transitioning = false
   })
   return tweens
 }
 
+/**
+* makes the distro points implode into sHPoint location and fade out
+* @method distroCloudDeath
+* @param {Object} opts
+*   @param {Number} opts.duration
+*   @param {Function} opts.easing
+*/
 TweenController.prototype.distroCloudDeath = function(opts) {
   var distributionCloud = this.environment.distributionCloud
   var tweens = []
@@ -69,14 +96,23 @@ TweenController.prototype.distroCloudDeath = function(opts) {
   return tweens
 };
 
+/**
+* moves the sHPoints
+* @method updateSHPoints
+* @param {Object} opts
+*   @param {Number} opts.time
+*   @param {Number} opts.oldTime
+*   @param {Function} opts.easing
+*   @param {Number} opts.duration
+*/
 TweenController.prototype.updateSHPoints = function(opts) {
   var tweens = []
   var environment = this.environment
   var pointCloud = environment.pointCloud
 
-  var deltaT = Math.abs(opts.time - opts.oldTime)
+  var deltaT = Math.abs(opts.time - opts.oldTime) //Work out the difference between the old time and the new time
 
-  if (deltaT <= 2 ) { // make the animations follow the curve
+  if (deltaT <= 2 ) { // if the difference is 2 or less make the animations follow the curve
     allPointsFromCurve()
   } else if ( ( deltaT >= 3 ) && environment.component.historyView && environment.focussedPoint ) { // linear, focussed point is curvy
     linearAndCurve()
@@ -84,15 +120,23 @@ TweenController.prototype.updateSHPoints = function(opts) {
     allPointsLinear(opts)
   }
 
+  function allPointsFromCurve () {
+    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
+      var clickTarget = pointCloud.sHPointClickTargets[i]
+      createPointTweensFromCurve(clickTarget, clickTarget.curve)
+      createPointTweensFromCurve(sHPoint, clickTarget.curve)
+    })
+  }
+
   function linearAndCurve() {
 
     _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
-      var clickTarget = pointCloud.sHPointClickTargets[i]
+      var clickTarget = pointCloud.sHPointClickTargets[i] // get the clickTarget
 
-      if (clickTarget.id === environment.focussedPoint.id) {
+      if (clickTarget.id === environment.focussedPoint.id) { // if the point is the selectedStakeholder, then move it along the curve
         createPointTweensFromCurve(sHPoint, clickTarget.curve)
         createPointTweensFromCurve(clickTarget, clickTarget.curve)
-      } else {
+      } else { // for all other points, move them in a straight line
         var snap = clickTarget.snapshots.objectAt( opts.time - 1 )
         var newCoords = coordsFromSnapshot(snap)
 
@@ -109,14 +153,6 @@ TweenController.prototype.updateSHPoints = function(opts) {
           easing : opts.easing
         })
       }
-    })
-  }
-
-  function allPointsFromCurve () {
-    _.forEach(pointCloud.sHPoints, function (sHPoint, i) {
-      var clickTarget = pointCloud.sHPointClickTargets[i]
-      createPointTweensFromCurve(clickTarget, clickTarget.curve)
-      createPointTweensFromCurve(sHPoint, clickTarget.curve)
     })
   }
 
@@ -144,18 +180,18 @@ TweenController.prototype.updateSHPoints = function(opts) {
     })
   }
 
+  //Given a curve it will make the dot follow the line
   function createPointTweensFromCurve (sHPoint, curve) {
-
     if (curve) {
       sHPoint.curveLocation = curveLocation(opts.oldTime)
       var newCurveLocation = curveLocation(opts.time)
 
       var tween = new TWEEN.Tween(sHPoint)
-
           .to({curveLocation: newCurveLocation}, opts.duration)
           .easing(opts.easing)
           .onUpdate(function () {
             sHPoint.mesh.position.copy(
+              // use the tweened curve location float to get the current coordinates of the point on the curve
               curve.getPoint(sHPoint.curveLocation)
             )
           })
@@ -163,12 +199,22 @@ TweenController.prototype.updateSHPoints = function(opts) {
       tweens.push(tween)
     }
   }
-
+  // returns a float between 0 and 1 that represent where the point sits on the curve.
+  // 0 would be the beginning of the curve, 1 would be the end.
   function curveLocation(week) {
-    var timeFrame = environment.project.get('timeframe')
-    return ( ( week - 1 ) * 1 / ( timeFrame - 1 ) )
+    var timeFrame = environment.project.get('timeframe') // timeframe is the total amount of weeks in the project
+    return ( ( week - 1 ) / ( timeFrame - 1 ) )
   }
 
+  /**
+  * moves a mesh from its current location to opts.newCoords
+  * @method createPointTweens
+  * @param {Object} opts
+  *   @param {Object} opts.newCoords THREE.Vector3
+  *   @param {Object} opts.point sHPoint
+  *   @param {number} opts.duration
+  *   @param {Function} opts.easing
+  */
   function createPointTweens (opts) {
     var point = opts.point
     var coords = opts.newCoords
@@ -284,13 +330,20 @@ TweenController.prototype.updateHistoryTail = function(sHPoint) {
   var environment = this.environment
   var tween
   if (_.isEmpty(environment.historyTailGroup.historyTails)) {
-    tween = this.buildHistorytails(sHPoint).onComplete(function () {
+    // create historyTail
+    tween = this.buildHistorytails(sHPoint)
+    tween.onComplete(function () {
+      // move target
       environment.target.updatePosition(environment.focussedPoint)
     })
   } else {
-    this.removeHistoryTails().onComplete(function () {
+    // remove old historyTail
+    tween = this.removeHistoryTails()
+    tween.onComplete( function () {
       environment.removeObjectsFromScene(environment.historyTailGroup.historyTails)
+      // move target
       environment.target.updatePosition(environment.focussedPoint)
+      // create new history tail
       self.buildHistorytails(sHPoint)
     })
   }
@@ -341,6 +394,7 @@ TweenController.prototype.removeDistroCloud = function() {
 
 TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
   var environment = this.environment
+  // move sHPoints
   var tweens = this.updateSHPoints({
     time : time,
     oldTime : oldTime,
@@ -348,6 +402,7 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
     duration : 1500
   })
   var lastTween = _.last(tweens)
+  // update position of target
   lastTween.onUpdate(function () {
     environment.target.updatePosition(environment.focussedPoint)
   })
@@ -386,16 +441,15 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
 
   var self = this
   var environment = this.environment
-
+  //Distro cloud death animation
   var deathTweens = this.distroCloudDeath({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.Out
   })
   var lastDeathTween = _.last(deathTweens)
-
   lastDeathTween.onComplete( function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
-
+    //Moving the stakeholder points
     var sHPointTweens = self.updateSHPoints({
       time : time,
       oldTime : oldTime,
@@ -403,10 +457,12 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
       duration : 500
     })
     var lastSHPointTween = _.last(sHPointTweens)
+    //Move the target with the selected stakeholder point
     lastSHPointTween.onUpdate(function () {
       environment.target.updatePosition(environment.focussedPoint)
     })
     .onComplete(function () {
+      //Rebuild Dristro cloud
       self.buildDistroCloud()
     })
   })
@@ -449,20 +505,24 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
   var self = this
   var environment = this.environment
 
+  // move the target to the new point
   environment.target.updatePosition(sHPoint)
 
-  if (environment.component.historyView) { // history tail stuff
+  if (environment.component.historyView) {
+    // fade out the historyTail
     var tween = _.last(self.fadeOutHistory({
       duration : 150,
       easing : TWEEN.Easing.Quadratic.In
     }))
     tween.onComplete(function () {
       environment.removeObjectsFromScene( environment.historyTailGroup.historyTails )
+      // Create the new historyTail
       self.buildHistorytails(sHPoint)
     })
   }
 
-  if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
+  if (environment.lineGroup.primaryConnections.length > 0) {
+    // remove connecting lines
     var fadeOutTweens = this.fadeOutConnections({
       duration : 150,
       easing : TWEEN.Easing.Quadratic.In
@@ -470,6 +530,7 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
 
     var lastFadeOutTween = _.last(fadeOutTweens)
     lastFadeOutTween.onComplete(function () {
+      // crate new connecting lines
       environment.lineGroup.drawConnections({
         projectId : environment.project.get('id'),
         sHPoint : sHPoint,
@@ -477,6 +538,7 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
       })
     })
   } else { // clicking a point after having the modal closed
+    // create connecting lines
     environment.lineGroup.drawConnections({
       projectId : environment.project.get('id'),
       sHPoint : sHPoint,
@@ -486,12 +548,18 @@ TweenController.prototype.updateSelectedStakeholderConnectionView = function(sHP
 };
 
 TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoint) { // also history
-
   var self = this
   var environment = this.environment
 
-  if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
+  if (environment.component.historyView) {
+    // remove the old historyTail
+    var removeHistoryTailsTween = this.removeHistoryTails()
+    removeHistoryTailsTween.onComplete( function () {
+      environment.removeObjectsFromScene( environment.historyTailGroup.historyTails )
+    })
+  }
 
+  // remove the distro cloud
   var deathTweens = this.distroCloudDeath({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
@@ -500,8 +568,11 @@ TweenController.prototype.updateSelectedStakeholderDistroView = function (sHPoin
   var lastDeathTween = _.last(deathTweens)
   lastDeathTween.onComplete(function () {
     environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+    // move the target
     environment.target.updatePosition(environment.focussedPoint)
+    // create new dirsto cloud
     self.buildDistroCloud()
+    // crate new historyTail
     if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
   })
 }
@@ -510,32 +581,45 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
   var self = this
   var environment = this.environment
 
-  if (environment.component.historyView) { this.removeHistoryTails().onComplete(function () {environment.removeObjectsFromScene(environment.historyTailGroup.historyTails) } ) }
+  // if historyView is active, remove old history tail
+  if (environment.component.historyView) {
+    var removeHistoryTailsTween = this.removeHistoryTails()
+    removeHistoryTailsTween.onComplete( function () {
+      environment.removeObjectsFromScene(environment.historyTailGroup.historyTails)
+    })
+  }
 
+  // remove the distro points
   var cloudDeathTweens = this.distroCloudDeath({
     duration : 300,
     easing : TWEEN.Easing.Quadratic.In
   })
-  var lastDeathTween = _.last(cloudDeathTweens)
-  lastDeathTween.onComplete(function () {
-    environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
 
-    environment.target.updatePosition(sHPoint)
-    self.buildDistroCloud()
-    environment.lineGroup.drawConnections({
-      projectId : environment.project.get('id'),
-      sHPoint : sHPoint,
-      currentWeek: environment.currentWeek
-    })
-
-    // environment.component.historyView ? self.buildHistorytails(sHPoint) :;
-    if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
-  })
-  if (!_.isEmpty(environment.lineGroup.primaryConnections)) {
+  // fade out old connections
+  if (environment.lineGroup.primaryConnections.length > 0) {
+    console.log('adfasdfasdf')
     this.fadeOutConnections({
       duration : 300,
       easing : TWEEN.Easing.Quadratic.In
     })
   }
+
+  var lastDeathTween = _.last(cloudDeathTweens)
+  lastDeathTween.onComplete(function () {
+    environment.removeObjectsFromScene(environment.distributionCloud.distributionPoints)
+
+    // move the target
+    environment.target.updatePosition(sHPoint)
+    // rebuild the distro cloud
+    self.buildDistroCloud()
+    // create new connections
+    environment.lineGroup.drawConnections({
+      projectId : environment.project.get('id'),
+      sHPoint : sHPoint,
+      currentWeek: environment.currentWeek
+    })
+    // if in historyView, rebuild the tail for the newly selected stakeholder
+    if (environment.component.historyView) { self.buildHistorytails(sHPoint) }
+  })
 }
 
