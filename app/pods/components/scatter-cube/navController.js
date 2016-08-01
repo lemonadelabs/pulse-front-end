@@ -578,54 +578,53 @@ NavController.prototype.moveCamera = function (opts) {
 *   @param {Number} opts.duration in ms
 * @return {Object} TWEEN.Tween
 */
-
 NavController.prototype.dollyZoom = function (opts) {
+  var destination = opts.destination
+  var duration = opts.duration
   var camera = this.environment.camera
   var focalPoint = this.focalPoint
 
-  var screenHeight = frustrumHeightAtFocalPoint({
+  var frustrumHeight = frustrumHeightAtFocalPoint({
     camera : camera,
     focalPoint : focalPoint,
     vFOV : camera.fov
   })
 
-  var destination = opts.destination
-
   var currentDistance = camera.position.distanceTo(focalPoint)
   var newDistance = destination.distanceTo(focalPoint)
   var easing
   if (newDistance > currentDistance) {
+    // if we are zooming out
     easing = TWEEN.Easing.Quartic.In
   } else {
+    // if we are zooming in
     easing = TWEEN.Easing.Quartic.Out
   }
 
-  var newX = destination.x
-  var newy = destination.y
-  var newZ = destination.z
 
-  var tweenIncrementors = {
+  var proxy = {
     x : camera.position.x,
     y : camera.position.y,
     z : camera.position.z
   }
 
-  var tween = new TWEEN.Tween(tweenIncrementors)
+  var tween = new TWEEN.Tween(proxy)
       .to({
-        x : newX,
-        y : newy,
-        z : newZ
-      }, opts.duration)
+        x : destination.x,
+        y : destination.y,
+        z : destination.z
+      }, duration)
       .easing(easing)
       .onUpdate(function () {
-        camera.position.set(tweenIncrementors.x, tweenIncrementors.y, tweenIncrementors.z)
-        camera.lookAt(focalPoint)
+        // set the camera position
+        camera.position.set(proxy.x, proxy.y, proxy.z)
 
         var newVFOV = findVFOV({
           depth : camera.position.distanceTo(focalPoint),
-          height : screenHeight,
+          height : frustrumHeight,
         })
 
+        // apply the new FOV
         camera.fov = newVFOV
         camera.updateProjectionMatrix()
       })
@@ -633,7 +632,17 @@ NavController.prototype.dollyZoom = function (opts) {
   return tween
 }
 
+/**
+* calculates the vertical FOV of the camera/frustrum in degrees using height of frustrum plane at focal point,
+* and distance from camera to focal point.
+* @method findVFOV
+* @param {Object} opts
+*   @param {Number} opts.depth
+*   @param {Number} opts.height
+* @return {Number} VFOV in degrees
+*/
 function findVFOV(opts) {
+  // soh cah toa trigonometry
   var angleRadians = 2 * Math.atan(opts.height / (2*opts.depth) )
   var angleDegrees = radiansToDegrees(angleRadians)
   return angleDegrees
