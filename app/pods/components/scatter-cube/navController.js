@@ -68,7 +68,6 @@ NavController.prototype.fadeInArrows = function(opts) {
       })
       .onComplete(function () {
         arrow.mesh.material.transparent = false
-        // console.log(arrow)
         self.addListnersToMesh(arrow)
       })
       .start();
@@ -154,34 +153,16 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
 
+  // fade out labels and dangerzone
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
+  // make camera orthographic
   this.moveAndDollyOut(new THREE.Vector3(1,1,4.9), new THREE.Vector3(1,1,1004.2), new THREE.Vector3(1,1,2))
 }
-
-NavController.prototype.moveAndDollyOut = function(destination, zoomedDestination, zoomedFocalPt) {
-  var camera = this.environment.camera
-  this.focalPoint = new THREE.Vector3(1,1,1)
-  var moveTween = this.moveCamera({
-    destination : destination,
-    duration : 800,
-    easing : TWEEN.Easing.Quadratic.InOut,
-  })
-
-  // dolly zoom out
-  moveTween.onComplete(() => {
-    this.returnLocation = camera.position.clone()
-    this.focalPoint = zoomedFocalPt
-    this.dollyZoom({ // dolly out
-      destination : zoomedDestination,
-      duration : 800
-    })
-  })
-};
 
 NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   var self = this
@@ -519,12 +500,48 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
 };
 
 
+/**
+* moves camera to destination, then dolly zooms out to zoomedDestination with zoomedFocalPt
+*
+* @method moveAndDollyOut
+* @param {Object} destination THREE.Vector3
+* @param {Object} zoomedDestination THREE.Vector3
+* @param {Object} zoomedFocalPt THREE.Vector3
+*/
+NavController.prototype.moveAndDollyOut = function(destination, zoomedDestination, zoomedFocalPt) {
+  var camera = this.environment.camera
+  this.focalPoint = new THREE.Vector3(1,1,1)
+  var moveTween = this.moveCamera({
+    destination : destination,
+    duration : 800,
+    easing : TWEEN.Easing.Quadratic.InOut,
+  })
+
+  // dolly zoom out
+  moveTween.onComplete(() => {
+    this.returnLocation = camera.position.clone()
+    this.focalPoint = zoomedFocalPt
+    this.dollyZoom({ // dolly out
+      destination : zoomedDestination,
+      duration : 800
+    })
+  })
+};
 
 
+/**
+* moves camera from current position to opts.position, while looking at NavController.focalPoint
+*
+* @method moveCamera
+* @param {Object} opts
+*   @param {Object} opts.destination THREE.Vector3
+*   @param {Number} opts.duration in ms
+*   @param {Function} opts.easing TWEEN.Easing
+* @return {Object} TWEEN.Tween
+*/
 NavController.prototype.moveCamera = function (opts) {
 
-  var self = this
-
+  var focalPoint = this.focalPoint
   var camera = this.environment.camera
 
   var destination = opts.destination
@@ -532,13 +549,13 @@ NavController.prototype.moveCamera = function (opts) {
   var newy = destination.y
   var newZ = destination.z
 
-  var tweenIncrementors = {
+  var proxy = {
     x : camera.position.x,
     y : camera.position.y,
     z : camera.position.z
   }
 
-  var tween = new TWEEN.Tween(tweenIncrementors)
+  var tween = new TWEEN.Tween(proxy)
       .to({
         x : newX,
         y : newy,
@@ -546,20 +563,29 @@ NavController.prototype.moveCamera = function (opts) {
       }, opts.duration)
       .easing(opts.easing)
       .onUpdate(function () {
-        camera.position.set(tweenIncrementors.x, tweenIncrementors.y, tweenIncrementors.z)
-        camera.lookAt(self.focalPoint)
+        camera.position.set(proxy.x, proxy.y, proxy.z)
+        camera.lookAt(focalPoint)
       })
       .start();
   return tween
 }
 
+/**
+* dolly zoom effect. See video for demonstration https://www.youtube.com/watch?v=NB4bikrNzMk
+* @method dollyZoom
+* @param {Object} opts
+*   @param {Object} opts.destination  THREE.Vector3
+*   @param {Number} opts.duration in ms
+* @return {Object} TWEEN.Tween
+*/
 
 NavController.prototype.dollyZoom = function (opts) {
   var camera = this.environment.camera
   var focalPoint = this.focalPoint
 
-  var screenHeight = findHeight({
-    distance : camera.position.distanceTo(focalPoint),
+  var screenHeight = frustrumHeightAtFocalPoint({
+    camera : camera,
+    focalPoint : focalPoint,
     vFOV : camera.fov
   })
 
@@ -613,12 +639,22 @@ function findVFOV(opts) {
   return angleDegrees
 }
 
-function findHeight(opts) {
+/**
+* Calculates the height of the frustrum plane at the focal point
+*
+* @method frustrumHeightAtFocalPoint
+* @param {Object} opts
+*   @param {Object} opts.camera
+*   @param {Object} opts.focalPoint THREE.Vector3
+*   @param {Number} opts.vFOV
+* @return {Number} frustrum height in meters
+*/
+function frustrumHeightAtFocalPoint(opts) {
+  var distance = opts.camera.position.distanceTo(opts.focalPoint)
   var vFOV = degreesToRadians(opts.vFOV)
-  var height = 2 * opts.distance * Math.tan(vFOV/2)
-  return height
+  var frustrumHeight = 2 * distance * Math.tan(vFOV/2)
+  return frustrumHeight
 }
-
 
 function degreesToRadians(degrees) {
   return degrees * Math.PI /180
@@ -720,6 +756,8 @@ NavController.prototype.fadeOutArrow = function(arrow) {
   this.tweens[name] = fadeOutTween
   fadeOutTween.start();
 };
+
+
 
 
 NavController.prototype.addListnersToMesh = function(arrow) {
