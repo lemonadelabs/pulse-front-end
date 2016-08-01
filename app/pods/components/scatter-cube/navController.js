@@ -157,36 +157,31 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
-    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+    meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
-  this.fadeOutMeshes({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.In,
-    meshes : self.hiddenLabels
-  })
-
-  moveAndDollyOut()
-  function moveAndDollyOut () {
-    self.focalPoint = new THREE.Vector3(1,1,1)
-    var moveTween = self.moveCamera({
-      destination : new THREE.Vector3(1,1,4.9),
-      duration : 800,
-      easing : TWEEN.Easing.Quadratic.InOut,
-    })
-
-    // dolly zoom out
-    moveTween.onComplete(function () {
-      self.returnLocation = camera.position.clone()
-      self.focalPoint = new THREE.Vector3(1,1,2)
-      self.dollyZoom({ // dolly out
-        destination : new THREE.Vector3(1,1,1004.2),
-        duration : 800
-      })
-    })
-  }
-
+  this.moveAndDollyOut(new THREE.Vector3(1,1,4.9), new THREE.Vector3(1,1,1004.2), new THREE.Vector3(1,1,2))
 }
+
+NavController.prototype.moveAndDollyOut = function(destination, zoomedDestination, zoomedFocalPt) {
+  var camera = this.environment.camera
+  this.focalPoint = new THREE.Vector3(1,1,1)
+  var moveTween = this.moveCamera({
+    destination : destination,
+    duration : 800,
+    easing : TWEEN.Easing.Quadratic.InOut,
+  })
+
+  // dolly zoom out
+  moveTween.onComplete(() => {
+    this.returnLocation = camera.position.clone()
+    this.focalPoint = zoomedFocalPt
+    this.dollyZoom({ // dolly out
+      destination : zoomedDestination,
+      duration : 800
+    })
+  })
+};
 
 NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   var self = this
@@ -280,34 +275,10 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
-    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+    meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
-  this.fadeOutMeshes({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.In,
-    meshes : self.hiddenLabels
-  })
-
-  moveAndDollyOut()
-  function moveAndDollyOut () {
-    self.focalPoint = new THREE.Vector3(1,1,1)
-    var moveTween = self.moveCamera({
-      destination : new THREE.Vector3(4.6,1,1),
-      duration : 800,
-      easing : TWEEN.Easing.Quadratic.InOut,
-    })
-
-    // dolly zoom out
-    moveTween.onComplete(function () {
-      self.returnLocation = camera.position.clone()
-      self.focalPoint = new THREE.Vector3(2,1,1)
-      self.dollyZoom({ // dolly out
-        destination : new THREE.Vector3(1004.6,1,1),
-        duration : 800
-      })
-    })
-  }
+  this.moveAndDollyOut(new THREE.Vector3(4.6,1,1), new THREE.Vector3(1004.6,1,1), new THREE.Vector3(2,1,1))
 }
 
 NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
@@ -398,35 +369,10 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
-    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+    meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
-  this.fadeOutMeshes({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.In,
-    meshes : self.hiddenLabels
-  })
-
-  moveAndDollyOut()
-  function moveAndDollyOut () {
-    self.focalPoint = new THREE.Vector3(1,1,1)
-    var moveTween = self.moveCamera({
-      destination : new THREE.Vector3(1,1,-2.6),
-      duration : 800,
-      easing : TWEEN.Easing.Quadratic.InOut,
-    })
-
-    // dolly zoom out
-    moveTween.onComplete(function () {
-      self.returnLocation = camera.position.clone()
-      // self.returnFocalPoint =
-      self.focalPoint = new THREE.Vector3(1,1,0)
-      self.dollyZoom({ // dolly out
-        destination : new THREE.Vector3(1,1,-1002.6),
-        duration : 800
-      })
-    })
-  }
+  this.moveAndDollyOut(new THREE.Vector3(1,1,-2.6), new THREE.Vector3(1,1,-1002.6), new THREE.Vector3(1,1,0))
 };
 
 NavController.prototype.powerXvitalPerspectiveLoLo = function() {
@@ -517,34 +463,10 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
-    meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
+    meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
-  this.fadeOutMeshes({
-    duration : 1000,
-    easing : TWEEN.Easing.Quadratic.In,
-    meshes : self.hiddenLabels
-  })
-
-  moveAndDollyOut()
-  function moveAndDollyOut () {
-    self.focalPoint = new THREE.Vector3(1,1,1)
-    var moveTween = self.moveCamera({
-      destination : new THREE.Vector3(-2.5,1,1),
-      duration : 800,
-      easing : TWEEN.Easing.Quadratic.InOut,
-    })
-
-    // dolly zoom out
-    moveTween.onComplete(function () {
-      self.returnLocation = camera.position.clone()
-      self.focalPoint = new THREE.Vector3(0,1,1)
-      self.dollyZoom({ // dolly out
-        destination : new THREE.Vector3(-1002.5,1,1),
-        duration : 800
-      })
-    })
-  }
+  this.moveAndDollyOut(new THREE.Vector3(-2.5,1,1), new THREE.Vector3(-1002.5,1,1), new THREE.Vector3(0,1,1))
 };
 
 NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
