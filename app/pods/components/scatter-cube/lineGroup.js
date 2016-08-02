@@ -9,7 +9,6 @@ import ConnectingLine from './connectingLine';
 *   @param {Function} opts.fadeInConnections
 *   @param {Function} opts.removeConnectingLines
 */
-// TODO: investigate creating modules for tweenController and environment
 export default function LineGroup (opts) {
   this.addObjectsToScene = opts.addObjectsToScene
   this.getConnections = opts.getConnections

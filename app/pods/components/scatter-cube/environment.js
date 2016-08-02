@@ -1,3 +1,5 @@
+// TODO: investigate using import rather than passing things down throughout the application
+
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
@@ -12,6 +14,11 @@ import NavController from './navController';
 import NavArrows from './navArrows';
 import environmentLoadAnimation from './environmentLoadAnimation'
 
+/**
+* @constructor
+* @method Environment
+* @param {Object} component ember scatter-cube component
+*/
 export default function Environment (component) {
   this.component = component
   this.container = document.getElementById( "container" );
@@ -52,8 +59,8 @@ Environment.prototype.init = function () {
   this.initStats()
   this.initRendererStats()
 
-  // bower component
-  this.fps = RunAtFps()
+
+  this.fps = RunAtFps() //this is a bower component
   this.onRenderFcts.push( this.fps.update.bind(this.fps) ) // add the update fxn to the render loop
 
   this.initQuadrantCalculator()
@@ -187,11 +194,17 @@ Environment.prototype.initPointCloud = function (opts) {
   if (!this.lineGroup) {
     console.error("linegroup isn't defined yet")
   }
+  // potential `race condition` if this gets run before linegroup is intantiated
   this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
-  // this is a potential `race condition` if this gets run before linegroup is intantiated
 
 }
 
+/**
+* initializes the relationship connections
+* @method initConnections
+* @param {Object} opts
+*   @param {Function} opts.getConnections ajax promise that returns connections data onComplete
+*/
 Environment.prototype.initConnections = function (opts) {
   var self = this
 
@@ -470,7 +483,7 @@ Environment.prototype.initStats = function () {
   document.body.appendChild( this.stats.domElement );
   var $stats = $(this.stats.domElement)
   $stats.hide()
-  $(document).on('keypress', function (e) {
+  $(document).on('keypress', function (e) {  // hide/show on `s` or `S` keypress
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $stats.toggle()
     }
@@ -479,7 +492,7 @@ Environment.prototype.initStats = function () {
 
 Environment.prototype.initRendererStats = function  () {
   var self = this
-  this.rendererStats   = new THREEx.RendererStats()
+  this.rendererStats = new THREEx.RendererStats() // https://github.com/jeromeetienne/threex.rendererstats
 
   this.rendererStats.domElement.style.position = 'absolute'
   this.rendererStats.domElement.style.right = '0px'
@@ -493,7 +506,7 @@ Environment.prototype.initRendererStats = function  () {
     self.rendererStats.update(self.renderer);
   })
 
-  $(document).on('keypress', function (e) {
+  $(document).on('keypress', function (e) { // hide/show on `s` or `S` keypress
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $rendererStats.toggle()
     }
@@ -622,11 +635,16 @@ Environment.prototype.configureNameBadge = function () {
   })
 }
 
+/**
+* @method initDistributionCloud
+* @param {Object} opts
+*   @param {Function} opts.getVotes ajax request that returns vote information onCompete
+*/
 Environment.prototype.initDistributionCloud = function (opts) {
   var self = this
   this.distributionCloud = new DistributionCloud( { getVotes : opts.getVotes } )
 
-  this.onRenderFcts.push( function () { // update color of point
+  this.onRenderFcts.push( function () { // update opacity of point to indicate depth
     if (self.component.distributionView && self.focussedPoint) {
       _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
         // dont update if they are being animated!!
@@ -699,7 +717,7 @@ Environment.prototype.removeObjectFromScene = function (object) {
   this.scene.remove( object.mesh )
 }
 
-Environment.prototype.removeObjectsFromScene = function (objects) { // duplicate of ebove function
+Environment.prototype.removeObjectsFromScene = function (objects) {
   _.forEach( objects, this.removeObjectFromScene.bind(this) )
 }
 
