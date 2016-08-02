@@ -15,7 +15,18 @@ export default function NavController (opts) {
 }
 
 
-
+/**
+* Fades out navigational arrows, as specified by arrowType.
+* This function is used when navigating via clicking on arrows.
+* It isn't used when navigating manually via threejs controls.
+* @method fadeOutArrows
+* @param {Object} opts
+*   @param {Number} opts.duration
+*   @param {Function} opts.easing
+*   @param {String} opts.arrowType optional tring defining type of arrows to fade out
+*   @param {Array} opts.arrows optional array of arrows to be faded out
+* @return {Object} last tween object
+*/
 NavController.prototype.fadeOutArrows = function(opts) {
   var self = this
   var arrows
@@ -26,17 +37,18 @@ NavController.prototype.fadeOutArrows = function(opts) {
   }
 
   var tweens = []
-
   _.forEach(arrows, function (arrow) {
-
     var tween = new TWEEN.Tween(arrow.mesh.material)
       .to( { opacity : 0 }, opts.duration )
       .easing(opts.easing)
       .onStart(function () {
+        // make transparent to allow for fading
         arrow.mesh.material.transparent = true
+        // make meshes not clickable
         self.removeListnersFromMesh( arrow )
       })
       .onComplete(function () {
+        // make invisible. Saves rendering resources
         arrow.mesh.material.visible = false
         arrow.mesh.material.transparent = false
       })
@@ -45,6 +57,18 @@ NavController.prototype.fadeOutArrows = function(opts) {
   })
   return _.last(tweens)
 };
+
+/**
+* Fades in navigational arrows, as specified by arrowType.
+* This function is used when navigating via clicking on arrows.
+* It isn't used when navigating manually via threejs controls.
+* @method fadeInArrows
+*   @param {Number} opts.duration
+*   @param {Function} opts.easing
+*   @param {String} opts.arrowType optional tring defining type of arrows to fade out
+*   @param {Array} opts.arrows optional array of arrows to be faded out
+* @return {Object} last tween object
+*/
 
 NavController.prototype.fadeInArrows = function(opts) {
   var self = this
@@ -55,7 +79,6 @@ NavController.prototype.fadeInArrows = function(opts) {
     arrows = this.environment.navArrows[opts.arrowType]
   }
   var tweens = []
-
   _.forEach(arrows, function (arrow) {
 
     arrow.mesh.material.opacity = 0
@@ -63,11 +86,14 @@ NavController.prototype.fadeInArrows = function(opts) {
       .to( { opacity : 1 }, opts.duration )
       .easing(opts.easing)
       .onStart(function () {
+        // make transparent and visible to allow for fading
         arrow.mesh.material.transparent = true
         arrow.mesh.material.visible = true
       })
       .onComplete(function () {
+        // remove transparency, as fading has finished. Prevents potential rendering draw order issues.
         arrow.mesh.material.transparent = false
+        // make arrow respond to mouse events
         self.addListnersToMesh(arrow)
       })
       .start();
@@ -76,6 +102,17 @@ NavController.prototype.fadeInArrows = function(opts) {
   return _.last(tweens)
 };
 
+
+/**
+* generic function for fading meshes
+* @method fadeInMeshes
+* @param {Object} opts
+*   @param {Number} opts.opacity
+*   @param {Number} opts.duration
+*   @param {Function} opts.easing
+*   @param {Array} opts.meshes
+* @return {Object} last tween object
+*/
 
 NavController.prototype.fadeInMeshes = function(opts) {
   var meshes = opts.meshes
@@ -101,6 +138,16 @@ NavController.prototype.fadeInMeshes = function(opts) {
   return _.last(tweens)
 };
 
+/**
+* generic function for fading meshes
+* @method fadeOutMeshes
+* @param {Object} opts
+*   @param {Number} opts.opacity
+*   @param {Number} opts.duration
+*   @param {Function} opts.easing
+*   @param {Array} opts.meshes
+* @return {Object} last tween object
+*/
 NavController.prototype.fadeOutMeshes = function(opts) {
   var meshes = opts.meshes
   var tweens = []
@@ -129,17 +176,17 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
   // disable camera controls
   this.environment.controls.enabled = false
 
+  // fade out cornerArrows
   this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'cornerArrows'
   })
 
-  // bring in the arrows
+  // fade in appropriate flat arrows
   var toFadeIn = []
   toFadeIn.push( this.environment.navArrows[ "sidePowerLoHiSupportLeft" ] )
   toFadeIn.push( this.environment.navArrows[ "sidePowerLoHiSupportRight" ] )
-
   this.fadeInArrows({
     duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
@@ -147,7 +194,7 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
     opacity : 1
   })
 
-  // hide the labels
+  // hide labels that aren't needed for this view
   this.hiddenLabels = []
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
@@ -167,18 +214,21 @@ NavController.prototype.powerXsupportOrthographicLoHi = function() {
 NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   var self = this
 
+  // fade out flat/side arrows
   this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'sideArrows'
   })
 
+  // fade in cornerArrows
   this.fadeInArrows({
     duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
 
+  // transition to perspective view
   var dollyInTween = self.dollyZoom({
     destination : self.returnLocation,
     duration : 800,
@@ -188,7 +238,8 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
   })
   dollyInTween.onComplete(function () {
 
-    self.fadeInMeshes({ // fade in label
+    // fade in the labels that had been previously hidden
+    self.fadeInMeshes({
       opacity : 1,
       duration : 1000,
       easing : TWEEN.Easing.Quadratic.Out,
@@ -202,6 +253,7 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
       meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
 
+    // move camera to the home position for this view
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(3.7, 1.5, 4.4),
       duration : 800,
@@ -209,10 +261,10 @@ NavController.prototype.powerXvitalPerspectiveHiHi = function() {
       focalPoint : new THREE.Vector3(1,1,1)
     })
     moveTween.onComplete(function () {
+      // re enable threejs controls for manual navigation
       self.environment.controls.enabled = true
     })
   })
-
 };
 
 
@@ -220,8 +272,10 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
   var camera = this.environment.camera
   var self = this
 
+  // disable camera controls
   this.environment.controls.enabled = false
 
+  // fade out cornerArrows
   var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -236,6 +290,7 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
     })
   })
 
+  // fade in appropriate flat arrows
   var toFadeIn = []
   toFadeIn.push( this.environment.navArrows[ "sideVitalHiLoSupportLeft" ] )
   toFadeIn.push( this.environment.navArrows[ "sideVitalHiLoSupportRight" ] )
@@ -247,37 +302,42 @@ NavController.prototype.vitalXsupportOrthographicHiLo = function() {
     arrows : toFadeIn
   })
 
-  // hide the labels
+  // hide labels that aren't needed for this view
   self.hiddenLabels = []
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
 
+  // fade out labels and dangerzone
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
+  // make camera orthographic
   this.moveAndDollyOut(new THREE.Vector3(4.6,1,1), new THREE.Vector3(1004.6,1,1), new THREE.Vector3(2,1,1))
 }
 
 NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
   var self = this
 
+
+  // fade out flat/side arrows
   this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'sideArrows'
   })
 
+  // fade in cornerArrows
   this.fadeInArrows({
     duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
 
-
+  // transition to perspective view
   var dollyInTween = self.dollyZoom({
     destination : self.returnLocation,
     duration : 800,
@@ -286,6 +346,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
     self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
+    // fade in the labels that had been previously hidden
     self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
@@ -299,6 +360,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
+    // move camera to the home position for this view
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(4.5, 1.5, -1.6),
       duration : 800,
@@ -306,6 +368,7 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
       focalPoint : new THREE.Vector3(1,1,1)
     })
     moveTween.onComplete(function () {
+      // re enable threejs controls for manual navigation
       self.environment.controls.enabled = true
     })
   })
@@ -313,9 +376,11 @@ NavController.prototype.vitalXpowerPerspectiveLoHi = function() {
 
 NavController.prototype.powerXsupportOrthographicHiLo = function() {
   var self = this
+  // disable camera controls
   var camera = this.environment.camera
   this.environment.controls.enabled = false
 
+  // fade out cornerArrows
   var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -330,6 +395,7 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
     })
   })
 
+  // fade in appropriate flat arrows
   var toFadeIn = []
   toFadeIn.push( this.environment.navArrows[ "sidePowerHiLoSupportLeft" ] )
   toFadeIn.push( this.environment.navArrows[ "sidePowerHiLoSupportRight" ] )
@@ -341,37 +407,40 @@ NavController.prototype.powerXsupportOrthographicHiLo = function() {
     arrows : toFadeIn
   })
 
-  // hide the labels
+  // hide labels that aren't needed for this view
   self.hiddenLabels = []
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Low-Vital" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Vital" ) )
 
+  // fade out labels and dangerzone
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
+  // make camera orthographic
   this.moveAndDollyOut(new THREE.Vector3(1,1,-2.6), new THREE.Vector3(1,1,-1002.6), new THREE.Vector3(1,1,0))
 };
 
 NavController.prototype.powerXvitalPerspectiveLoLo = function() {
   var self = this
-
+  // fade out flat/side arrows
   this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'sideArrows'
   })
 
+  // fade in cornerArrows
   this.fadeInArrows({
     duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
 
-
+  // transition to perspective view
   var dollyInTween = self.dollyZoom({
     destination : self.returnLocation,
     duration : 800,
@@ -380,6 +449,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
     self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
+    // fade in the labels that had been previously hidden
     self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
@@ -393,6 +463,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
+    // move camera to the home position for this view
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-1.7, 1.6, -2.5),
       duration : 800,
@@ -400,6 +471,7 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
       focalPoint : new THREE.Vector3(1,1,1)
     })
     moveTween.onComplete(function () {
+      // re enable threejs controls for manual navigation
       self.environment.controls.enabled = true
     })
   })
@@ -408,8 +480,10 @@ NavController.prototype.powerXvitalPerspectiveLoLo = function() {
 NavController.prototype.vitalXsupportOrthographicLoHo = function() {
   var self = this
   var camera = this.environment.camera
+  // disable camera controls
   this.environment.controls.enabled = false
 
+  // fade out cornerArrows
   var fadeOutTween = this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
@@ -424,6 +498,7 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
     })
   })
 
+  // fade in appropriate flat arrows
   var toFadeIn = []
   toFadeIn.push( this.environment.navArrows[ "sideVitalLoHiSupportLeft" ] )
   toFadeIn.push( this.environment.navArrows[ "sideVitalLoHiSupportRight" ] )
@@ -435,37 +510,42 @@ NavController.prototype.vitalXsupportOrthographicLoHo = function() {
     arrows : toFadeIn
   })
 
-  // hide the labels
+
+  // hide labels that aren't needed for this view
   self.hiddenLabels = []
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-High-Power" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Label-Power-Low" ) )
   this.hiddenLabels.push( this.environment.scene.getObjectByName( "Power" ) )
 
+  // fade out labels and dangerzone
   this.fadeOutMeshes({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     meshes : [...self.hiddenLabels, self.environment.scene.getObjectByName( "dangerZone" )]
   })
 
+  // make camera orthographic
   this.moveAndDollyOut(new THREE.Vector3(-2.5,1,1), new THREE.Vector3(-1002.5,1,1), new THREE.Vector3(0,1,1))
 };
 
 NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
   var self = this
 
+  // fade out flat/side arrows
   this.fadeOutArrows({
     duration : 1000,
     easing : TWEEN.Easing.Quadratic.In,
     arrowType: 'sideArrows'
   })
 
+  // fade in cornerArrows
   this.fadeInArrows({
     duration : 1500,
     easing : TWEEN.Easing.Quadratic.Out,
     arrowType: 'cornerArrows'
   })
 
-
+  // transition to perspective view
   var dollyInTween = self.dollyZoom({
     destination : self.returnLocation,
     duration : 800,
@@ -474,6 +554,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
     self.update({ quadrant : self.environment.quadrantCalculator.quadrant })
   })
   dollyInTween.onComplete(function () {
+    // fade in the labels that had been previously hidden
     self.fadeInMeshes({ // fade in label
       opacity : 1,
       duration : 1000,
@@ -487,6 +568,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
       easing : TWEEN.Easing.Quadratic.Out,
       meshes : [self.environment.scene.getObjectByName( "dangerZone" )]
     })
+    // move camera to the home position for this view
     var moveTween = self.moveCamera({
       destination : new THREE.Vector3(-2.5, 1.5, 3.7),
       duration : 800,
@@ -494,6 +576,7 @@ NavController.prototype.vitalXpowerPerspectiveHiLo = function() {
       focalPoint : new THREE.Vector3(1,1,1)
     })
     moveTween.onComplete(function () {
+      // re enable threejs controls for manual navigation
       self.environment.controls.enabled = true
     })
   })
