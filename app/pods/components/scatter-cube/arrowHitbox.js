@@ -1,3 +1,11 @@
+/**
+*
+*
+* @method
+* @param {Object} opts
+*   @param {Object} opts.
+* @return {Array} array of ids
+*/
 export default function arrowHitbox (opts) {
   var arrowType = opts.arrowType
   var rotation = opts.rotation

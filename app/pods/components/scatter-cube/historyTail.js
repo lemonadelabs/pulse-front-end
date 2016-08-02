@@ -6,7 +6,7 @@ export default function HistoryTail (opts) {
 
 HistoryTail.prototype.createMesh = function() {
 
-  var curve = this.sHPoint.curve
+  var curve = this.sHPoint.curve // path information is stored in the sHPointClickTarget
 
   var material = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide,

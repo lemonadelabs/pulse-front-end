@@ -1,5 +1,14 @@
 import ConnectingLine from './connectingLine';
 
+/**
+* @constructor
+* @method LineGroup
+* @param {Object} opts
+*   @param {Function} opts.addObjectsToScene
+*   @param {Function} opts.getConnections
+*   @param {Function} opts.fadeInConnections
+*   @param {Function} opts.removeConnectingLines
+*/
 export default function LineGroup (opts) {
   this.addObjectsToScene = opts.addObjectsToScene
   this.getConnections = opts.getConnections
@@ -29,10 +38,25 @@ LineGroup.prototype.getConnectionsForStakeholder = function(opts) {
   })
 }
 
+/**
+* this is designed so that it can be extended to do secondary and tertiary connections
+* @method drawConnections
+* @param {Object} opts
+*   @param {Number} opts.projectId
+*   @param {Object} opts.sHPoint current selected stakeholder (SHPointClickTarget)
+*   @param {Number} opts.currentWeek
+*/
 LineGroup.prototype.drawConnections = function(opts) {
   this.createPrimaryConnections(opts)
 }
 
+/**
+* @method createPrimaryConnections
+* @param {Object} opts
+*   @param {Number} opts.projectId
+*   @param {Object} opts.sHPoint current selected stakeholder (SHPointClickTarget)
+*   @param {Number} opts.currentWeek
+*/
 LineGroup.prototype.createPrimaryConnections = function(opts) {
 
   var self = this
@@ -49,7 +73,7 @@ LineGroup.prototype.createPrimaryConnections = function(opts) {
       connectingLines.push(line)
     })
     self.primaryConnections = connectingLines
-    if (opts.sHPoint.id !== self.previousStakeholderId) {
+    if (opts.sHPoint.id !== self.previousStakeholderId) { // don't animate if user clicks on the same stakeholder again
       self.fadeInConnections({
         duration : 300,
         easing : TWEEN.Easing.Quadratic.Out
@@ -62,6 +86,7 @@ LineGroup.prototype.createPrimaryConnections = function(opts) {
 
 
 LineGroup.prototype.update = function () {
+  // this.needsUpdate is set to true if lines are animating
   var self = this
   if (this.needsUpdate) {
     _.forEach(self.primaryConnections, function (connectingLine) {

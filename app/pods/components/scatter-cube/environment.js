@@ -1,3 +1,5 @@
+// TODO: investigate using import rather than passing things down throughout the application
+
 import QuadrantCalculator from './quadrantCalculator';
 import DangerZone from './dangerZone';
 import AxisGuides from './axisGuides';
@@ -12,9 +14,16 @@ import NavController from './navController';
 import NavArrows from './navArrows';
 import environmentLoadAnimation from './environmentLoadAnimation'
 
+/**
+* @constructor
+* @method Environment
+* @param {Object} component ember scatter-cube component
+*/
 export default function Environment (component) {
   this.component = component
   this.container = document.getElementById( "container" );
+
+  // sets up queues for event based functions
   this.onRenderFcts = []
   this.onPointClickFcts = []
   this.noSelectedStakeholderFcts = []
@@ -22,6 +31,7 @@ export default function Environment (component) {
   this.onMouseoverFcts = []
   this.onMouseoutFcts = []
   this.onQuadrantUpdateFxns = []
+
   this.nameBadgeVisible = false
   this.scene = new THREE.Scene()
   this.jSONloader = new THREE.JSONLoader()
@@ -40,14 +50,18 @@ Environment.prototype.init = function () {
   this.initializeControls()
   /////////////////////////// set up renderer /////////////////////////////////////
   this.initializeRenderer()
+  this.initRendererPause()
   ///////////////////// On Window Resize //////////////////////////////////////////
   this.initWindowResize()
   ///////////////////////////////////// Dom Events ////////////////////////////////
   this.domEvents = new THREEx.DomEvents(this.camera, this.renderer.domElement)
   ///////////////////////////////////// Stats /////////////////////////////////////
-  this.initStats() ; this.initRendererStats()
-  this.fps = RunAtFps()
-  this.onRenderFcts.push( this.fps.update.bind(this.fps) )
+  this.initStats()
+  this.initRendererStats()
+
+
+  this.fps = RunAtFps() //this is a bower component
+  this.onRenderFcts.push( this.fps.update.bind(this.fps) ) // add the update fxn to the render loop
 
   this.initQuadrantCalculator()
   /////////////////////// Create Tween Controller ///////////////////////
@@ -66,9 +80,10 @@ Environment.prototype.init = function () {
 Environment.prototype.setupScatterCube = function (opts) {
   this.project = opts.project
   this.fadeInOnLoad = []
-  this.stillToLoad = ['cube', 'dangerZone', 'axisGuides']
+  // these are the entities must load before fade in starts
+  this.stillToLoad = ['cube', 'dangerZone']
 
-  ////////////////////// create the cube //////////////////////////////
+  ////////////////////// create the cube ////////////////////////////////
   this.initCube()
   //////////////////// create axis guides ///////////////////////////////
   this.initAxisGuides()
@@ -89,13 +104,21 @@ Environment.prototype.setupScatterCube = function (opts) {
 
 }
 
+/**
+* init stakeholder points and associated interactions
+*
+* @method initPointCloud
+* @param {Object} opts
+*   @param {Object} opts.project
+*   @param {Array} opts.stakeholders
+*   @param {Number} opts.selectedTime
+*/
 Environment.prototype.initPointCloud = function (opts) {
   var self = this
   var stakeholders = opts.stakeholders
   this.oldTime = opts.selectedTime
 
   ///////////////////// Create Point Cloud ////////////////////////
-
   this.pointCloud = new PointCloud({
     stakeholders: stakeholders,
     selectedTime: opts.selectedTime,
@@ -103,21 +126,23 @@ Environment.prototype.initPointCloud = function (opts) {
 
   this.fps.runFunctionAtFps({
     toRun : self.pointCloud.startupAnimation.bind(self.pointCloud),
-    args : { addObjectToScene : self.addObjectToScene.bind(self) }
+    args : { addObjectToScene : self.addObjectToScene.bind(self) } // args for `toRun` fxn
   })
 
-  // this.addObjectsToScene(this.pointCloud.sHPoints)
+  // add click targets that are invisible and a little bit bigger than the dots, for ease of clicking.
   this.addObjectsToScene(self.pointCloud.sHPointClickTargets)
 
   // turn cursor into hand when hovering the sHPoints
+  var $scatterCube = $('.scatter-cube')
   this.onMouseoverFcts.push( function () {
-    $('.scatter-cube').addClass('threejs-hover')
+    $scatterCube.addClass('threejs-hover')
   })
   this.onMouseoutFcts.push( function () {
-    $('.scatter-cube').removeClass('threejs-hover')
+    $scatterCube.removeClass('threejs-hover')
   })
 
-  this.addListnerSHPoint = function (sHPoint) {
+
+  var addListenerSHPoint = function (sHPoint) { // sets up event listners to execute fxn queues
     var mesh = sHPoint.mesh
     self.domEvents.addEventListener(mesh, 'click', function(){
       self.onPointClickFcts.forEach( function(onPointClickFct) {
@@ -137,13 +162,14 @@ Environment.prototype.initPointCloud = function (opts) {
       })
     }, false)
   }
+  _.forEach(this.pointCloud.sHPointClickTargets, addListenerSHPoint)
 
-  _.forEach(this.pointCloud.sHPointClickTargets, self.addListnerSHPoint) // apply event listner to points
-
+  // sets Environment.focussedPoint to be the point that the user clicks on
   this.onPointClickFcts.push( function (sHPoint) {
     self.focussedPoint = sHPoint
   })
 
+  // resets Environment.focussedPoint
   this.noSelectedStakeholderFcts.push( function () {
     self.focussedPoint = undefined
   })
@@ -152,7 +178,7 @@ Environment.prototype.initPointCloud = function (opts) {
     self.component.updateSelectedStakeholder(sHPoint)
   })
 
-  this.onRenderFcts.push( function () { // depth
+  this.onRenderFcts.push( function () { // updates the opacity of the points to imply depth
     _.forEach(self.pointCloud.sHPoints, function (sHPoint) {
       sHPoint.updateColor({
         cameraPosition : self.camera.position,
@@ -168,16 +194,22 @@ Environment.prototype.initPointCloud = function (opts) {
   if (!this.lineGroup) {
     console.error("linegroup isn't defined yet")
   }
+  // potential `race condition` if this gets run before linegroup is intantiated
   this.lineGroup.archiveSHPoints(this.pointCloud.sHPointClickTargets) // give point information to the lineGroup
-  // this is a potential `race condition` if this gets run before linegroup is intantiated
 
 }
 
+/**
+* initializes the relationship connections
+* @method initConnections
+* @param {Object} opts
+*   @param {Function} opts.getConnections ajax promise that returns connections data onComplete
+*/
 Environment.prototype.initConnections = function (opts) {
   var self = this
 
   /////////////////// Create Connecting Lines ////////////////////////
-  this.removeConnectingLines = function() {
+  this.removeConnectingLines = function() { // reset fxn for linegroup
     this.removeObjectsFromScene(this.lineGroup.primaryConnections)
     this.lineGroup.primaryConnections = []
   }
@@ -190,6 +222,7 @@ Environment.prototype.initConnections = function (opts) {
   })
 
   this.noSelectedStakeholderFcts.push( function () {
+    // fade out connections and then remove them
     if (self.component.connectionView) {
       _.last(self.tweenController.fadeOutConnections({
         duration : 300,
@@ -201,11 +234,9 @@ Environment.prototype.initConnections = function (opts) {
     }
   })
 
-
   this.onRenderFcts.push(function () {
     self.lineGroup.update()
   })
-
 }
 
 
@@ -214,11 +245,12 @@ Environment.prototype.render = function () {
   var lastTimeMsec = null
   requestAnimationFrame(function animate(nowMsec){
 
-    // keep looping
+    // save rafId for pause function
     self.renderer.rafId = requestAnimationFrame( animate );
     self.stats.begin()
 
-    // measure time
+    // measure time for update fxns
+    // we update with respect to time rather than framerate so that animations don't slow down when the framerate drops
     lastTimeMsec  = lastTimeMsec || nowMsec-1000/60
     var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
     lastTimeMsec  = nowMsec
@@ -249,6 +281,7 @@ Environment.prototype.updateTime = function (time) {
 
   if ( this.pointCloud ) {
     this.onUpdateTimeFcts.forEach( function( onUpdateTimeFct ) {
+      // we pass old time because some of the animations need to know where they came from
       onUpdateTimeFct(time, oldTime)
     })
   }
@@ -256,20 +289,23 @@ Environment.prototype.updateTime = function (time) {
 
 Environment.prototype.connectionViewUpdated = function () {
   var self = this
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
 
-  if (this.component.connectionView) { // for turning ON the connectionView
+  if (this.component.connectionView) { // called from the scatterCube componenet. Property is set in the viewMode component.
     this.lineGroup.drawConnections({
       sHPoint : this.focussedPoint,
       currentWeek : this.currentWeek,
       projectId : this.project.get('id')
     })
   } else { // for turning OFF the connectionView
+    // fade out connections
     var tweens = this.tweenController.fadeOutConnections({
       duration : 300,
       easing : TWEEN.Easing.Quadratic.In
     })
     if (!_.isEmpty(tweens)) {
+    // TODO change to `( tweens.length > 0 )` and test
+      // once faded out, remove them
       _.last(tweens).onComplete(function () {
         self.removeConnectingLines()
       })
@@ -278,9 +314,8 @@ Environment.prototype.connectionViewUpdated = function () {
 }
 
 Environment.prototype.distributionViewUpdated = function () {
-  this.triggerRender()
-
-  if (this.component.distributionView) {
+  this.triggerRender() // ensure renderer is rendering
+  if (this.component.distributionView) {  // called from the scatterCube componenet. Property is set in the viewMode component.
     this.tweenController.buildDistroCloud()
   } else {
     this.tweenController.removeDistroCloud()
@@ -289,9 +324,9 @@ Environment.prototype.distributionViewUpdated = function () {
 
 Environment.prototype.historyViewUpdated = function () {
   var self = this
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
 
-  if (this.component.historyView) {
+  if (this.component.historyView) {  // called from the scatterCube componenet. Property is set in the viewMode component.
     this.tweenController.buildHistorytails(this.focussedPoint)
   } else {
     this.tweenController.removeHistoryTails().onComplete(function () {
@@ -300,23 +335,33 @@ Environment.prototype.historyViewUpdated = function () {
   }
 }
 
+/**
+* calls pointCloud fxn which foccusses stakeholder as selected in the `stakeholders` modal
+* @method foccussedStakeholdersUpdated
+* @param {Object} opts
+*   @param {Object} opts.focussedStakeholders stakeholders with id as key
+*/
 Environment.prototype.foccussedStakeholdersUpdated = function(opts) {
-  this.triggerRender()
-
+  this.triggerRender() // ensure renderer is rendering
   this.pointCloud.focusPoints(opts)
 }
 
+// this handles animation with time change for all of the different combinations of view options
 Environment.prototype.animateViewWithTime = function (time, oldTime) {
-  this.triggerRender()
+  this.triggerRender() // ensure renderer is rendering
+  // the UI is viewing connection view, distribution view, and the stakeholder modal is showing
   if (this.component.connectionView && this.component.distributionView && this.focussedPoint) {
     this.tweenController.updateTimeRelationDistroViews(time, oldTime)
+    // the UI is viewing connection view, and the stakeholder modal is showing
   } else if (this.component.connectionView && this.focussedPoint) {
     this.tweenController.updateTimeRelationView(time, oldTime)
+    // the UI is viewing distribution view, and the stakeholder modal is showing
   } else if (this.component.distributionView && this.focussedPoint) {
     this.tweenController.updateTimeDistroView(time, oldTime)
+    // the UI is viewing the stakeholder modal
   } else if (this.focussedPoint) { // no views but with selected stakeholder
     this.tweenController.updateTimeNoViewsWithFocus(time, oldTime)
-  } else { // no viewsm no selected stakeholder
+  } else { // no views, and no selected stakeholder
     this.tweenController.updateSHPoints({
       time : time,
       oldTime : oldTime,
@@ -326,7 +371,7 @@ Environment.prototype.animateViewWithTime = function (time, oldTime) {
   }
 }
 
-Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) {
+Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) { // executed when the user click a stakeholder point
    if (this.component.connectionView && this.component.distributionView) { // also takes care of history view
     this.tweenController.updateSelectedStakeholderAllViews(sHPoint)
   } else if (this.component.connectionView) { // also takes care of history view
@@ -339,8 +384,6 @@ Environment.prototype.animateViewWithSelectedStakeholder = function (sHPoint) {
     this.target.updatePosition(sHPoint)
   }
 }
-
-
 
 /////////////////////////////////////////////////////////////////////
 ///////////////////////////// init fxns /////////////////////////////
@@ -366,7 +409,7 @@ Environment.prototype.initializeControls = function () {
 
 Environment.prototype.initializeRenderer = function () {
   var self = this
-
+  // create renderer, reference in Environment
   this.renderer = new THREE.WebGLRenderer( { antialias: true } );
   this.renderer.setClearColor( 0x222628 );
   this.renderer.setPixelRatio( window.devicePixelRatio );
@@ -374,8 +417,12 @@ Environment.prototype.initializeRenderer = function () {
   this.renderer.sortObjects = false;
   this.renderer.rendering = true
   this.container.appendChild( this.renderer.domElement );
+}
 
+Environment.prototype.initRendererPause = function() {
+  var self = this
   ///////////////////////////  renderer start and stop /////////////////////////////
+  // raf id is the id of the current requestAnimationFrame. This is set in the raf loop. The raf loop is defined in Environment.render.
   this.renderer.pauseRender = function () {
     cancelAnimationFrame(this.rafId)
     this.rendering = false
@@ -383,7 +430,7 @@ Environment.prototype.initializeRenderer = function () {
   }
   this.renderer.resumeRender = function () {
     this.rendering = true
-    self.render()
+    self.render() // Environment.render()
     console.log('resume')
   }
 
@@ -395,19 +442,22 @@ Environment.prototype.initializeRenderer = function () {
     }, 3000)
   }
 
+  // this gets called on every interaction, and calls renderer.resetTimeout
+  // this is the only publicly accessed method
   this.triggerRender = function () {
     if (!this.renderer.rendering) { this.renderer.resumeRender()  } // resume the render
     this.renderer.resetTimeout()
   }
 
+  // bind triggerRender to interactions
   $('.scatter-cube').on('mousemove', function () {
     self.triggerRender()
   })
-
+  // bind triggerRender to interactions
   $('.scatter-cube').on('mouseup', function () {
     self.triggerRender()
   })
-
+  // bind triggerRender to interactions
   this.controls.domElement.addEventListener( 'mousewheel', function () {
     self.triggerRender()
   }, false );
@@ -415,7 +465,8 @@ Environment.prototype.initializeRenderer = function () {
   setTimeout(function () { // this should be called when the page is completely loaded. It starts the auto render-pause system
     self.renderer.resetTimeout()
   }, 3000)
-}
+
+};
 
 Environment.prototype.initWindowResize = function () {
   this.windowResize = new THREEx.WindowResize(this.renderer, this.camera)
@@ -432,7 +483,7 @@ Environment.prototype.initStats = function () {
   document.body.appendChild( this.stats.domElement );
   var $stats = $(this.stats.domElement)
   $stats.hide()
-  $(document).on('keypress', function (e) {
+  $(document).on('keypress', function (e) {  // hide/show on `s` or `S` keypress
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $stats.toggle()
     }
@@ -441,7 +492,7 @@ Environment.prototype.initStats = function () {
 
 Environment.prototype.initRendererStats = function  () {
   var self = this
-  this.rendererStats   = new THREEx.RendererStats()
+  this.rendererStats = new THREEx.RendererStats() // https://github.com/jeromeetienne/threex.rendererstats
 
   this.rendererStats.domElement.style.position = 'absolute'
   this.rendererStats.domElement.style.right = '0px'
@@ -455,7 +506,7 @@ Environment.prototype.initRendererStats = function  () {
     self.rendererStats.update(self.renderer);
   })
 
-  $(document).on('keypress', function (e) {
+  $(document).on('keypress', function (e) { // hide/show on `s` or `S` keypress
     if ( e.keyCode === 115 || e.keyCode === 83) {
       $rendererStats.toggle()
     }
@@ -465,7 +516,8 @@ Environment.prototype.initRendererStats = function  () {
 Environment.prototype.initQuadrantCalculator = function() {
   var self = this
 
-  this.onQuadrantUpdate = function (quadrant) {
+  // executes each onQuadrantUpdate fxn when the current quadrant changes
+  var onQuadrantUpdate = function (quadrant) {
     self.onQuadrantUpdateFxns.forEach(function (onQuadrantUpdateFxn) {
       onQuadrantUpdateFxn(quadrant)
     })
@@ -473,7 +525,7 @@ Environment.prototype.initQuadrantCalculator = function() {
 
   this.quadrantCalculator = new QuadrantCalculator({
     cameraPosition : self.camera.position,
-    onQuadrantUpdate : self.onQuadrantUpdate
+    onQuadrantUpdate : onQuadrantUpdate
   })
   this.onRenderFcts.push(this.quadrantCalculator.update.bind(this.quadrantCalculator))
 };
@@ -489,6 +541,7 @@ Environment.prototype.initCube = function () {
     var cube = new THREE.Mesh(geometry, cubeMaterial)
     cube.name = 'cube'
     self.fadeInOnLoad.push(cube)
+    // removes placeholder from `stillToLoad` array
     _.pull(self.stillToLoad, 'cube')
     self.environmentLoadAnimation()
   })
@@ -497,8 +550,6 @@ Environment.prototype.initCube = function () {
 Environment.prototype.initAxisGuides = function() {
   this.axisGuides = new AxisGuides()
   this.fadeInOnLoad.push(this.axisGuides)
-  _.pull(this.stillToLoad, 'axisGuides')
-  this.environmentLoadAnimation()
 };
 
 Environment.prototype.initDangerZone = function () {
@@ -516,8 +567,7 @@ Environment.prototype.initDangerZone = function () {
 Environment.prototype.initLabelGroup = function () {
   var self = this
   this.labelGroup = new LabelGroup({
-    scene: this.scene,
-    camera: this.camera
+    scene: this.scene // pass scene so that meshes can be added
   })
   this.labelGroup.createLabels({
     initialQuadrant : this.quadrantCalculator.quadrant,
@@ -541,11 +591,12 @@ Environment.prototype.initTarget = function () {
 
     self.addObjectToScene(self.target)
 
+    // add to the queue of functions that are executed on render
     self.onRenderFcts.push(function () {
       self.billboardObject(self.target)
     })
 
-    // hide target
+    // add to the queue of functions that are executed when the stakeholder modal is closed
     self.noSelectedStakeholderFcts.push(hideTarget)
     function hideTarget () {
       self.target.mesh.visible = false
@@ -556,14 +607,16 @@ Environment.prototype.initTarget = function () {
 Environment.prototype.configureNameBadge = function () {
   var self = this
   this.onMouseoverFcts.push(function (sHPoint) {
+    // add to onMouseOver queue
     self.nameBadgeVisible = true
     self.component.updateHoveredStakeholder(sHPoint)
     $('.name-badge').show()
   })
 
   this.onMouseoutFcts.push(function () {
+    // executed when cursor leaves sHPoint
     var $nameBadge = $('.name-badge')
-    if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) {
+    if ($nameBadge.html().trim() === self.component.hoveredStakeholder.name.trim()) { // this if statement is serving an edge-case with zooming
       $nameBadge.hide()
       self.nameBadgeVisible = false
     }
@@ -571,6 +624,7 @@ Environment.prototype.configureNameBadge = function () {
 
   this.onRenderFcts.push( function () {
     if ( self.nameBadgeVisible ) {
+      // put namebadge in the right place
       var position = THREEx.ObjCoord.cssPosition(self.component.hoveredStakeholder.mesh, self.camera, self.renderer)
 
       var left = ( position.x + 10 ) + 'px'
@@ -581,11 +635,16 @@ Environment.prototype.configureNameBadge = function () {
   })
 }
 
+/**
+* @method initDistributionCloud
+* @param {Object} opts
+*   @param {Function} opts.getVotes ajax request that returns vote information onCompete
+*/
 Environment.prototype.initDistributionCloud = function (opts) {
   var self = this
   this.distributionCloud = new DistributionCloud( { getVotes : opts.getVotes } )
 
-  this.onRenderFcts.push( function () { // update color of point
+  this.onRenderFcts.push( function () { // update opacity of point to indicate depth
     if (self.component.distributionView && self.focussedPoint) {
       _.forEach(self.distributionCloud.distributionPoints, function (distributionPoint) {
         // dont update if they are being animated!!
@@ -604,10 +663,11 @@ Environment.prototype.initDistributionCloud = function (opts) {
 Environment.prototype.initHistoryTailGroup = function () {
   var self = this
   this.historyTailGroup = new HistoryTailGroup()
+  // gets executed when there is no selected stakeholder
   this.noSelectedStakeholderFcts.push( function () {
-    if (self.component.historyView) {
-      self.tweenController.removeHistoryTails().onComplete(function () {
-        self.removeObjectsFromScene(self.historyTailGroup.historyTails)
+    if (self.component.historyView) { // checking to see if historyView is active
+      self.tweenController.removeHistoryTails().onComplete(function () { // fade out tails
+        self.removeObjectsFromScene(self.historyTailGroup.historyTails) // remove from scene
       })
     }
   })
@@ -621,14 +681,13 @@ Environment.prototype.initNav = function () {
     scene : this.scene,
     jSONloader : this.jSONloader,
     navController : this.navController,
-    domEvents : this.domEvents,
     initialQuadrant: self.quadrantCalculator.quadrant,
-    navControllerUpdate : self.navController.update.bind(self.navController)
+    navControllerUpdate : self.navController.update.bind(self.navController) // bind to its own context
   })
   this.navController.cornerArrows = this.navArrows.cornerArrows
 
   this.onQuadrantUpdateFxns.push(function (quadrant) {
-
+    // don't bother updating when the view is in orthographic mode
     if (self.camera.position.distanceTo(self.controls.target) < 50) {
       self.navController.update({ quadrant : quadrant })
     }
@@ -658,7 +717,7 @@ Environment.prototype.removeObjectFromScene = function (object) {
   this.scene.remove( object.mesh )
 }
 
-Environment.prototype.removeObjectsFromScene = function (objects) { // duplicate of ebove function
+Environment.prototype.removeObjectsFromScene = function (objects) {
   _.forEach( objects, this.removeObjectFromScene.bind(this) )
 }
 
@@ -669,5 +728,6 @@ Environment.prototype.billboardObjects = function (objects) {
 }
 
 Environment.prototype.billboardObject = function (object) {
+  // copies the rotation from the camera and applies it to the mesh
   object.mesh.quaternion.copy( this.camera.quaternion )
 }

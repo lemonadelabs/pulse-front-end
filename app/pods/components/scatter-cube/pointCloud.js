@@ -7,8 +7,8 @@ export default function PointCloud (opts) {
 
   this.selectedPoint = undefined
 
-  this.sHPointClickTargets = this.createSHPointClickTargets()
-  this.sHPoints = this.createSHPoints()
+  this.sHPointClickTargets = this.createSHPointClickTargets() // interaction logic
+  this.sHPoints = this.createSHPoints() // visual component
 }
 
 PointCloud.prototype.startupAnimation = function(opts) {
@@ -75,7 +75,14 @@ PointCloud.prototype.createSHPoints = function() {
   return shPoints
 };
 
+/**
+* foccusses stakeholder as selected in the `stakeholders` modal
+* @method focusPoints
+* @param {Object} opts
+*   @param {Object} opts.focussedStakeholders stakeholders with id as key
+*/
 PointCloud.prototype.focusPoints = function(opts) {
+  console.log('opts.focussedStakeholders', opts.focussedStakeholders)
   var focusAll
   if (_.isEmpty(opts.focussedStakeholders)) {
     focusAll = true
@@ -84,6 +91,7 @@ PointCloud.prototype.focusPoints = function(opts) {
     if (focusAll) {
       point.focussed = true
     } else {
+      // Check to see if stakeholder is in focussedStakeholders. If it is, set focussed to true. Otherwise set it to false
       point.focussed = (opts.focussedStakeholders[point.id]) ? true : false
     }
   })
