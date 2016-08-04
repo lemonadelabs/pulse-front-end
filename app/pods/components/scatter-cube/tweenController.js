@@ -408,35 +408,6 @@ TweenController.prototype.updateTimeNoViewsWithFocus = function(time, oldTime) {
   })
 };
 
-
-TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
-  var environment = this.environment
-
-  environment.lineGroup.drawConnections({
-    projectId : environment.project.get('id'),
-    sHPoint : environment.focussedPoint,
-    currentWeek: time
-  })
-
-  var sHPointTweens = this.updateSHPoints({
-    time : time,
-    oldTime : oldTime,
-    easing: TWEEN.Easing.Exponential.Out,
-    duration : 1500
-  })
-
-  var lastTween = _.last(sHPointTweens)
-
-  lastTween.onUpdate(function () {
-    environment.target.updatePosition(environment.focussedPoint) // make the target follow the point
-    environment.lineGroup.needsUpdate = true // make the lines follow the points
-  })
-
-  lastTween.onComplete(function () {
-    environment.lineGroup.needsUpdate = false
-  })
-}
-
 TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
 
   var self = this
@@ -468,6 +439,34 @@ TweenController.prototype.updateTimeDistroView = function(time, oldTime) {
   })
 }
 
+TweenController.prototype.updateTimeRelationView = function(time, oldTime) {
+  var environment = this.environment
+
+  environment.lineGroup.drawConnections({
+    projectId : environment.project.get('id'),
+    sHPoint : environment.focussedPoint,
+    currentWeek: time
+  })
+
+  var sHPointTweens = this.updateSHPoints({
+    time : time,
+    oldTime : oldTime,
+    easing: TWEEN.Easing.Exponential.Out,
+    duration : 1500
+  })
+
+  var lastTween = _.last(sHPointTweens)
+
+  lastTween.onUpdate(function () {
+    environment.target.updatePosition(environment.focussedPoint) // make the target follow the point
+    environment.lineGroup.needsUpdate = true // make the lines follow the points
+  })
+
+  lastTween.onComplete(function () {
+    environment.lineGroup.needsUpdate = false
+  })
+}
+
 TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime) {
   var self = this
   var environment = this.environment
@@ -495,6 +494,11 @@ TweenController.prototype.updateTimeRelationDistroViews = function(time, oldTime
     .onComplete(function () {
       environment.lineGroup.needsUpdate = false
       self.buildDistroCloud()
+      environment.lineGroup.drawConnections({
+        projectId : environment.project.get('id'),
+        sHPoint : environment.focussedPoint,
+        currentWeek: time
+      })
     });
   })
 };
@@ -597,7 +601,6 @@ TweenController.prototype.updateSelectedStakeholderAllViews = function(sHPoint) 
 
   // fade out old connections
   if (environment.lineGroup.primaryConnections.length > 0) {
-    console.log('adfasdfasdf')
     this.fadeOutConnections({
       duration : 300,
       easing : TWEEN.Easing.Quadratic.In
