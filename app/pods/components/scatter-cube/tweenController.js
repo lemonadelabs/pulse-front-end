@@ -180,18 +180,34 @@ TweenController.prototype.updateSHPoints = function(opts) {
     })
   }
 
+  function difference (a, b) { return Math.abs(a - b) }
+  function almostEqualCoords(object1, object2) {
+    var equal = true
+    _.forEach(object1, function (value, key) {
+      if ( difference(value,object2[key]) > 0.001 ) { equal = false}
+    })
+    return equal
+  }
   //Given a curve it will make the dot follow the line
   function createPointTweensFromCurve (sHPoint, curve) {
     if (curve) {
       sHPoint.curveLocation = curveLocation(opts.oldTime)
       var newCurveLocation = curveLocation(opts.time)
 
+      var oldPoint = curve.getPoint(sHPoint.curveLocation)
+      var newPoint = curve.getPoint(newCurveLocation)
+
+
+      var equal = almostEqualCoords(newPoint, oldPoint)
+      if (equal) {return}
+
       var tween = new TWEEN.Tween(sHPoint)
-          .to({curveLocation: newCurveLocation}, opts.duration)
+          .to({curveLocation: newCurveLocation }, opts.duration)
           .easing(opts.easing)
           .onUpdate(function () {
             sHPoint.mesh.position.copy(
               // use the tweened curve location float to get the current coordinates of the point on the curve
+              // Our current implentation
               curve.getPoint(sHPoint.curveLocation)
             )
           })
