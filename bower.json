@@ -25,19 +25,22 @@
     "ember-resolver": "~0.1.20",
     "loader.js": "ember-cli/loader.js#3.4.0",
     "qunit": "~1.20.0",
-    "threex.windowresize": "*",
+    "threex.windowresize": "git://github.com/jeromeetienne/threex.windowresize.git#6e1b4d06c9c0ed56f9dd43abb7b50bc85e325013",
     "tween.js": "tweenjs#~16.3.1",
     "lodash": "4.5.x",
-    "three.js": "threejs#*",
+    "three.js": "threejs#r74",
     "chroma-js": "~1.1.1",
     "chartist": "~0.9.5",
     "masonry": "~4.0.0",
     "stats.js": "mrdoob/stats.js#r14",
-    "threex.rendererstats": "*",
-    "threex.objcoord": "*",
+    "threex.rendererstats": "git://github.com/jeromeetienne/threex.rendererstats.git#eb43b05b83f03014efa3b6d35cfff41eddae8df8",
+    "threex.objcoord": "git://github.com/jeromeetienne/threex.objcoord.git#017ef78c1ee3bd610ceeb6816fb1bd9452aaaf20",
     "ember": "2.3.0",
     "threex.domevents": "https://github.com/jeromeetienne/threex.domevents.git#f0cb8e0e6972fae9e28b7d2e6a77348cdd4ac2ad",
     "run-at-fps": "*"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "threex.objcoord": "017ef78c1ee3bd610ceeb6816fb1bd9452aaaf20"
+  }
 }
